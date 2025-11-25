@@ -9,6 +9,9 @@ plugins {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.4")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
+
 
 
     implementation(project(":shared-library"))

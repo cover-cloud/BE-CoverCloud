@@ -1,0 +1,45 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/user_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # 초기 개발은 update, 완성 후 validate 추천
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+  mvc:
+    converters:
+      preferred-json-mapper: jackson
+
+# WebClient 설정
+webclient:
+  base-timeout: 5000
+
+# 카카오 OAuth 설정
+oauth:
+  kakao:
+    client-id: "카카오 REST API 키 입력"
+    client-secret: ""   # 카카오에서는 보통 필요 없음 (비워두면 됨)
+    redirect-uri: "http://localhost:3000/login/kakao"
+
+# JWT 설정
+jwt:
+  secret: "THIS-IS-SUPER-SECRET-KEY-CHANGE-THIS"
+  expiration: 43200000   # 12시간 (ms)
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.covercloud: DEBUG
