@@ -17,7 +17,7 @@ class JwtProvider {
 
     fun generateToken(userId: Long): String {
         val now = Date()
-        val exp = Date(now.time + 1000)
+        val exp = Date(now.time + 1000 * 60 * 60 * 24)
 
         return Jwts.builder()
             .setSubject(userId.toString())
