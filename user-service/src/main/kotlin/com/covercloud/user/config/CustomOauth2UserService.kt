@@ -19,16 +19,16 @@ class CustomOauth2UserService (
         val provider = userRequest.clientRegistration.registrationId
         val attributes = oAuth2User.attributes
 
-        val (socialId, nickname, email) = when (provider) {
+        val (socialId, nickname, profileImage) = when (provider) {
             "kakao" -> {
                 val kakaoAccount = attributes["kakao_account"] as Map<*, *>
                 val profile = kakaoAccount["profile"] as Map<*, *>
 
-                Triple(
-                    attributes["id"].toString(),
-                    profile["nickname"]?.toString() ?: "Unknown",
-                    kakaoAccount["email"]?.toString()
-                )
+                val id = attributes["id"].toString()
+                val nick = profile["nickname"]?.toString() ?: "Unknown"
+                val image = profile["profile_image_url"]?.toString()
+
+                Triple(id, nick, image)
             }
 
             "naver" -> {
@@ -36,7 +36,7 @@ class CustomOauth2UserService (
                 Triple(
                     response["id"].toString(),
                     response["nickname"]?.toString() ?: "Unknown",
-                    response["email"]?.toString()
+                    response["profile_image"]?.toString()
                 )
             }
 
@@ -49,18 +49,16 @@ class CustomOauth2UserService (
             else -> throw IllegalArgumentException("Unknown provider: $provider")
         }
 
-        // 기존 유저 검색 또는 자동 가입
         val user = userRepository.findBySocialId(socialId)
             ?: userRepository.save(
                 User(
                     socialId = socialId,
                     provider = providerEnum,
                     nickname = nickname,
-                    profileImage = ""
+                    profileImage = profileImage ?: ""
                 )
             )
 
-        // 스프링 시큐리티 인증 객체 생성
         val userNameAttribute = userRequest.clientRegistration
             .providerDetails.userInfoEndpoint.userNameAttributeName
 

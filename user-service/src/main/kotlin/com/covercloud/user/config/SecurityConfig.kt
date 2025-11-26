@@ -7,7 +7,8 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 class SecurityConfig (
-    private val customOAuth2UserService: CustomOauth2UserService
+    private val customOAuth2UserService: CustomOauth2UserService,
+    private val oAuth2SuccessHandler: OAuth2SuccessHandler
 ) {
 
     @Bean
@@ -20,10 +21,16 @@ class SecurityConfig (
                     .anyRequest().authenticated()
             }
             .oauth2Login {
-                it.userInfoEndpoint { userInfo ->
-                    userInfo.userService(customOAuth2UserService)
-                }
-                it.defaultSuccessUrl("/auth/success", true)
+//                it.userInfoEndpoint { userInfo ->
+//                    userInfo.userService(customOAuth2UserService)
+//                }
+//                it.defaultSuccessUrl("/auth/success", true)
+                    oauth ->
+                oauth
+                    .userInfoEndpoint {
+                        it.userService(customOAuth2UserService)
+                    }
+                    .successHandler(oAuth2SuccessHandler)
             }
 
         return http.build()

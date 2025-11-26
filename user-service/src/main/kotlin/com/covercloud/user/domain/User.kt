@@ -16,7 +16,7 @@ class User(
     @Enumerated(EnumType.STRING)
     val provider: Provider,
     val nickname: String,
-    val profileImage: String,
+    var profileImage: String? = null,
 ) : BaseEntity() {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null
