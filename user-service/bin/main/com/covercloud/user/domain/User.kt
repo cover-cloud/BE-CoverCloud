@@ -14,18 +14,10 @@ import jakarta.persistence.Table
 class User(
     val socialId: String,
     @Enumerated(EnumType.STRING)
-    val provider: Provider? = null,
+    val provider: Provider,
     val nickname: String,
-    val profileImage: String,
+    var profileImage: String? = null,
 ) : BaseEntity() {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null
-}
-
-enum class Provider(val value: String){
-    KAKAO("kakao");
-
-    companion object {
-        fun from(value: String): Provider = Provider.values().first { it.value == value }
-    }
 }

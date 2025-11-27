@@ -1,9 +1,12 @@
 package com.covercloud.user.config
 
+import com.covercloud.user.domain.User
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
+import jakarta.xml.bind.annotation.XmlID
 import org.springframework.stereotype.Component
+import org.springframework.beans.factory.annotation.Value
 import java.util.Date
 
 

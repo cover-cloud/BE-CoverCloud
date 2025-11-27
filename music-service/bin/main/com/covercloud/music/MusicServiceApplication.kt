@@ -1,10 +1,12 @@
-package com.covercloud.user
+package com.covercloud.music
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
+
 @SpringBootApplication
-class UserServiceApplication
+class MusicServiceApplication
+
 fun main(args: Array<String>) {
-    runApplication<UserServiceApplication>(*args)
+    runApplication<MusicServiceApplication>(*args)
 }
