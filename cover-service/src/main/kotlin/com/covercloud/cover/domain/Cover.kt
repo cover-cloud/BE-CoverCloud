@@ -5,13 +5,17 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "cover")
 class Cover (
     val link: String,
     val userId: Long,
     val musicId: Long,
     val coverArtist: String,
+    val coverTitle: String,
+    val coverGenre: String,
     var viewCount: Long = 0,
     var likeCount: Long = 0,
     var commentCount: Long = 0

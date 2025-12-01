@@ -1,7 +1,9 @@
-package com.covercloud.cover.infrastructure
+package com.covercloud.cover.repository
 
 import com.covercloud.cover.domain.Cover
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 
+@Repository
 interface CoverRepository : JpaRepository<Cover, Long> {
 }

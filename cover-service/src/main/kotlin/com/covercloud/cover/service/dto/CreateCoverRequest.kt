@@ -1,4 +1,4 @@
-package com.covercloud.cover.application.dto
+package com.covercloud.cover.service.dto
 
 data class CreateCoverRequest(
     val originalTitle: String,

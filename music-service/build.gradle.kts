@@ -14,7 +14,11 @@ dependencies {
 
 
 
-    implementation(project(":shared-library"))
+
+//    implementation(project(":shared-library"))
 
     runtimeOnly("com.mysql:mysql-connector-j")
+    implementation(project(":shared-library")) {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-security")
+    }
 }
