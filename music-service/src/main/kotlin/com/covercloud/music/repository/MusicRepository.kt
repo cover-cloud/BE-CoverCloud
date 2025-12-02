@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface MusicRepository : JpaRepository<Music, Long> {
+    fun findByTitleAndArtist(title: String, artist: String): Music?
 }

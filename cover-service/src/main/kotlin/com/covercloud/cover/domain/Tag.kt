@@ -10,7 +10,7 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "tag")
 class Tag(
-    val tag: String
+    val name: String
 ): BaseEntity() {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null

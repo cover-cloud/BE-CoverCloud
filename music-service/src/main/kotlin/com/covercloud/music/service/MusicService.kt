@@ -14,6 +14,15 @@ class MusicService(
 ) {
     @Transactional
     fun saveMusic(request: CreateMusicDto): MusicResponse {
+        val existing = musicRepository.findByTitleAndArtist(request.title, request.artist)
+
+        if(existing != null) {
+            return MusicResponse(
+                id = existing.id!!,
+                title = existing.title,
+                artist = existing.artist,
+            )
+        }
         val music = Music(
             title = request.title,
             artist = request.artist
@@ -21,10 +30,11 @@ class MusicService(
         val savedMusic = musicRepository.save(music)
 
         return MusicResponse(
-            musicId = savedMusic.id!!,
+            id = savedMusic.id!!,
             title = savedMusic.title,
             artist = savedMusic.artist,
         )
+
     }
 
 }

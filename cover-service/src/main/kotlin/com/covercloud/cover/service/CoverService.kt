@@ -3,17 +3,25 @@ package com.covercloud.cover.service
 import com.covercloud.cover.service.dto.CoverResponse
 import com.covercloud.cover.service.dto.CreateCoverRequest
 import com.covercloud.cover.domain.Cover
+import com.covercloud.cover.domain.CoverTag
+import com.covercloud.cover.domain.Tag
 //import com.covercloud.cover.global.security.SecurityUtil
 import com.covercloud.cover.infrastructure.dto.CreateMusicRequest
 import com.covercloud.cover.infrastructure.feign.MusicClient
 import com.covercloud.cover.repository.CoverRepository
+import com.covercloud.cover.repository.CoverTagRepository
+import com.covercloud.cover.repository.TagRepository
 import com.covercloud.shared.security.JwtProvider
 import jakarta.transaction.Transactional
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class CoverService(
     private val coverRepository: CoverRepository,
+    private val tagRepository: TagRepository,
+    private val coverTagRepository: CoverTagRepository,
     private val musicClient: MusicClient,
 
 ) {
@@ -37,14 +45,89 @@ class CoverService(
 
         val savedCover = coverRepository.save(cover);
 
+        request.tags?.forEach { tagName ->
+            val tag = tagRepository.findByName(tagName)
+                ?: tagRepository.save(Tag(name = tagName))
+
+            coverTagRepository.save(CoverTag(cover, tag))
+        }
+
         return CoverResponse(
             coverId = savedCover.id!!,
             musicId = savedCover.musicId,
             coverTitle = savedCover.coverTitle,
             coverArtist = savedCover.coverArtist,
             coverGenre = savedCover.coverGenre,
+            tags = request.tags,
             link = savedCover.link
         )
+    }
+
+    @Transactional
+    fun updateCover(
+        id: Long,
+        request: CreateCoverRequest,
+        testUserId: Long? = null
+    ): CoverResponse {
+        val cover = coverRepository.findByIdOrNull(id) ?: throw NotFoundException()
+
+
+        if (cover.musicId == null) {
+            val musicResult = musicClient.saveMusic(
+                CreateMusicRequest(
+                    title = request.originalTitle,
+                    artist = request.originalArtist
+                )
+            )
+            cover.musicId = musicResult.id
+        }
+
+        request.title?.let { cover.coverTitle = it }
+        request.coverArtist?.let { cover.coverArtist = it }
+        request.genre?.let { cover.coverGenre = it }
+        request.videoUrl?.let { cover.link = it }
+
+        request.tags?.let { newTagList ->
+            val existingTags = coverTagRepository.findAllByCoverId(cover.id!!)
+                .associateBy { it.tag.name }
+
+            val newTagNames = newTagList.toSet()
+
+            // 기존 태그 중 삭제할 태그
+            existingTags.keys
+                .filter { it !in newTagNames }
+                .forEach { tagName ->
+                    coverTagRepository.delete(existingTags[tagName]!!)
+                }
+
+            // 새로 추가할 태그
+            newTagNames
+                .filter { it !in existingTags.keys }
+                .forEach { tagName ->
+                    val tag = tagRepository.findByName(tagName) ?: tagRepository.save(Tag(name = tagName))
+                    coverTagRepository.save(CoverTag(cover, tag))
+                }
+        }
+
+        val responseTags = request.tags ?: coverTagRepository.findAllByCoverId(cover.id!!)
+            .map { it.tag.name }
+
+        return CoverResponse(
+            coverId = cover.id!!,
+            musicId = cover.musicId,
+            coverTitle = cover.coverTitle,
+            coverArtist = cover.coverArtist,
+            coverGenre = cover.coverGenre,
+            tags = responseTags,
+            link = cover.link
+        )
+    }
+
+    @Transactional
+    fun deleteCover(coverId: Long) {
+        val cover = coverRepository.findByIdOrNull(coverId) ?: throw NotFoundException()
+        coverTagRepository.deleteAllByCoverId(cover.id!!)
+        coverRepository.delete(cover)
     }
 
 }
