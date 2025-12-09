@@ -61,7 +61,7 @@ class JwtProvider {
     }
 
     /**
-     * 기존 메서드 호환성 유지 (Access Token 생성)
+     * Access Token 생성
      */
     fun generateToken(userId: Long): String {
         return generateAccessToken(userId)

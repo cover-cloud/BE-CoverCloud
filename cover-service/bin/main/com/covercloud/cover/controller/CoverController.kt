@@ -63,4 +63,5 @@ class CoverController (
         val coverList = coverService.getCovers(page, size, sortBy, sortDirection)
         return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
     }
+
 }
