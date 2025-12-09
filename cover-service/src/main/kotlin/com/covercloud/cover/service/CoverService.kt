@@ -1,7 +1,9 @@
 package com.covercloud.cover.service
 
 import com.covercloud.cover.service.dto.CoverResponse
+import com.covercloud.cover.service.dto.CoverListResponse
 import com.covercloud.cover.service.dto.CreateCoverRequest
+import com.covercloud.cover.service.dto.PageResponse
 import com.covercloud.cover.domain.Cover
 import com.covercloud.cover.domain.CoverTag
 import com.covercloud.cover.domain.Tag
@@ -11,11 +13,15 @@ import com.covercloud.cover.infrastructure.feign.MusicClient
 import com.covercloud.cover.repository.CoverRepository
 import com.covercloud.cover.repository.CoverTagRepository
 import com.covercloud.cover.repository.TagRepository
-import com.covercloud.shared.security.JwtProvider
+import com.covercloud.shared.jwt.JwtProvider
 import jakarta.transaction.Transactional
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.format.DateTimeFormatter
 
 @Service
 class CoverService(
@@ -128,6 +134,54 @@ class CoverService(
         val cover = coverRepository.findByIdOrNull(coverId) ?: throw NotFoundException()
         coverTagRepository.deleteAllByCoverId(cover.id!!)
         coverRepository.delete(cover)
+    }
+
+    fun getCovers(
+        page: Int = 0,
+        size: Int = 20,
+        sortBy: String = "createdAt",
+        sortDirection: String = "DESC"
+    ): PageResponse<CoverListResponse> {
+        val sort = if (sortDirection.uppercase() == "ASC") {
+            Sort.by(sortBy).ascending()
+        } else {
+            Sort.by(sortBy).descending()
+        }
+        
+        val pageable: Pageable = PageRequest.of(page, size, sort)
+        val coverPage = coverRepository.findAll(pageable)
+        
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        
+        val content = coverPage.content.map { cover ->
+            val tags = coverTagRepository.findAllByCoverId(cover.id!!)
+                .map { it.tag.name }
+            
+            CoverListResponse(
+                coverId = cover.id!!,
+                musicId = cover.musicId,
+                userId = cover.userId,
+                coverArtist = cover.coverArtist,
+                coverTitle = cover.coverTitle,
+                coverGenre = cover.coverGenre,
+                link = cover.link,
+                viewCount = cover.viewCount,
+                likeCount = cover.likeCount,
+                commentCount = cover.commentCount,
+                tags = tags,
+                createdAt = cover.createdAt?.format(dateFormatter) ?: ""
+            )
+        }
+        
+        return PageResponse(
+            content = content,
+            pageNumber = coverPage.number,
+            pageSize = coverPage.size,
+            totalElements = coverPage.totalElements,
+            totalPages = coverPage.totalPages,
+            isFirst = coverPage.isFirst,
+            isLast = coverPage.isLast
+        )
     }
 
 }

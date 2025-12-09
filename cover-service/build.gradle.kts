@@ -41,5 +41,5 @@ dependencies {
 }
 
 tasks.bootJar {
-    mainClass.set("com.covercloud.cover.CoverServiceApplication")
+    mainClass.set("com.covercloud.cover.CoverServiceApplicationKt")
 }

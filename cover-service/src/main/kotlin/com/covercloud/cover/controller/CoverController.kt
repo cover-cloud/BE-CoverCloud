@@ -2,10 +2,15 @@ package com.covercloud.cover.controller
 
 import com.covercloud.cover.controller.dto.CoverRequest
 import com.covercloud.cover.service.CoverService
+import com.covercloud.cover.service.dto.CoverListResponse
 import com.covercloud.cover.service.dto.CoverResponse
 import com.covercloud.cover.service.dto.CreateCoverRequest
+import com.covercloud.cover.service.dto.PageResponse
 import com.covercloud.shared.response.ApiResponse
+import com.covercloud.shared.security.AuthenticationContext
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -15,22 +20,29 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/cover")
 class CoverController (
-    private val coverService: CoverService
+    private val coverService: CoverService,
+    private val authContext: AuthenticationContext
 ){
 
     @PostMapping("/create")
-    fun saveCover(@RequestBody request: CoverRequest,
-                  @RequestParam(required = false) testUserId: Long?): ResponseEntity<ApiResponse<Any>>  {
-        val coverResponse = coverService.uploadCover(request.toDto(), testUserId)
+    fun saveCover(
+        @RequestBody request: CoverRequest,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<Any>>  {
+        val userId = authContext.getCurrentUserId(httpRequest) ?: 1L
+        val coverResponse = coverService.uploadCover(request.toDto(), userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = coverResponse))
     }
 
 
     @PostMapping("/update")
-    fun updateCover(@RequestParam coverId: Long,
-                    @RequestBody request: CoverRequest,
-                  @RequestParam(required = false) testUserId: Long?): ResponseEntity<ApiResponse<Any>>  {
-        val coverResponse = coverService.updateCover(coverId, request.toDto(), testUserId)
+    fun updateCover(
+        @RequestParam coverId: Long,
+        @RequestBody request: CoverRequest,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<Any>>  {
+        val userId = authContext.getCurrentUserId(httpRequest) ?: 1L
+        val coverResponse = coverService.updateCover(coverId, request.toDto(), userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = coverResponse))
     }
 
@@ -39,5 +51,31 @@ class CoverController (
         coverService.deleteCover(coverId)
         return ResponseEntity.ok(ApiResponse(success = true, message = "Cover deleted successfully"))
 
+    }
+
+    @GetMapping("/list")
+    fun getCovers(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "createdAt") sortBy: String,
+        @RequestParam(defaultValue = "DESC") sortDirection: String
+    ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
+        val coverList = coverService.getCovers(page, size, sortBy, sortDirection)
+        return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
+    }
+
+    @GetMapping("/test-auth")
+    fun testAuth(httpRequest: HttpServletRequest): ResponseEntity<ApiResponse<Map<String, Any?>>> {
+        val userId = authContext.getCurrentUserId(httpRequest)
+        return ResponseEntity.ok(
+            ApiResponse(
+                success = true,
+                data = mapOf(
+                    "authenticated" to (userId != null),
+                    "userId" to userId,
+                    "message" to if (userId != null) "Token valid, userId: $userId" else "No token or invalid token"
+                )
+            )
+        )
     }
 }

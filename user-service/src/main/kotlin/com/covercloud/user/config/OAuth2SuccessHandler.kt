@@ -1,5 +1,6 @@
 package com.covercloud.user.config
 
+import com.covercloud.user.application.AuthService
 import com.covercloud.user.domain.Provider
 import com.covercloud.user.domain.User
 import com.covercloud.user.infrastructure.UserRepository
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class OAuth2SuccessHandler(
-    private val jwtProvider: JwtProvider,
+    private val authService: AuthService,
     private val userRepository: UserRepository
 ) : AuthenticationSuccessHandler {
 
@@ -61,10 +62,13 @@ class OAuth2SuccessHandler(
                 )
             )
 
-        // 4. JWT 생성
-        val token = jwtProvider.generateToken(user.id!!)
+        // JWT Access Token과 Refresh Token 생성
+        val tokens = authService.generateTokens(user.id!!)
 
-        response.sendRedirect("http://localhost:3000/success?token=$token")
+        // 프론트엔드로 토큰 전달 (프론트엔드 URL로 리다이렉트)
+        response.sendRedirect(
+            "http://localhost:3000/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
+        )
     }
 
     data class Quadruple<A, B, C, D>(
