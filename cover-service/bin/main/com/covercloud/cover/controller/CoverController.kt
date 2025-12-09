@@ -63,19 +63,4 @@ class CoverController (
         val coverList = coverService.getCovers(page, size, sortBy, sortDirection)
         return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
     }
-
-    @GetMapping("/test-auth")
-    fun testAuth(httpRequest: HttpServletRequest): ResponseEntity<ApiResponse<Map<String, Any?>>> {
-        val userId = authContext.getCurrentUserId(httpRequest)
-        return ResponseEntity.ok(
-            ApiResponse(
-                success = true,
-                data = mapOf(
-                    "authenticated" to (userId != null),
-                    "userId" to userId,
-                    "message" to if (userId != null) "Token valid, userId: $userId" else "No token or invalid token"
-                )
-            )
-        )
-    }
 }

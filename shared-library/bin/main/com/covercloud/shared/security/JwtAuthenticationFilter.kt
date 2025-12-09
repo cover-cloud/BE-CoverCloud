@@ -26,7 +26,7 @@ class JwtAuthenticationFilter(
                 logger.info("UserId from Gateway: $userIdFromGateway")
                 request.setAttribute("userId", userIdFromGateway.toLong())
             } else {
-                // Gateway를 거치지 않은 직접 요청인 경우 JWT 검증 (개발/테스트용)
+                // Gateway를 거치지 않은 직접 요청인 경우 JWT 검증
                 val token = resolveToken(request)
                 
                 if (token != null) {
