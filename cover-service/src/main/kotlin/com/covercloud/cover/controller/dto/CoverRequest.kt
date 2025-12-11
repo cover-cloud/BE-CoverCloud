@@ -1,6 +1,6 @@
 package com.covercloud.cover.controller.dto
 
-import com.covercloud.cover.service.dto.CreateCoverRequest
+import com.covercloud.cover.service.dto.CreateServiceCoverRequest
 
 data class CoverRequest(
     val originalTitle: String,
@@ -11,8 +11,8 @@ data class CoverRequest(
     val tags: List<String>?,
     val videoUrl: String?
 ){
-    fun toDto(): CreateCoverRequest{
-        return CreateCoverRequest(
+    fun toDto(): CreateServiceCoverRequest{
+        return CreateServiceCoverRequest(
             originalArtist = originalArtist,
             originalTitle = originalTitle,
             genre = genre,

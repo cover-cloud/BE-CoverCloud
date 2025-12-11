@@ -39,8 +39,11 @@ class SecurityConfig(
         
         return http
             .csrf { it.disable() }
+            .cors { } // CORS 활성화
             .authorizeExchange { exchanges ->
                 exchanges
+                    // CORS preflight 요청 허용
+                    .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     // 인증 불필요한 경로들
                     .pathMatchers(HttpMethod.GET, "/api/cover/list").permitAll()
                     .pathMatchers("/api/auth/**").permitAll()

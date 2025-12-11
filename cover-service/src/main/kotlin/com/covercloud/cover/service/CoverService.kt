@@ -2,7 +2,7 @@ package com.covercloud.cover.service
 
 import com.covercloud.cover.service.dto.CoverResponse
 import com.covercloud.cover.service.dto.CoverListResponse
-import com.covercloud.cover.service.dto.CreateCoverRequest
+import com.covercloud.cover.service.dto.CreateServiceCoverRequest
 import com.covercloud.cover.service.dto.PageResponse
 import com.covercloud.cover.domain.Cover
 import com.covercloud.cover.domain.CoverTag
@@ -13,7 +13,6 @@ import com.covercloud.cover.infrastructure.feign.MusicClient
 import com.covercloud.cover.repository.CoverRepository
 import com.covercloud.cover.repository.CoverTagRepository
 import com.covercloud.cover.repository.TagRepository
-import com.covercloud.shared.jwt.JwtProvider
 import jakarta.transaction.Transactional
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.data.domain.PageRequest
@@ -32,8 +31,7 @@ class CoverService(
 
 ) {
     @Transactional
-    fun uploadCover(request: CreateCoverRequest, testUserId: Long? = null): CoverResponse {
-        val userId = testUserId
+    fun uploadCover(request: CreateServiceCoverRequest, userId: Long): CoverResponse {
         val musicResult = musicClient.saveMusic(
             CreateMusicRequest(
                 title = request.originalTitle,
@@ -42,7 +40,7 @@ class CoverService(
         )
         val cover = Cover(
             musicId = musicResult.id,
-            userId = userId!!,
+            userId = userId,
             link = request.videoUrl,
             coverArtist = request.originalArtist,
             coverGenre = request.genre,
@@ -72,8 +70,7 @@ class CoverService(
     @Transactional
     fun updateCover(
         id: Long,
-        request: CreateCoverRequest,
-        testUserId: Long? = null
+        request: CreateServiceCoverRequest,
     ): CoverResponse {
         val cover = coverRepository.findByIdOrNull(id) ?: throw NotFoundException()
 

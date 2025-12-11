@@ -1,6 +1,6 @@
 package com.covercloud.cover.service.dto
 
-data class CreateCoverRequest(
+data class CreateServiceCoverRequest(
     val originalTitle: String,
     val originalArtist: String,
     val genre: String?,

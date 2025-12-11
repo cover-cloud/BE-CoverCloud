@@ -3,8 +3,6 @@ package com.covercloud.cover.controller
 import com.covercloud.cover.controller.dto.CoverRequest
 import com.covercloud.cover.service.CoverService
 import com.covercloud.cover.service.dto.CoverListResponse
-import com.covercloud.cover.service.dto.CoverResponse
-import com.covercloud.cover.service.dto.CreateCoverRequest
 import com.covercloud.cover.service.dto.PageResponse
 import com.covercloud.shared.response.ApiResponse
 import com.covercloud.shared.security.AuthenticationContext
@@ -21,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/cover")
 class CoverController (
     private val coverService: CoverService,
-    private val authContext: AuthenticationContext
+    private val authenticationContext: AuthenticationContext
 ){
 
     @PostMapping("/create")
@@ -29,7 +27,7 @@ class CoverController (
         @RequestBody request: CoverRequest,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Any>>  {
-        val userId = authContext.getCurrentUserId(httpRequest) ?: 1L
+        val userId = authenticationContext.requireUserId(httpRequest)
         val coverResponse = coverService.uploadCover(request.toDto(), userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = coverResponse))
     }
@@ -41,8 +39,8 @@ class CoverController (
         @RequestBody request: CoverRequest,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Any>>  {
-        val userId = authContext.getCurrentUserId(httpRequest) ?: 1L
-        val coverResponse = coverService.updateCover(coverId, request.toDto(), userId)
+        val userId = authenticationContext.requireUserId(httpRequest)
+        val coverResponse = coverService.updateCover(coverId, request.toDto())
         return ResponseEntity.ok(ApiResponse(success = true, data = coverResponse))
     }
 
