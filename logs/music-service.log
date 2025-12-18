@@ -7,31 +7,24 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.4)
 
-2025-12-18T14:37:51.674+09:00  INFO 164856 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : Starting MusicServiceApplicationKt v0.0.1 using Java 17.0.17 with PID 164856 (/home/pduser/pd3/work/BE-CoverCloud/music-service/build/libs/music-service-0.0.1.jar started by pduser in /home/pduser/pd3/work/BE-CoverCloud)
-2025-12-18T14:37:51.685+09:00  INFO 164856 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : No active profile set, falling back to 1 default profile: "default"
-2025-12-18T14:37:58.801+09:00  INFO 164856 --- [music-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-12-18T14:37:59.185+09:00  INFO 164856 --- [music-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 350 ms. Found 1 JPA repository interface.
-2025-12-18T14:38:02.354+09:00  INFO 164856 --- [music-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8083 (http)
-2025-12-18T14:38:02.377+09:00  INFO 164856 --- [music-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-12-18T14:38:02.378+09:00  INFO 164856 --- [music-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
-2025-12-18T14:38:02.562+09:00  INFO 164856 --- [music-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-12-18T14:38:02.565+09:00  INFO 164856 --- [music-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 10289 ms
-2025-12-18T14:38:03.119+09:00  INFO 164856 --- [music-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-12-18T14:38:03.258+09:00  INFO 164856 --- [music-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2025-12-18T14:38:03.313+09:00  INFO 164856 --- [music-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-12-18T14:38:03.884+09:00  INFO 164856 --- [music-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-12-18T14:38:03.934+09:00  INFO 164856 --- [music-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-12-18T14:38:04.798+09:00  INFO 164856 --- [music-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3386ed8
-2025-12-18T14:38:04.800+09:00  INFO 164856 --- [music-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-12-18T14:38:06.009+09:00  INFO 164856 --- [music-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-12-18T14:38:06.325+09:00  INFO 164856 --- [music-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-12-18T14:38:08.011+09:00  WARN 164856 --- [music-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-12-18T14:38:08.777+09:00  INFO 164856 --- [music-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8083 (http) with context path ''
-2025-12-18T14:38:08.818+09:00  INFO 164856 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : Started MusicServiceApplicationKt in 21.862 seconds (process running for 26.553)
-2025-12-18T14:38:15.674+09:00  INFO 164856 --- [music-service] [nio-8083-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-12-18T14:38:15.676+09:00  INFO 164856 --- [music-service] [nio-8083-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2025-12-18T14:38:15.680+09:00  INFO 164856 --- [music-service] [nio-8083-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
-2025-12-18T14:38:15.690+09:00  INFO 164856 --- [music-service] [nio-8083-exec-2] c.c.s.security.JwtAuthenticationFilter   : JWT Token found (direct request): eyJhbGciOiJIUzUxMiJ9...
-2025-12-18T14:38:15.807+09:00  INFO 164856 --- [music-service] [nio-8083-exec-2] c.c.s.security.JwtAuthenticationFilter   : JWT Token validated successfully. UserId: 1
-2025-12-18T14:38:31.982+09:00  INFO 164856 --- [music-service] [nio-8083-exec-1] c.c.s.security.JwtAuthenticationFilter   : JWT Token found (direct request): eyJhbGciOiJIUzUxMiJ9...
-2025-12-18T14:38:31.987+09:00  INFO 164856 --- [music-service] [nio-8083-exec-1] c.c.s.security.JwtAuthenticationFilter   : JWT Token validated successfully. UserId: 1
+2025-12-18T17:26:44.563+09:00  INFO 285228 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : Starting MusicServiceApplicationKt v0.0.1 using Java 17.0.17 with PID 285228 (/home/pduser/pd3/work/BE-CoverCloud/music-service/build/libs/music-service-0.0.1.jar started by pduser in /home/pduser/pd3/work/BE-CoverCloud)
+2025-12-18T17:26:44.576+09:00  INFO 285228 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : No active profile set, falling back to 1 default profile: "default"
+2025-12-18T17:26:46.820+09:00  INFO 285228 --- [music-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-18T17:26:46.974+09:00  INFO 285228 --- [music-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 148 ms. Found 1 JPA repository interface.
+2025-12-18T17:26:47.820+09:00  INFO 285228 --- [music-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8083 (http)
+2025-12-18T17:26:47.839+09:00  INFO 285228 --- [music-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-18T17:26:47.840+09:00  INFO 285228 --- [music-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-12-18T17:26:47.893+09:00  INFO 285228 --- [music-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-18T17:26:47.896+09:00  INFO 285228 --- [music-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3074 ms
+2025-12-18T17:26:48.173+09:00  INFO 285228 --- [music-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-18T17:26:48.251+09:00  INFO 285228 --- [music-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-12-18T17:26:48.289+09:00  INFO 285228 --- [music-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-18T17:26:48.553+09:00  INFO 285228 --- [music-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-18T17:26:48.573+09:00  INFO 285228 --- [music-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-18T17:26:48.924+09:00  INFO 285228 --- [music-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2520aa05
+2025-12-18T17:26:48.927+09:00  INFO 285228 --- [music-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-18T17:26:50.057+09:00  INFO 285228 --- [music-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-18T17:26:50.173+09:00  INFO 285228 --- [music-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-18T17:26:51.919+09:00  WARN 285228 --- [music-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-18T17:26:52.299+09:00  INFO 285228 --- [music-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8083 (http) with context path ''
+2025-12-18T17:26:52.322+09:00  INFO 285228 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : Started MusicServiceApplicationKt in 10.584 seconds (process running for 12.789)

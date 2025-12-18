@@ -7,14 +7,16 @@ import com.covercloud.shared.response.ApiResponse
 import com.covercloud.shared.security.AuthenticationContext
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/comment")
+@RequestMapping("/api/cover/comment")
 class CommentController(
     private val commentService: CommentService,
     private val authenticationContext: AuthenticationContext
@@ -55,6 +57,15 @@ class CommentController(
         @RequestParam coverId: Long
     ): ResponseEntity<ApiResponse<Any>> {
         val comments = commentService.getCommentsByCoverId(coverId)
+        return ResponseEntity.ok(ApiResponse(success = true, data = comments))
+    }
+
+    @GetMapping("/my")
+    fun getMyComments(
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<Any>> {
+        val userId = authenticationContext.requireUserId(httpRequest)
+        val comments = commentService.getCommentsByUserId(userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = comments))
     }
 

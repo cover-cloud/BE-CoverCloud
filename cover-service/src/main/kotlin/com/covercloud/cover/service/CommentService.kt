@@ -107,4 +107,16 @@ class CommentService(
                 )
             }
     }
+
+    fun getCommentsByUserId(userId: Long): List<CommentResponse> {
+        return commentRepository.findAllByUserId(userId)
+            .map { comment ->
+                CommentResponse(
+                    commentId = comment.id,
+                    content = comment.content,
+                    coverId = comment.cover.id,
+                    userId = comment.userId
+                )
+            }
+    }
 }

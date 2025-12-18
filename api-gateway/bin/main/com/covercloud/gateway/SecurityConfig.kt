@@ -28,6 +28,7 @@ class SecurityConfig(
                 NegatedServerWebExchangeMatcher(
                     OrServerWebExchangeMatcher(
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/list"),
+                        ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/comment/list"),
                         ServerWebExchangeMatchers.pathMatchers("/api/auth/**"),
                         ServerWebExchangeMatchers.pathMatchers("/oauth2/**"),
                         ServerWebExchangeMatchers.pathMatchers("/login/**"),
@@ -46,6 +47,7 @@ class SecurityConfig(
                     .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     // 인증 불필요한 경로들
                     .pathMatchers(HttpMethod.GET, "/api/cover/list").permitAll()
+                    .pathMatchers(HttpMethod.GET, "/api/cover/comment/list").permitAll()
                     .pathMatchers("/api/auth/**").permitAll()
                     .pathMatchers("/oauth2/**").permitAll()
                     .pathMatchers("/login/**").permitAll()

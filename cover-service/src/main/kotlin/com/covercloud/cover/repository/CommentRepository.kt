@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CommentRepository : JpaRepository<Comment, Long> {
     fun findAllByCoverId(coverId: Long): List<Comment>
+    fun findAllByUserId(userId: Long): List<Comment>
 }
