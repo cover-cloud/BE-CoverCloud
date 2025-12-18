@@ -40,4 +40,22 @@ class CommentController(
         return ResponseEntity.ok(ApiResponse(success = true, data = commentResponse))
     }
 
+    @PostMapping("/delete")
+    fun deleteComment(
+        @RequestParam commentId: Long,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<String>> {
+        val userId = authenticationContext.requireUserId(httpRequest)
+        commentService.deleteComment(commentId, userId)
+        return ResponseEntity.ok(ApiResponse(success = true, message = "Comment deleted successfully"))
+    }
+
+    @GetMapping("/list")
+    fun getComments(
+        @RequestParam coverId: Long
+    ): ResponseEntity<ApiResponse<Any>> {
+        val comments = commentService.getCommentsByCoverId(coverId)
+        return ResponseEntity.ok(ApiResponse(success = true, data = comments))
+    }
+
 }

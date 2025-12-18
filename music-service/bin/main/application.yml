@@ -19,3 +19,7 @@ spring:
 
   security:
     enabled: false
+  
+spotify:
+  client-id: 2204e48081a84cf495978d562a36eb49
+  client-secret: 8d940ca97fa24adcad467f85e169081b

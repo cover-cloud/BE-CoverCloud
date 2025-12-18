@@ -71,4 +71,40 @@ class CommentService(
             userId = savedComment.userId
         )
     }
+
+    @Transactional
+    fun deleteComment(id: Long, userId: Long) {
+        val comment = commentRepository.findByIdOrNull(id)
+            ?: throw NotFoundException()
+        
+        // 본인 댓글인지 확인
+        if (comment.userId != userId) {
+            throw IllegalArgumentException("You can only delete your own comments")
+        }
+        
+        val cover = comment.cover
+        commentRepository.delete(comment)
+        
+        // Cover의 댓글 수 감소
+        if (cover.commentCount > 0) {
+            cover.commentCount -= 1
+            coverRepository.save(cover)
+        }
+    }
+
+    fun getCommentsByCoverId(coverId: Long): List<CommentResponse> {
+        // Cover 존재 여부 확인
+        coverRepository.findByIdOrNull(coverId)
+            ?: throw NotFoundException()
+        
+        return commentRepository.findAllByCoverId(coverId)
+            .map { comment ->
+                CommentResponse(
+                    commentId = comment.id,
+                    content = comment.content,
+                    coverId = comment.cover.id,
+                    userId = comment.userId
+                )
+            }
+    }
 }
