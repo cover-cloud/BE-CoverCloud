@@ -99,7 +99,8 @@ class AuthService(
             userId = user.id!!,
             nickname = user.nickname,
             profileImage = user.profileImage,
-            provider = user.provider.name
+            provider = user.provider.name,
+            email = user.email
         )
     }
 

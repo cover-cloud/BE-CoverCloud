@@ -14,5 +14,6 @@ data class UserInfoResponse(
     val userId: Long,
     val nickname: String,
     val profileImage: String?,
-    val provider: String
+    val provider: String,
+    val email: String?
 )
