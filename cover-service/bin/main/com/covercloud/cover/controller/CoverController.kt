@@ -1,9 +1,11 @@
 package com.covercloud.cover.controller
 
 import com.covercloud.cover.controller.dto.CoverRequest
+import com.covercloud.cover.domain.TrendingPeriod
 import com.covercloud.cover.service.CoverService
 import com.covercloud.cover.service.dto.CoverListResponse
 import com.covercloud.cover.service.dto.PageResponse
+import com.covercloud.cover.service.dto.TrendingCoverResponse
 import com.covercloud.shared.response.ApiResponse
 import com.covercloud.shared.security.AuthenticationContext
 import jakarta.servlet.http.HttpServletRequest
@@ -60,6 +62,24 @@ class CoverController (
     ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
         val coverList = coverService.getCovers(page, size, sortBy, sortDirection)
         return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
+    }
+
+
+    @GetMapping("/trending")
+    fun getTrendingCovers(
+        @RequestParam period: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int
+    ): ResponseEntity<ApiResponse<PageResponse<TrendingCoverResponse>>> {
+        val trendingPeriod = when (period.uppercase()) {
+            "DAILY" -> TrendingPeriod.DAILY
+            "WEEKLY" -> TrendingPeriod.WEEKLY
+            "MONTHLY" -> TrendingPeriod.MONTHLY
+            else -> throw IllegalArgumentException("Invalid period: $period. Use DAILY, WEEKLY, or MONTHLY")
+        }
+        
+        val trendingCovers = coverService.getTrendingCovers(trendingPeriod, page, size)
+        return ResponseEntity.ok(ApiResponse(success = true, data = trendingCovers))
     }
 
 }

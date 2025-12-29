@@ -67,7 +67,7 @@ class OAuth2SuccessHandler(
 
         // 프론트엔드로 토큰 전달 (프론트엔드 URL로 리다이렉트)
         response.sendRedirect(
-            "http://localhost:3000/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
+            "http://localhost:8080/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
         )
     }
 

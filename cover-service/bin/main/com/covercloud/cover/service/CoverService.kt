@@ -4,15 +4,18 @@ import com.covercloud.cover.service.dto.CoverResponse
 import com.covercloud.cover.service.dto.CoverListResponse
 import com.covercloud.cover.service.dto.CreateServiceCoverRequest
 import com.covercloud.cover.service.dto.PageResponse
+import com.covercloud.cover.service.dto.TrendingCoverResponse
 import com.covercloud.cover.domain.Cover
 import com.covercloud.cover.domain.CoverTag
 import com.covercloud.cover.domain.Tag
+import com.covercloud.cover.domain.TrendingPeriod
 //import com.covercloud.cover.global.security.SecurityUtil
 import com.covercloud.cover.infrastructure.dto.CreateMusicRequest
 import com.covercloud.cover.infrastructure.feign.MusicClient
 import com.covercloud.cover.repository.CoverRepository
 import com.covercloud.cover.repository.CoverTagRepository
 import com.covercloud.cover.repository.TagRepository
+import com.covercloud.cover.repository.CoverLikeRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.data.domain.PageRequest
@@ -21,6 +24,9 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
+import java.time.DayOfWeek
+import java.time.temporal.TemporalAdjusters
 
 @Service
 class CoverService(
@@ -28,7 +34,7 @@ class CoverService(
     private val tagRepository: TagRepository,
     private val coverTagRepository: CoverTagRepository,
     private val musicClient: MusicClient,
-
+    private val coverLikeRepository: CoverLikeRepository,
 ) {
     @Transactional
     fun uploadCover(request: CreateServiceCoverRequest, userId: Long): CoverResponse {
@@ -178,6 +184,82 @@ class CoverService(
             totalPages = coverPage.totalPages,
             isFirst = coverPage.isFirst,
             isLast = coverPage.isLast
+        )
+    }
+
+    fun getTrendingCovers(
+        period: TrendingPeriod,
+        page: Int = 0,
+        size: Int = 20
+    ): PageResponse<TrendingCoverResponse> {
+        // 기간 시작 시점 계산
+        val startDate = when (period) {
+            TrendingPeriod.DAILY -> LocalDateTime.now().toLocalDate().atStartOfDay()
+            TrendingPeriod.WEEKLY -> LocalDateTime.now()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .toLocalDate().atStartOfDay()
+            TrendingPeriod.MONTHLY -> LocalDateTime.now().withDayOfMonth(1).toLocalDate().atStartOfDay()
+        }
+        
+        // 기간 내 좋아요 수 조회
+        val periodLikeCounts = coverLikeRepository.countLikesByPeriod(startDate)
+            .associate { array -> (array[0] as Long) to (array[1] as Long) }
+        
+        // 모든 커버 가져와서 증가량 계산
+        val trendingCovers = coverRepository.findAll()
+            .mapNotNull { cover ->
+                val periodLikes = periodLikeCounts[cover.id!!] ?: 0L
+                
+                if (periodLikes <= 0) return@mapNotNull null
+                
+                Triple(cover, cover.likeCount - periodLikes, periodLikes)
+            }
+            .sortedByDescending { it.third }
+        
+        // 페이징 처리
+        val startIndex = page * size
+        val endIndex = minOf(startIndex + size, trendingCovers.size)
+        val pagedCovers = if (startIndex < trendingCovers.size) {
+            trendingCovers.subList(startIndex, endIndex)
+        } else {
+            emptyList()
+        }
+        
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        
+        val content = pagedCovers.map { (cover, previousLikeCount, periodLikes) ->
+            val tags = coverTagRepository.findAllByCoverId(cover.id!!)
+                .map { it.tag.name }
+            
+            TrendingCoverResponse(
+                coverId = cover.id!!,
+                musicId = cover.musicId,
+                userId = cover.userId,
+                coverArtist = cover.coverArtist,
+                coverTitle = cover.coverTitle,
+                coverGenre = cover.coverGenre,
+                link = cover.link,
+                currentLikeCount = cover.likeCount,
+                previousLikeCount = previousLikeCount,
+                likeIncrement = periodLikes,
+                viewCount = cover.viewCount,
+                commentCount = cover.commentCount,
+                tags = tags,
+                createdAt = cover.createdAt?.format(dateFormatter) ?: ""
+            )
+        }
+        
+        val totalElements = trendingCovers.size.toLong()
+        val totalPages = (totalElements + size - 1) / size
+        
+        return PageResponse(
+            content = content,
+            pageNumber = page,
+            pageSize = size,
+            totalElements = totalElements,
+            totalPages = totalPages.toInt(),
+            isFirst = page == 0,
+            isLast = page >= totalPages - 1
         )
     }
 
