@@ -232,6 +232,29 @@ class CoverService(
                 .map { it.tag.name }
             
             TrendingCoverResponse(
+    fun getCoversByUserId(
+        userId: Long,
+        page: Int = 0,
+        size: Int = 20,
+        sortBy: String = "createdAt",
+        sortDirection: String = "DESC"
+    ): PageResponse<CoverListResponse> {
+        val sort = if (sortDirection.uppercase() == "ASC") {
+            Sort.by(sortBy).ascending()
+        } else {
+            Sort.by(sortBy).descending()
+        }
+
+        val pageable: Pageable = PageRequest.of(page, size, sort)
+        val coverPage = coverRepository.findAllByUserId(userId, pageable)
+
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        val content = coverPage.content.map { cover ->
+            val tags = coverTagRepository.findAllByCoverId(cover.id!!)
+                .map { it.tag.name }
+
+            CoverListResponse(
                 coverId = cover.id!!,
                 musicId = cover.musicId,
                 userId = cover.userId,
@@ -243,6 +266,7 @@ class CoverService(
                 previousLikeCount = previousLikeCount,
                 likeIncrement = periodLikes,
                 viewCount = cover.viewCount,
+                likeCount = cover.likeCount,
                 commentCount = cover.commentCount,
                 tags = tags,
                 createdAt = cover.createdAt?.format(dateFormatter) ?: ""
@@ -251,15 +275,15 @@ class CoverService(
         
         val totalElements = trendingCovers.size.toLong()
         val totalPages = (totalElements + size - 1) / size
-        
+
         return PageResponse(
             content = content,
-            pageNumber = page,
-            pageSize = size,
-            totalElements = totalElements,
-            totalPages = totalPages.toInt(),
-            isFirst = page == 0,
-            isLast = page >= totalPages - 1
+            pageNumber = coverPage.number,
+            pageSize = coverPage.size,
+            totalElements = coverPage.totalElements,
+            totalPages = coverPage.totalPages,
+            isFirst = coverPage.isFirst,
+            isLast = coverPage.isLast
         )
     }
 

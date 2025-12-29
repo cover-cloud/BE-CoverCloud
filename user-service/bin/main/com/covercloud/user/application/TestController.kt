@@ -4,6 +4,7 @@ import com.covercloud.shared.response.ApiResponse
 import com.covercloud.user.application.dto.TokenResponse
 import com.covercloud.user.config.JwtProvider
 import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

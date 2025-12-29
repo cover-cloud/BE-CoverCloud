@@ -15,9 +15,15 @@ class User(
     val socialId: String,
     @Enumerated(EnumType.STRING)
     val provider: Provider,
-    val nickname: String,
+    var nickname: String,
     var profileImage: String? = null,
+    var email: String? = null
 ) : BaseEntity() {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null
+    
+    fun updateProfile(newNickname: String?, newProfileImage: String?) {
+        newNickname?.let { this.nickname = it }
+        newProfileImage?.let { this.profileImage = it }
+    }
 }
