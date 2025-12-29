@@ -1,0 +1,75 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.4)
+
+2025-12-29T13:30:35.021+09:00  INFO 143884 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : Starting UserServiceApplicationKt v0.0.1 using Java 17.0.17 with PID 143884 (/home/pduser/pd3/work/BE-CoverCloud/user-service/build/libs/user-service-0.0.1.jar started by pduser in /home/pduser/pd3/work/BE-CoverCloud)
+2025-12-29T13:30:35.026+09:00 DEBUG 143884 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : Running with Spring Boot v3.2.4, Spring v6.1.5
+2025-12-29T13:30:35.027+09:00  INFO 143884 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : No active profile set, falling back to 1 default profile: "default"
+2025-12-29T13:30:36.894+09:00  INFO 143884 --- [user-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-29T13:30:36.960+09:00  INFO 143884 --- [user-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 55 ms. Found 2 JPA repository interfaces.
+2025-12-29T13:30:38.517+09:00  INFO 143884 --- [user-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-12-29T13:30:38.565+09:00  INFO 143884 --- [user-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-29T13:30:38.566+09:00  INFO 143884 --- [user-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-12-29T13:30:38.706+09:00  INFO 143884 --- [user-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-29T13:30:38.714+09:00  INFO 143884 --- [user-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3489 ms
+2025-12-29T13:30:39.001+09:00  INFO 143884 --- [user-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-29T13:30:39.102+09:00  INFO 143884 --- [user-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-12-29T13:30:39.156+09:00  INFO 143884 --- [user-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-29T13:30:39.570+09:00  INFO 143884 --- [user-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-29T13:30:39.595+09:00  INFO 143884 --- [user-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-29T13:30:39.933+09:00  INFO 143884 --- [user-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2729bb71
+2025-12-29T13:30:39.936+09:00  INFO 143884 --- [user-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-29T13:30:41.080+09:00  INFO 143884 --- [user-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-29T13:30:41.147+09:00  INFO 143884 --- [user-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-29T13:30:42.214+09:00  WARN 143884 --- [user-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-29T13:30:42.529+09:00 DEBUG 143884 --- [user-service] [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2025-12-29T13:30:42.647+09:00 DEBUG 143884 --- [user-service] [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-12-29T13:30:42.744+09:00  INFO 143884 --- [user-service] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@7f82a71f, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7a0df38e, org.springframework.security.web.context.SecurityContextHolderFilter@4f7da3a2, org.springframework.security.web.header.HeaderWriterFilter@52a3eba3, org.springframework.web.filter.CorsFilter@64821706, org.springframework.security.web.authentication.logout.LogoutFilter@4a49ce3a, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@5b8ba1d2, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@3f0751b0, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@ce5a2ea, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@8aa3013, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@76055d02, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@31c800a5, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@627ad446, org.springframework.security.web.access.ExceptionTranslationFilter@78c91d2a, org.springframework.security.web.access.intercept.AuthorizationFilter@51a73873]
+2025-12-29T13:30:42.835+09:00 DEBUG 143884 --- [user-service] [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-12-29T13:30:42.898+09:00 DEBUG 143884 --- [user-service] [           main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-12-29T13:30:43.141+09:00  INFO 143884 --- [user-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path ''
+2025-12-29T13:30:43.173+09:00  INFO 143884 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : Started UserServiceApplicationKt in 9.361 seconds (process running for 10.362)
+2025-12-29T13:31:38.800+09:00  INFO 143884 --- [user-service] [nio-8081-exec-2] o.apache.tomcat.util.http.parser.Cookie  : A cookie header was received [token="Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjpbIlJPTEVfR00iXSwidXNlck9pZCI6MTc1OTIwNjU5OTc3ODAwMjgxMiwibG9jYWxlIjoia28iLCJleHAiOjE3NjY5NzY2Mzk2MzYsImlhdCI6MTc2Njk2OTQzOTYzNiwic3ViIjoidGxzZ21sODE4QHB1enpsZWRhdGEuY29tIn0.NcBYBb-z2fmTbAakte_AXQkmBMww1LNXCSl33-xze-QA12S7EWxpClUKOnCuaZpD";] that contained an invalid cookie. That cookie will be ignored.
+ Note: further occurrences of this error will be logged at DEBUG level.
+2025-12-29T13:31:38.809+09:00  INFO 143884 --- [user-service] [nio-8081-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-29T13:31:38.810+09:00  INFO 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-29T13:31:38.810+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2025-12-29T13:31:38.810+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2025-12-29T13:31:38.811+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2025-12-29T13:31:38.817+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@4f1ea463
+2025-12-29T13:31:38.818+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@1b4ade78
+2025-12-29T13:31:38.818+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-12-29T13:31:38.818+09:00  INFO 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 8 ms
+2025-12-29T13:31:38.869+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/api/auth/test/token", parameters={}
+2025-12-29T13:31:38.871+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.covercloud.user.application.AuthController#generateTestToken(long)
+Hibernate: 
+    select
+        rt1_0.id,
+        rt1_0.expiry_date,
+        rt1_0.token,
+        rt1_0.user_id 
+    from
+        refresh_token rt1_0 
+    where
+        rt1_0.user_id=?
+Hibernate: 
+    insert 
+    into
+        refresh_token
+        (expiry_date, token, user_id) 
+    values
+        (?, ?, ?)
+Hibernate: 
+    delete 
+    from
+        refresh_token 
+    where
+        id=?
+2025-12-29T13:31:39.229+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json;q=0.8', given [text/html, application/xhtml+xml, image/avif, image/webp, image/apng, application/xml;q=0.9, */*;q=0.8, application/signed-exchange;v=b3;q=0.7] and supported [application/json, application/*+json]
+2025-12-29T13:31:39.233+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [ApiResponse(success=true, data=TokenResponse(accessToken=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlck (truncated)...]
+2025-12-29T13:31:39.246+09:00 DEBUG 143884 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK

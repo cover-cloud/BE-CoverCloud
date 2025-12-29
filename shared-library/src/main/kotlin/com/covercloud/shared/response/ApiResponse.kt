@@ -1,4 +1,4 @@
-package com.covercloud.shared
+package com.covercloud.shared.response
 
 data class ApiResponse<T>(
     val success: Boolean = true,
