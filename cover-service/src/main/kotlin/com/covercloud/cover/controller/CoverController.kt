@@ -1,10 +1,12 @@
 package com.covercloud.cover.controller
 
 import com.covercloud.cover.controller.dto.CoverRequest
+import com.covercloud.cover.domain.TrendingPeriod
 import com.covercloud.cover.service.CoverService
 import com.covercloud.cover.service.LikeService
 import com.covercloud.cover.service.dto.CoverListResponse
 import com.covercloud.cover.service.dto.PageResponse
+import com.covercloud.cover.service.dto.TrendingCoverResponse
 import com.covercloud.shared.response.ApiResponse
 import com.covercloud.shared.security.AuthenticationContext
 import jakarta.servlet.http.HttpServletRequest

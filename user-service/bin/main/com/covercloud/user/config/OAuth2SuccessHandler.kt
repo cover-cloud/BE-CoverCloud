@@ -66,6 +66,8 @@ class OAuth2SuccessHandler(
         val tokens = authService.generateTokens(user.id!!)
 
         // 프론트엔드로 토큰 전달 (프론트엔드 URL로 리다이렉트)
+        // "http://localhost:8081/login-test.html?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
+
         response.sendRedirect(
             "http://localhost:3000/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
         )
