@@ -2,6 +2,8 @@ package com.covercloud.cover.domain
 
 import com.covercloud.shared.BaseEntity
 import jakarta.persistence.Entity
+import jakarta.persistence.Enumerated
+import jakarta.persistence.EnumType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -15,7 +17,10 @@ class Cover (
     var musicId: Long,
     var coverArtist: String?,
     var coverTitle: String?,
-    var coverGenre: String?,
+    
+    @Enumerated(EnumType.STRING)
+    var coverGenre: CoverGenre?,
+    
     var viewCount: Long = 0,
     var likeCount: Long = 0,
     var commentCount: Long = 0

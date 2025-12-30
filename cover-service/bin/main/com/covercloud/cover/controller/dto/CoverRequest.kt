@@ -1,5 +1,6 @@
 package com.covercloud.cover.controller.dto
 
+import com.covercloud.cover.domain.CoverGenre
 import com.covercloud.cover.service.dto.CreateServiceCoverRequest
 
 data class CoverRequest(
@@ -12,10 +13,13 @@ data class CoverRequest(
     val videoUrl: String?
 ){
     fun toDto(): CreateServiceCoverRequest{
+        val coverGenre = genre?.let { 
+            CoverGenre.valueOf(it.uppercase().replace("-", "_"))
+        }
         return CreateServiceCoverRequest(
             originalArtist = originalArtist,
             originalTitle = originalTitle,
-            genre = genre,
+            genre = coverGenre,
             coverArtist = coverArtist,
             title = title,
             tags = tags,

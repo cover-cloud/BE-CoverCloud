@@ -21,7 +21,10 @@ class Comment(
     val cover: Cover,
 
     @Column(name="user_id" , nullable = false)
-    val userId: Long
+    val userId: Long,
+
+    @Column(name="parent_comment_id")
+    val parentCommentId: Long? = null
 
 ): BaseEntity() {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
