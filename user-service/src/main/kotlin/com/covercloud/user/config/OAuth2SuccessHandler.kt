@@ -69,7 +69,7 @@ class OAuth2SuccessHandler(
         // "http://localhost:8081/login-test.html?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
 
         response.sendRedirect(
-            "http://localhost:8080/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
+            "http://localhost:3000/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
         )
     }
 
