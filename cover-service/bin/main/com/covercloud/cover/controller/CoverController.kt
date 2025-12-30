@@ -56,14 +56,21 @@ class CoverController (
 
     }
 
+    @GetMapping("/list/{coverId}")
+    fun getCover(@PathVariable coverId: Long): ResponseEntity<ApiResponse<CoverListResponse>> {
+        val cover = coverService.getCoverById(coverId)
+        return ResponseEntity.ok(ApiResponse(success = true, data = cover))
+    }
+
     @GetMapping("/list")
     fun getCovers(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,
         @RequestParam(defaultValue = "createdAt") sortBy: String,
-        @RequestParam(defaultValue = "DESC") sortDirection: String
+        @RequestParam(defaultValue = "DESC") sortDirection: String,
+        @RequestParam(required = false) genre: String?
     ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
-        val coverList = coverService.getCovers(page, size, sortBy, sortDirection)
+        val coverList = coverService.getCovers(page, size, sortBy, sortDirection, genre)
         return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
     }
 
@@ -84,7 +91,7 @@ class CoverController (
         return ResponseEntity.ok(ApiResponse(success = true, data = trendingCovers))
     }
 
-}
+
     @GetMapping("/my")
     fun getMyCovers(
         httpRequest: HttpServletRequest,

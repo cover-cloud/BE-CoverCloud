@@ -9,6 +9,7 @@ import com.covercloud.cover.domain.Cover
 import com.covercloud.cover.domain.CoverTag
 import com.covercloud.cover.domain.Tag
 import com.covercloud.cover.domain.TrendingPeriod
+import com.covercloud.cover.domain.CoverGenre
 //import com.covercloud.cover.global.security.SecurityUtil
 import com.covercloud.cover.infrastructure.dto.CreateMusicRequest
 import com.covercloud.cover.infrastructure.feign.MusicClient
@@ -143,7 +144,8 @@ class CoverService(
         page: Int = 0,
         size: Int = 20,
         sortBy: String = "createdAt",
-        sortDirection: String = "DESC"
+        sortDirection: String = "DESC",
+        genre: String? = null
     ): PageResponse<CoverListResponse> {
         val sort = if (sortDirection.uppercase() == "ASC") {
             Sort.by(sortBy).ascending()
@@ -152,7 +154,12 @@ class CoverService(
         }
         
         val pageable: Pageable = PageRequest.of(page, size, sort)
-        val coverPage = coverRepository.findAll(pageable)
+        val coverPage = if (genre != null) {
+            val coverGenre = CoverGenre.valueOf(genre.uppercase().replace("-", "_"))
+            coverRepository.findAllByCoverGenre(coverGenre, pageable)
+        } else {
+            coverRepository.findAll(pageable)
+        }
         
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         
@@ -187,6 +194,36 @@ class CoverService(
         )
     }
 
+    @Transactional
+    fun getCoverById(coverId: Long): CoverListResponse {
+        val cover = coverRepository.findByIdOrNull(coverId) 
+            ?: throw IllegalArgumentException("Cover not found with id: $coverId")
+        
+        // 조회수 증가
+        cover.viewCount++
+        coverRepository.save(cover)
+        
+        val tags = coverTagRepository.findAllByCoverId(cover.id!!)
+            .map { it.tag.name }
+        
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        
+        return CoverListResponse(
+            coverId = cover.id!!,
+            musicId = cover.musicId,
+            userId = cover.userId,
+            coverArtist = cover.coverArtist,
+            coverTitle = cover.coverTitle,
+            coverGenre = cover.coverGenre,
+            link = cover.link,
+            viewCount = cover.viewCount,
+            likeCount = cover.likeCount,
+            commentCount = cover.commentCount,
+            tags = tags,
+            createdAt = cover.createdAt?.format(dateFormatter) ?: ""
+        )
+    }
+
     fun getTrendingCovers(
         period: TrendingPeriod,
         page: Int = 0,
@@ -200,22 +237,20 @@ class CoverService(
                 .toLocalDate().atStartOfDay()
             TrendingPeriod.MONTHLY -> LocalDateTime.now().withDayOfMonth(1).toLocalDate().atStartOfDay()
         }
-        
+
         // 기간 내 좋아요 수 조회
         val periodLikeCounts = coverLikeRepository.countLikesByPeriod(startDate)
             .associate { array -> (array[0] as Long) to (array[1] as Long) }
-        
-        // 모든 커버 가져와서 증가량 계산
+
+        // 모든 커버 가져와서 증가량 계산 (좋아요 없어도 포함)
         val trendingCovers = coverRepository.findAll()
-            .mapNotNull { cover ->
+            .map { cover ->
                 val periodLikes = periodLikeCounts[cover.id!!] ?: 0L
-                
-                if (periodLikes <= 0) return@mapNotNull null
-                
                 Triple(cover, cover.likeCount - periodLikes, periodLikes)
             }
-            .sortedByDescending { it.third }
-        
+            .sortedWith(compareByDescending<Triple<Cover, Long, Long>> { it.third }
+                .thenByDescending { it.first.createdAt })
+
         // 페이징 처리
         val startIndex = page * size
         val endIndex = minOf(startIndex + size, trendingCovers.size)
@@ -224,15 +259,45 @@ class CoverService(
         } else {
             emptyList()
         }
-        
+
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        
+
         val content = pagedCovers.map { (cover, previousLikeCount, periodLikes) ->
             val tags = coverTagRepository.findAllByCoverId(cover.id!!)
                 .map { it.tag.name }
-            
+
             TrendingCoverResponse(
-    fun getCoversByUserId(
+                coverId = cover.id!!,
+                musicId = cover.musicId,
+                userId = cover.userId,
+                coverArtist = cover.coverArtist,
+                coverTitle = cover.coverTitle,
+                coverGenre = cover.coverGenre,
+                link = cover.link,
+                currentLikeCount = cover.likeCount,
+                previousLikeCount = previousLikeCount,
+                likeIncrement = periodLikes,
+                viewCount = cover.viewCount,
+                commentCount = cover.commentCount,
+                tags = tags,
+                createdAt = cover.createdAt?.format(dateFormatter) ?: ""
+            )
+        }
+
+        val totalElements = trendingCovers.size.toLong()
+        val totalPages = (totalElements + size - 1) / size
+
+        return PageResponse(
+            content = content,
+            pageNumber = page,
+            pageSize = size,
+            totalElements = totalElements,
+            totalPages = totalPages.toInt(),
+            isFirst = page == 0,
+            isLast = page >= totalPages - 1
+        )
+    }
+     fun getCoversByUserId(
         userId: Long,
         page: Int = 0,
         size: Int = 20,
@@ -262,9 +327,6 @@ class CoverService(
                 coverTitle = cover.coverTitle,
                 coverGenre = cover.coverGenre,
                 link = cover.link,
-                currentLikeCount = cover.likeCount,
-                previousLikeCount = previousLikeCount,
-                likeIncrement = periodLikes,
                 viewCount = cover.viewCount,
                 likeCount = cover.likeCount,
                 commentCount = cover.commentCount,
@@ -272,9 +334,6 @@ class CoverService(
                 createdAt = cover.createdAt?.format(dateFormatter) ?: ""
             )
         }
-        
-        val totalElements = trendingCovers.size.toLong()
-        val totalPages = (totalElements + size - 1) / size
 
         return PageResponse(
             content = content,

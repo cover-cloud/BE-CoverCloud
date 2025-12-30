@@ -3,3 +3,25 @@
 
 # Ignore Gradle build output directory
 build
+
+# 로그 파일 및 PID 파일 무시
+logs/
+*.log
+*.pid
+
+# # Application configuration
+# **/application.yml
+# **/application.yaml
+# **/application-*.yml
+# **/application-*.yaml
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# OS
+.DS_Store
+Thumbs.db

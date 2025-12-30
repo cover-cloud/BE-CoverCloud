@@ -19,7 +19,8 @@ class CustomOauth2UserService (
         val provider = userRequest.clientRegistration.registrationId
         val attributes = oAuth2User.attributes
 
-        val (socialId, nickname, profileImage) = when (provider) {
+
+        val (socialId, nickname, profileImage, email) = when (provider) {
             "kakao" -> {
                 val kakaoAccount = attributes["kakao_account"] as Map<*, *>
                 val profile = kakaoAccount["profile"] as Map<*, *>
@@ -27,16 +28,18 @@ class CustomOauth2UserService (
                 val id = attributes["id"].toString()
                 val nick = profile["nickname"]?.toString() ?: "Unknown"
                 val image = profile["profile_image_url"]?.toString()
+                val email = kakaoAccount["email"]?.toString()
 
-                Triple(id, nick, image)
+                listOf(id, nick, image, email)
             }
 
             "naver" -> {
                 val response = attributes["response"] as Map<*, *>
-                Triple(
+                listOf(
                     response["id"].toString(),
                     response["nickname"]?.toString() ?: "Unknown",
-                    response["profile_image"]?.toString()
+                    response["profile_image"]?.toString(),
+                    response["email"]?.toString()
                 )
             }
 
@@ -55,9 +58,13 @@ class CustomOauth2UserService (
                     socialId = socialId,
                     provider = providerEnum,
                     nickname = nickname,
-                    profileImage = profileImage ?: ""
+                    profileImage = profileImage ?: "",
+                    email = email
                 )
             )
+
+        // 기존 유저라면 nickname/profileImage를 덮어쓰지 않음
+        // 신규 유저만 소셜 정보로 저장
 
         val userNameAttribute = userRequest.clientRegistration
             .providerDetails.userInfoEndpoint.userNameAttributeName

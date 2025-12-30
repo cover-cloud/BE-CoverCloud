@@ -21,10 +21,17 @@ class CommentService(
         val cover = coverRepository.findByIdOrNull(request.coverId) 
             ?: throw NotFoundException()
         
+        // 부모 댓글이 있으면 존재 여부 확인
+        if (request.parentCommentId != null) {
+            commentRepository.findByIdOrNull(request.parentCommentId)
+                ?: throw NotFoundException()
+        }
+        
         val comment = Comment(
             userId = userId,
             content = request.content,
-            cover = cover
+            cover = cover,
+            parentCommentId = request.parentCommentId
         )
         
         val savedComment = commentRepository.save(comment)
@@ -37,7 +44,8 @@ class CommentService(
             commentId = savedComment.id,
             content = savedComment.content,
             coverId = cover.id,
-            userId = savedComment.userId
+            userId = savedComment.userId,
+            parentCommentId = savedComment.parentCommentId
         )
     }
 
@@ -57,7 +65,8 @@ class CommentService(
         val updatedComment = Comment(
             content = request.content,
             cover = comment.cover,
-            userId = comment.userId
+            userId = comment.userId,
+            parentCommentId = comment.parentCommentId
         ).apply {
             this.id = comment.id
         }
@@ -68,7 +77,8 @@ class CommentService(
             commentId = savedComment.id,
             content = savedComment.content,
             coverId = savedComment.cover.id,
-            userId = savedComment.userId
+            userId = savedComment.userId,
+            parentCommentId = savedComment.parentCommentId
         )
     }
 
@@ -97,15 +107,38 @@ class CommentService(
         coverRepository.findByIdOrNull(coverId)
             ?: throw NotFoundException()
         
-        return commentRepository.findAllByCoverId(coverId)
-            .map { comment ->
-                CommentResponse(
-                    commentId = comment.id,
-                    content = comment.content,
-                    coverId = comment.cover.id,
-                    userId = comment.userId
-                )
-            }
+        val allComments = commentRepository.findAllByCoverId(coverId)
+        
+        // 부모 댓글만 필터링 (parentCommentId가 null인 것)
+        val parentComments = allComments.filter { it.parentCommentId == null }
+        
+        // 재귀적으로 대댓글 구조 생성
+        fun buildCommentTree(commentId: Long): List<CommentResponse> {
+            return allComments
+                .filter { it.parentCommentId == commentId }
+                .map { reply ->
+                    CommentResponse(
+                        commentId = reply.id,
+                        content = reply.content,
+                        coverId = reply.cover.id,
+                        userId = reply.userId,
+                        parentCommentId = reply.parentCommentId,
+                        replies = buildCommentTree(reply.id!!)
+                    )
+                }
+        }
+        
+        // 각 부모 댓글의 전체 트리 구성
+        return parentComments.map { parent ->
+            CommentResponse(
+                commentId = parent.id,
+                content = parent.content,
+                coverId = parent.cover.id,
+                userId = parent.userId,
+                parentCommentId = parent.parentCommentId,
+                replies = buildCommentTree(parent.id!!)
+            )
+        }
     }
 
     fun getCommentsByUserId(userId: Long): List<CommentResponse> {
@@ -115,7 +148,8 @@ class CommentService(
                     commentId = comment.id,
                     content = comment.content,
                     coverId = comment.cover.id,
-                    userId = comment.userId
+                    userId = comment.userId,
+                    parentCommentId = comment.parentCommentId
                 )
             }
     }
