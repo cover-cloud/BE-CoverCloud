@@ -12,9 +12,9 @@ spring:
         - id: user-service
           uri: http://localhost:8081
           predicates:
-            - Path=/api/auth/**, /api/user/**, /api/test/**, /oauth2/**, /login/oauth2/**
+            - Path=/api/auth/**, /api/user/**, /api/test/**, /oauth2/**
           filters:
-            - RewritePath=/(?<segment>.*), /$\{segment}
+            - RewritePath=/(?<segment>.*), /${segment}
             
         # Cover Service
         - id: cover-service

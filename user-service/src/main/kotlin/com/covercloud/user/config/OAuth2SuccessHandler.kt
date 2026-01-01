@@ -65,12 +65,37 @@ class OAuth2SuccessHandler(
         // JWT Access Token과 Refresh Token 생성
         val tokens = authService.generateTokens(user.id!!)
 
-        // 프론트엔드로 토큰 전달 (프론트엔드 URL로 리다이렉트)
-        // "http://localhost:8081/login-test.html?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
+        // Postman 등에서 test=true 쿼리파라미터가 있으면 JSON으로 토큰 반환
+        if (request.getParameter("test") == "true") {
+            response.contentType = "application/json"
+            response.characterEncoding = "UTF-8"
+            response.writer.write("{" +
+                "\"accessToken\": \"${tokens.accessToken}\"," +
+                "\"refreshToken\": \"${tokens.refreshToken}\"}")
+            return
+        }
 
-        response.sendRedirect(
-            "http://localhost:3000/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}"
-        )
+        // 토큰을 HttpOnly, Secure 쿠키로 설정
+        val accessTokenCookie = jakarta.servlet.http.Cookie("accessToken", tokens.accessToken).apply {
+            path = "/"
+            isHttpOnly = true
+            secure = true
+            maxAge = 60 * 60 // 1시간
+            domain = "localhost"
+        }
+        val refreshTokenCookie = jakarta.servlet.http.Cookie("refreshToken", tokens.refreshToken).apply {
+            path = "/"
+            isHttpOnly = true
+            secure = true
+            maxAge = 60 * 60 * 24 * 7 // 7일
+            domain = "localhost"
+        }
+        response.addCookie(accessTokenCookie)
+        response.addCookie(refreshTokenCookie)
+
+        // 인증 성공 후 gateway(8080)로 리다이렉트
+        response.sendRedirect("http://localhost:8080/")
+        return
     }
 
     data class Quadruple<A, B, C, D>(

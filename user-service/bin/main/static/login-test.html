@@ -102,20 +102,20 @@
         
         <div>
             <h3>OAuth 로그인</h3>
-            <a href="http://localhost:8081/oauth2/authorization/kakao" class="login-btn kakao-btn">
+            <a href="http://localhost:8080/oauth2/authorization/kakao" class="login-btn kakao-btn">
                 카카오로 로그인
             </a>
-            <a href="http://localhost:8081/oauth2/authorization/naver" class="login-btn naver-btn">
+            <a href="http://localhost:8080/oauth2/authorization/naver" class="login-btn naver-btn">
                 네이버로 로그인
             </a>
         </div>
         
         <div>
             <h3>테스트 토큰 발급</h3>
-            <a href="http://localhost:8081/api/test/token?userId=1" class="login-btn test-btn" target="_blank">
+            <a href="http://localhost:8080/api/test/token?userId=1" class="login-btn test-btn" target="_blank">
                 테스트 토큰 발급 (userId=1)
             </a>
-            <a href="http://localhost:8081/api/test/token?userId=2" class="login-btn test-btn" target="_blank">
+            <a href="http://localhost:8080/api/test/token?userId=2" class="login-btn test-btn" target="_blank">
                 테스트 토큰 발급 (userId=2)
             </a>
         </div>
@@ -143,8 +143,9 @@
             
             <h4>🔗 직접 API 호출 (curl)</h4>
             <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto;">
+
 # 테스트 토큰 발급
-curl http://localhost:8081/api/test/token?userId=1
+curl http://localhost:8080/api/test/token?userId=1
 
 # 내 커버 목록
 curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8080/api/cover/my

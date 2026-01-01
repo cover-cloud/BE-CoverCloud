@@ -42,12 +42,17 @@ class SecurityConfig(
         
         return http
             .csrf { it.disable() }
+            .httpBasic { it.disable() } // HTTP Basic 인증 비활성화(팝업 방지)
             .cors { } // CORS 활성화
             .authorizeExchange { exchanges ->
                 exchanges
                     // CORS preflight 요청 허용
                     .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    // 인증 불필요한 경로들
+                    // 정적 리소스 및 인증 불필요 경로 허용
+                    .pathMatchers("/favicon.ico").permitAll()
+                    .pathMatchers("/css/**").permitAll()
+                    .pathMatchers("/js/**").permitAll()
+                    .pathMatchers("/images/**").permitAll()
                     .pathMatchers(HttpMethod.GET, "/api/cover/list").permitAll()
                     .pathMatchers(HttpMethod.GET, "/api/cover/list/**").permitAll()
                     .pathMatchers(HttpMethod.GET, "/api/cover/trending").permitAll()
