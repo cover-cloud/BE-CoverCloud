@@ -19,6 +19,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     
+    // macOS DNS resolver 네이티브 라이브러리
+    runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.107.Final:osx-aarch_64")
+    
     implementation(project(":shared-library")) {
         exclude(group = "org.springframework.boot", module = "spring-boot-starter-web")
         exclude(group = "org.springframework.boot", module = "spring-boot-starter-data-jpa")
