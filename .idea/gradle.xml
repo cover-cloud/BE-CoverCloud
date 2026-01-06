@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud" />
+            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/api-gateway" />
+            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/cover-service" />
+            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/music-service" />
+            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/shared-library" />
+            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/user-service" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
