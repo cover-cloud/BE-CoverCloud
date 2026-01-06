@@ -7,59 +7,58 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.4)
 
-2026-01-02T15:57:54.050+09:00  INFO 9471 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : Starting UserServiceApplicationKt v0.0.1 using Java 21.0.9 with PID 9471 (/Users/sini/Documents/개발/BE-CoverCloud/user-service/build/libs/user-service-0.0.1.jar started by sini in /Users/sini/Documents/개발/BE-CoverCloud)
-2026-01-02T15:57:54.050+09:00 DEBUG 9471 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : Running with Spring Boot v3.2.4, Spring v6.1.5
-2026-01-02T15:57:54.051+09:00  INFO 9471 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : No active profile set, falling back to 1 default profile: "default"
-2026-01-02T15:57:54.402+09:00  INFO 9471 --- [user-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-01-02T15:57:54.422+09:00  INFO 9471 --- [user-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 17 ms. Found 2 JPA repository interfaces.
-2026-01-02T15:57:54.619+09:00  INFO 9471 --- [user-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
-2026-01-02T15:57:54.624+09:00  INFO 9471 --- [user-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-01-02T15:57:54.624+09:00  INFO 9471 --- [user-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
-2026-01-02T15:57:54.637+09:00  INFO 9471 --- [user-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-01-02T15:57:54.637+09:00  INFO 9471 --- [user-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 559 ms
-2026-01-02T15:57:54.656+09:00 DEBUG 9471 --- [user-service] [           main] o.s.web.filter.ForwardedHeaderFilter     : Filter 'forwardedHeaderFilter' configured for use
-2026-01-02T15:57:54.707+09:00  INFO 9471 --- [user-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-01-02T15:57:54.727+09:00  INFO 9471 --- [user-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2026-01-02T15:57:54.739+09:00  INFO 9471 --- [user-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-01-02T15:57:54.821+09:00  INFO 9471 --- [user-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-01-02T15:57:54.830+09:00  INFO 9471 --- [user-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-01-02T15:57:54.946+09:00  INFO 9471 --- [user-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@95cecc5
-2026-01-02T15:57:54.946+09:00  INFO 9471 --- [user-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-01-02T15:57:55.221+09:00  INFO 9471 --- [user-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-01-02T15:57:55.237+09:00  INFO 9471 --- [user-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-01-02T15:57:55.471+09:00  WARN 9471 --- [user-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-01-02T15:57:55.501+09:00 DEBUG 9471 --- [user-service] [           main] swordEncoderAuthenticationManagerBuilder : No authenticationProviders and no parentAuthenticationManager defined. Returning null.
-2026-01-02T15:57:55.547+09:00 DEBUG 9471 --- [user-service] [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
-2026-01-02T15:57:55.573+09:00 DEBUG 9471 --- [user-service] [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
-2026-01-02T15:57:55.589+09:00  INFO 9471 --- [user-service] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5dfb65d5, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@f4aec23, org.springframework.security.web.context.SecurityContextHolderFilter@120661d2, org.springframework.security.web.header.HeaderWriterFilter@599fab92, org.springframework.web.filter.CorsFilter@713c8cbb, org.springframework.security.web.authentication.logout.LogoutFilter@4c90fc3b, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@4f466207, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@23ee31b8, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@1b9cfc19, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@7680beac, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7715d43c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3763aafd, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7053a864, org.springframework.security.web.access.ExceptionTranslationFilter@106387cf, org.springframework.security.web.access.intercept.AuthorizationFilter@66ab3716]
-2026-01-02T15:57:55.610+09:00 DEBUG 9471 --- [user-service] [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-01-02T15:57:55.620+09:00 DEBUG 9471 --- [user-service] [           main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-01-02T15:57:55.666+09:00  INFO 9471 --- [user-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path ''
-2026-01-02T15:57:55.674+09:00  INFO 9471 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : Started UserServiceApplicationKt in 1.79 seconds (process running for 1.99)
-2026-01-02T15:59:27.660+09:00  INFO 9471 --- [user-service] [nio-8081-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-01-02T15:59:27.663+09:00  INFO 9471 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-01-02T15:59:27.663+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
-2026-01-02T15:59:27.663+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
-2026-01-02T15:59:27.663+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
-2026-01-02T15:59:27.665+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@18a538a0
-2026-01-02T15:59:27.665+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@5a1a5521
-2026-01-02T15:59:27.665+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
-2026-01-02T15:59:27.665+09:00  INFO 9471 --- [user-service] [nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
-2026-01-02T15:59:27.676+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /oauth2/authorization/naver
-2026-01-02T15:59:27.699+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-2] o.s.s.web.DefaultRedirectStrategy        : Redirecting to https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=9VmhBqrcqFK_3XKAA6J0&scope=name%20nickname%20profile_image%20email&state=XH0YtHSEIKNypjk9T7kz_lesOXh7dbpTj_lBSR_snFg%3D&redirect_uri=http://localhost:8080/login/oauth2/code/naver
-2026-01-02T15:59:36.212+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /login/oauth2/code/naver?code=MmX0ZIC9WNPeNMCJ3i&state=XH0YtHSEIKNypjk9T7kz_lesOXh7dbpTj_lBSR_snFg=
-2026-01-02T15:59:36.244+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.web.client.RestTemplate              : HTTP POST https://nid.naver.com/oauth2.0/token
-2026-01-02T15:59:36.247+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
-2026-01-02T15:59:36.248+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.web.client.RestTemplate              : Writing [{grant_type=[authorization_code], code=[MmX0ZIC9WNPeNMCJ3i], redirect_uri=[http://localhost:8080/login/oauth2/code/naver]}] as "application/x-www-form-urlencoded;charset=UTF-8"
-2026-01-02T15:59:36.476+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.web.client.RestTemplate              : Response 200 OK
-2026-01-02T15:59:36.476+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.web.client.RestTemplate              : Reading to [org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse] as "application/json;charset=utf-8"
-2026-01-02T15:59:36.490+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.web.client.RestTemplate              : HTTP GET https://openapi.naver.com/v1/nid/me
-2026-01-02T15:59:36.490+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
-2026-01-02T15:59:36.567+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.web.client.RestTemplate              : Response 200 OK
-2026-01-02T15:59:36.568+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] o.s.web.client.RestTemplate              : Reading to [java.util.Map<java.lang.String, java.lang.Object>]
-2026-01-02T15:59:36.569+09:00  INFO 9471 --- [user-service] [nio-8081-exec-1] c.c.user.config.CustomOauth2UserService  : [naver] OAuth2 전체 attributes: {resultcode=00, message=success, response={id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}}
-2026-01-02T15:59:36.569+09:00  INFO 9471 --- [user-service] [nio-8081-exec-1] c.c.user.config.CustomOauth2UserService  : [NAVER] response 내용: {id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}
-2026-01-02T15:59:36.569+09:00  INFO 9471 --- [user-service] [nio-8081-exec-1] c.c.user.config.CustomOauth2UserService  : [NAVER] id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, email=xbox234@naver.com
+2026-01-05T15:10:58.759+09:00  INFO 241091 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : Starting UserServiceApplicationKt v0.0.1 using Java 21.0.9 with PID 241091 (/home/pduser/pd3/work/BE-CoverCloud/user-service/build/libs/user-service-0.0.1.jar started by pduser in /home/pduser/pd3/work/BE-CoverCloud)
+2026-01-05T15:10:58.760+09:00 DEBUG 241091 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-01-05T15:10:58.761+09:00  INFO 241091 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : No active profile set, falling back to 1 default profile: "default"
+2026-01-05T15:10:59.626+09:00  INFO 241091 --- [user-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-05T15:10:59.670+09:00  INFO 241091 --- [user-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 38 ms. Found 2 JPA repository interfaces.
+2026-01-05T15:11:00.248+09:00  INFO 241091 --- [user-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2026-01-05T15:11:00.266+09:00  INFO 241091 --- [user-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-05T15:11:00.266+09:00  INFO 241091 --- [user-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-01-05T15:11:00.303+09:00  INFO 241091 --- [user-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-01-05T15:11:00.304+09:00  INFO 241091 --- [user-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1470 ms
+2026-01-05T15:11:00.349+09:00 DEBUG 241091 --- [user-service] [           main] o.s.web.filter.ForwardedHeaderFilter     : Filter 'forwardedHeaderFilter' configured for use
+2026-01-05T15:11:00.464+09:00  INFO 241091 --- [user-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-05T15:11:00.526+09:00  INFO 241091 --- [user-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-01-05T15:11:00.558+09:00  INFO 241091 --- [user-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-01-05T15:11:00.749+09:00  INFO 241091 --- [user-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-05T15:11:00.770+09:00  INFO 241091 --- [user-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-05T15:11:01.100+09:00  INFO 241091 --- [user-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@cf10c92
+2026-01-05T15:11:01.102+09:00  INFO 241091 --- [user-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-05T15:11:01.795+09:00  INFO 241091 --- [user-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-05T15:11:01.850+09:00  INFO 241091 --- [user-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-05T15:11:02.452+09:00  WARN 241091 --- [user-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-05T15:11:02.516+09:00 DEBUG 241091 --- [user-service] [           main] swordEncoderAuthenticationManagerBuilder : No authenticationProviders and no parentAuthenticationManager defined. Returning null.
+2026-01-05T15:11:02.641+09:00 DEBUG 241091 --- [user-service] [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2026-01-05T15:11:02.705+09:00 DEBUG 241091 --- [user-service] [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2026-01-05T15:11:02.762+09:00  INFO 241091 --- [user-service] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@345d4ecb, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@66e44f9f, org.springframework.security.web.context.SecurityContextHolderFilter@495598c5, org.springframework.security.web.header.HeaderWriterFilter@7ceb7a60, org.springframework.web.filter.CorsFilter@79f82fc4, org.springframework.security.web.authentication.logout.LogoutFilter@22db974d, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@2fda92e0, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@25cef4b3, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@366c9912, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@554db19d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@48dc06a9, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1798c749, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@bb896e9, org.springframework.security.web.access.ExceptionTranslationFilter@63024843, org.springframework.security.web.access.intercept.AuthorizationFilter@60c33609]
+2026-01-05T15:11:02.837+09:00 DEBUG 241091 --- [user-service] [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-01-05T15:11:02.869+09:00 DEBUG 241091 --- [user-service] [           main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-01-05T15:11:02.977+09:00  INFO 241091 --- [user-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path ''
+2026-01-05T15:11:02.997+09:00  INFO 241091 --- [user-service] [           main] c.c.user.UserServiceApplicationKt        : Started UserServiceApplicationKt in 4.73 seconds (process running for 5.277)
+2026-01-05T15:11:32.723+09:00  INFO 241091 --- [user-service] [nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-05T15:11:32.723+09:00  INFO 241091 --- [user-service] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-01-05T15:11:32.723+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2026-01-05T15:11:32.724+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2026-01-05T15:11:32.724+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2026-01-05T15:11:32.725+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@2bc52b08
+2026-01-05T15:11:32.725+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@48cebb78
+2026-01-05T15:11:32.725+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2026-01-05T15:11:32.725+09:00  INFO 241091 --- [user-service] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-01-05T15:11:32.747+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /oauth2/authorization/kakao
+2026-01-05T15:11:32.762+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-1] o.s.s.web.DefaultRedirectStrategy        : Redirecting to https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=89b63443fe35d95b4e29b1e8e1ba7d4c&scope=profile_nickname%20profile_image&state=lKmyct4AEC_gkd3-q6kfJhA_Gq6CYCPhcNs0U5_let0%3D&redirect_uri=http://localhost:8080/login/oauth2/code/kakao
+2026-01-05T15:11:32.883+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /login/oauth2/code/kakao?code=1K3XvvQyW8M3rh-IU2bP5g8pDkicmBNa7sFzFDEO1Yd92DkqNgvHIQAAAAQKFxZiAAABm4zIQnmQgW3aWXatGQ&state=lKmyct4AEC_gkd3-q6kfJhA_Gq6CYCPhcNs0U5_let0%3D
+2026-01-05T15:11:32.933+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.web.client.RestTemplate              : HTTP POST https://kauth.kakao.com/oauth/token
+2026-01-05T15:11:32.937+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+2026-01-05T15:11:32.938+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.web.client.RestTemplate              : Writing [{grant_type=[authorization_code], code=[1K3XvvQyW8M3rh-IU2bP5g8pDkicmBNa7sFzFDEO1Yd92DkqNgvHIQAAAAQKFxZiAAABm4zIQnmQgW3aWXatGQ], redirect_uri=[http://localhost:8080/login/oauth2/code/kakao], client_id=[89b63443fe35d95b4e29b1e8e1ba7d4c], client_secret=[nz0TL4yPpuImzr43EyhuB4MMwPtRrgoy]}] as "application/x-www-form-urlencoded;charset=UTF-8"
+2026-01-05T15:11:33.087+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.web.client.RestTemplate              : Response 200 OK
+2026-01-05T15:11:33.088+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.web.client.RestTemplate              : Reading to [org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse] as "application/json;charset=UTF-8"
+2026-01-05T15:11:33.119+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.web.client.RestTemplate              : HTTP GET https://kapi.kakao.com/v2/user/me
+2026-01-05T15:11:33.119+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+2026-01-05T15:11:33.203+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.web.client.RestTemplate              : Response 200 OK
+2026-01-05T15:11:33.204+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] o.s.web.client.RestTemplate              : Reading to [java.util.Map<java.lang.String, java.lang.Object>]
+2026-01-05T15:11:33.207+09:00  INFO 241091 --- [user-service] [nio-8081-exec-2] c.c.user.config.CustomOauth2UserService  : [kakao] OAuth2 전체 attributes: {id=4598748647, connected_at=2025-11-25T08:06:54Z, properties={nickname=박신희, profile_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, thumbnail_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg}, kakao_account={profile_nickname_needs_agreement=false, profile_image_needs_agreement=false, profile={nickname=박신희, thumbnail_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg, profile_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, is_default_image=false, is_default_nickname=false}}}
+2026-01-05T15:11:33.208+09:00  INFO 241091 --- [user-service] [nio-8081-exec-2] c.c.user.config.CustomOauth2UserService  : [KAKAO] id=4598748647, nickname=박신희 (이메일은 가져오지 않음)
 Hibernate: 
     select
         u1_0.id,
@@ -74,13 +73,12 @@ Hibernate:
         user u1_0 
     where
         u1_0.social_id=?
-2026-01-02T15:59:36.625+09:00  INFO 9471 --- [user-service] [nio-8081-exec-1] c.c.user.config.CustomOauth2UserService  : [naver] 최종 User 정보: id=2, email=null
-2026-01-02T15:59:36.626+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] .s.ChangeSessionIdAuthenticationStrategy : Changed session id from 02016CCFC4CB8B853941C49588D19A38
-2026-01-02T15:59:36.626+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=OAuth2AuthenticationToken [Principal=Name: [{id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}], Granted Authorities: [[OAUTH2_USER]], User Attributes: [{resultcode=00, message=success, response={id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}}], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=[0:0:0:0:0:0:0:1], SessionId=02016CCFC4CB8B853941C49588D19A38], Granted Authorities=[OAUTH2_USER]]] to HttpSession [org.apache.catalina.session.StandardSessionFacade@40dc3ff]
-2026-01-02T15:59:36.626+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-1] .s.o.c.w.OAuth2LoginAuthenticationFilter : Set SecurityContextHolder to OAuth2AuthenticationToken [Principal=Name: [{id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}], Granted Authorities: [[OAUTH2_USER]], User Attributes: [{resultcode=00, message=success, response={id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}}], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=[0:0:0:0:0:0:0:1], SessionId=02016CCFC4CB8B853941C49588D19A38], Granted Authorities=[OAUTH2_USER]]
-2026-01-02T15:59:36.626+09:00  INFO 9471 --- [user-service] [nio-8081-exec-1] c.c.user.config.OAuth2SuccessHandler     : [OAuth2SuccessHandler] 전체 attributes: {resultcode=00, message=success, response={id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}}
-2026-01-02T15:59:36.626+09:00  INFO 9471 --- [user-service] [nio-8081-exec-1] c.c.user.config.OAuth2SuccessHandler     : [NAVER] response 내용: {id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}
-2026-01-02T15:59:36.626+09:00  INFO 9471 --- [user-service] [nio-8081-exec-1] c.c.user.config.OAuth2SuccessHandler     : [NAVER] id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, email=xbox234@naver.com
+2026-01-05T15:11:33.327+09:00  INFO 241091 --- [user-service] [nio-8081-exec-2] c.c.user.config.CustomOauth2UserService  : [kakao] 최종 User 정보: id=1, email=null
+2026-01-05T15:11:33.329+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] .s.ChangeSessionIdAuthenticationStrategy : Changed session id from DAD21517F3045EBD87CE7A045855F136
+2026-01-05T15:11:33.330+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=OAuth2AuthenticationToken [Principal=Name: [4598748647], Granted Authorities: [[OAUTH2_USER, SCOPE_profile_image, SCOPE_profile_nickname]], User Attributes: [{id=4598748647, connected_at=2025-11-25T08:06:54Z, properties={nickname=박신희, profile_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, thumbnail_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg}, kakao_account={profile_nickname_needs_agreement=false, profile_image_needs_agreement=false, profile={nickname=박신희, thumbnail_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg, profile_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, is_default_image=false, is_default_nickname=false}}}], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=[0:0:0:0:0:0:0:1%0], SessionId=DAD21517F3045EBD87CE7A045855F136], Granted Authorities=[OAUTH2_USER, SCOPE_profile_image, SCOPE_profile_nickname]]] to HttpSession [org.apache.catalina.session.StandardSessionFacade@528d2983]
+2026-01-05T15:11:33.331+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-2] .s.o.c.w.OAuth2LoginAuthenticationFilter : Set SecurityContextHolder to OAuth2AuthenticationToken [Principal=Name: [4598748647], Granted Authorities: [[OAUTH2_USER, SCOPE_profile_image, SCOPE_profile_nickname]], User Attributes: [{id=4598748647, connected_at=2025-11-25T08:06:54Z, properties={nickname=박신희, profile_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, thumbnail_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg}, kakao_account={profile_nickname_needs_agreement=false, profile_image_needs_agreement=false, profile={nickname=박신희, thumbnail_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg, profile_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, is_default_image=false, is_default_nickname=false}}}], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=[0:0:0:0:0:0:0:1%0], SessionId=DAD21517F3045EBD87CE7A045855F136], Granted Authorities=[OAUTH2_USER, SCOPE_profile_image, SCOPE_profile_nickname]]
+2026-01-05T15:11:33.331+09:00  INFO 241091 --- [user-service] [nio-8081-exec-2] c.c.user.config.OAuth2SuccessHandler     : [OAuth2SuccessHandler] 전체 attributes: {id=4598748647, connected_at=2025-11-25T08:06:54Z, properties={nickname=박신희, profile_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, thumbnail_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg}, kakao_account={profile_nickname_needs_agreement=false, profile_image_needs_agreement=false, profile={nickname=박신희, thumbnail_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg, profile_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, is_default_image=false, is_default_nickname=false}}}
+2026-01-05T15:11:33.331+09:00  INFO 241091 --- [user-service] [nio-8081-exec-2] c.c.user.config.OAuth2SuccessHandler     : [KAKAO] id=4598748647, nickname=박신희 (이메일은 가져오지 않음)
 Hibernate: 
     select
         u1_0.id,
@@ -95,7 +93,7 @@ Hibernate:
         user u1_0 
     where
         u1_0.social_id=?
-2026-01-02T15:59:36.628+09:00  INFO 9471 --- [user-service] [nio-8081-exec-1] c.c.user.config.OAuth2SuccessHandler     : [naver] 최종 User 정보: id=2, email=null
+2026-01-05T15:11:33.336+09:00  INFO 241091 --- [user-service] [nio-8081-exec-2] c.c.user.config.OAuth2SuccessHandler     : [kakao] 최종 User 정보: id=1, email=null
 Hibernate: 
     select
         rt1_0.id,
@@ -119,231 +117,21 @@ Hibernate:
         refresh_token 
     where
         id=?
-2026-01-02T15:59:42.697+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/auth/me
-2026-01-02T15:59:42.701+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/auth/me
-2026-01-02T15:59:42.703+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-3] o.s.web.servlet.DispatcherServlet        : GET "/api/auth/me", parameters={}
-2026-01-02T15:59:42.703+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.covercloud.user.application.AuthController#getUserInfo(String)
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.email,
-        u1_0.nickname,
-        u1_0.profile_image,
-        u1_0.provider,
-        u1_0.social_id,
-        u1_0.updated_at 
-    from
-        user u1_0 
-    where
-        u1_0.id=?
-2026-01-02T15:59:42.748+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json;q=0.8', given [text/html, application/xhtml+xml, image/avif, image/webp, image/apng, application/xml;q=0.9, */*;q=0.8, application/signed-exchange;v=b3;q=0.7] and supported [application/json, application/*+json]
-2026-01-02T15:59:42.749+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [ApiResponse(success=true, data=UserInfoResponse(userId=2, nickname=시닝, profileImage=https://phinf.ps (truncated)...]
-2026-01-02T15:59:42.754+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
-2026-01-02T15:59:42.754+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-3] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=OAuth2AuthenticationToken [Principal=Name: [{id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}], Granted Authorities: [[OAUTH2_USER]], User Attributes: [{resultcode=00, message=success, response={id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}}], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=[0:0:0:0:0:0:0:1], SessionId=02016CCFC4CB8B853941C49588D19A38], Granted Authorities=[OAUTH2_USER]]]
-2026-01-02T16:01:45.253+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /oauth2/authorization/naver
-2026-01-02T16:01:45.255+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-5] o.s.s.web.DefaultRedirectStrategy        : Redirecting to https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=9VmhBqrcqFK_3XKAA6J0&scope=name%20nickname%20profile_image%20email&state=SA2a_iJ9q7ZwzxWnWdNzz8zgbKmQfqCkUvxlImdJKc0%3D&redirect_uri=http://localhost:8080/login/oauth2/code/naver
-2026-01-02T16:02:02.480+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /login/oauth2/code/naver?code=qGnVbG2WqnTqG43ENi&state=SA2a_iJ9q7ZwzxWnWdNzz8zgbKmQfqCkUvxlImdJKc0=
-2026-01-02T16:02:02.481+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.web.client.RestTemplate              : HTTP POST https://nid.naver.com/oauth2.0/token
-2026-01-02T16:02:02.482+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
-2026-01-02T16:02:02.482+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.web.client.RestTemplate              : Writing [{grant_type=[authorization_code], code=[qGnVbG2WqnTqG43ENi], redirect_uri=[http://localhost:8080/login/oauth2/code/naver]}] as "application/x-www-form-urlencoded;charset=UTF-8"
-2026-01-02T16:02:02.676+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.web.client.RestTemplate              : Response 200 OK
-2026-01-02T16:02:02.677+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.web.client.RestTemplate              : Reading to [org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse] as "application/json;charset=utf-8"
-2026-01-02T16:02:02.679+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.web.client.RestTemplate              : HTTP GET https://openapi.naver.com/v1/nid/me
-2026-01-02T16:02:02.680+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
-2026-01-02T16:02:02.772+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.web.client.RestTemplate              : Response 200 OK
-2026-01-02T16:02:02.773+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] o.s.web.client.RestTemplate              : Reading to [java.util.Map<java.lang.String, java.lang.Object>]
-2026-01-02T16:02:02.773+09:00  INFO 9471 --- [user-service] [nio-8081-exec-6] c.c.user.config.CustomOauth2UserService  : [naver] OAuth2 전체 attributes: {resultcode=00, message=success, response={id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}}
-2026-01-02T16:02:02.773+09:00  INFO 9471 --- [user-service] [nio-8081-exec-6] c.c.user.config.CustomOauth2UserService  : [NAVER] response 내용: {id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}
-2026-01-02T16:02:02.773+09:00  INFO 9471 --- [user-service] [nio-8081-exec-6] c.c.user.config.CustomOauth2UserService  : [NAVER] id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, email=xbox234@naver.com
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.email,
-        u1_0.nickname,
-        u1_0.profile_image,
-        u1_0.provider,
-        u1_0.social_id,
-        u1_0.updated_at 
-    from
-        user u1_0 
-    where
-        u1_0.social_id=?
-2026-01-02T16:02:02.789+09:00  INFO 9471 --- [user-service] [nio-8081-exec-6] c.c.user.config.CustomOauth2UserService  : [naver] 새 유저 생성: socialId=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, email=xbox234@naver.com
-Hibernate: 
-    select
-        next_val as id_val 
-    from
-        user_seq for update
-Hibernate: 
-    update
-        user_seq 
-    set
-        next_val= ? 
-    where
-        next_val=?
-Hibernate: 
-    insert 
-    into
-        user
-        (created_at, email, nickname, profile_image, provider, social_id, updated_at, id) 
-    values
-        (?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-02T16:02:02.803+09:00  INFO 9471 --- [user-service] [nio-8081-exec-6] c.c.user.config.CustomOauth2UserService  : [naver] 최종 User 정보: id=52, email=xbox234@naver.com
-2026-01-02T16:02:02.803+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] .s.ChangeSessionIdAuthenticationStrategy : Changed session id from 6A49380D598F63853CD2FB82406F1FC6
-2026-01-02T16:02:02.803+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=OAuth2AuthenticationToken [Principal=Name: [{id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}], Granted Authorities: [[OAUTH2_USER]], User Attributes: [{resultcode=00, message=success, response={id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}}], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=[0:0:0:0:0:0:0:1], SessionId=6A49380D598F63853CD2FB82406F1FC6], Granted Authorities=[OAUTH2_USER]]] to HttpSession [org.apache.catalina.session.StandardSessionFacade@176203b1]
-2026-01-02T16:02:02.803+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-6] .s.o.c.w.OAuth2LoginAuthenticationFilter : Set SecurityContextHolder to OAuth2AuthenticationToken [Principal=Name: [{id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}], Granted Authorities: [[OAUTH2_USER]], User Attributes: [{resultcode=00, message=success, response={id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}}], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=[0:0:0:0:0:0:0:1], SessionId=6A49380D598F63853CD2FB82406F1FC6], Granted Authorities=[OAUTH2_USER]]
-2026-01-02T16:02:02.803+09:00  INFO 9471 --- [user-service] [nio-8081-exec-6] c.c.user.config.OAuth2SuccessHandler     : [OAuth2SuccessHandler] 전체 attributes: {resultcode=00, message=success, response={id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}}
-2026-01-02T16:02:02.803+09:00  INFO 9471 --- [user-service] [nio-8081-exec-6] c.c.user.config.OAuth2SuccessHandler     : [NAVER] response 내용: {id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, profile_image=https://phinf.pstatic.net/contact/20250912_83/1757638229966I9Csz_PNG/profileImage.png, email=xbox234@naver.com, name=박신희}
-2026-01-02T16:02:02.803+09:00  INFO 9471 --- [user-service] [nio-8081-exec-6] c.c.user.config.OAuth2SuccessHandler     : [NAVER] id=0f08-zcoVRFBiaLEDGSGF2reeWVG9usmPxSPKmXz6nE, nickname=시닝, email=xbox234@naver.com
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.email,
-        u1_0.nickname,
-        u1_0.profile_image,
-        u1_0.provider,
-        u1_0.social_id,
-        u1_0.updated_at 
-    from
-        user u1_0 
-    where
-        u1_0.social_id=?
-2026-01-02T16:02:02.805+09:00  INFO 9471 --- [user-service] [nio-8081-exec-6] c.c.user.config.OAuth2SuccessHandler     : [naver] 최종 User 정보: id=52, email=xbox234@naver.com
-Hibernate: 
-    select
-        rt1_0.id,
-        rt1_0.expiry_date,
-        rt1_0.token,
-        rt1_0.user_id 
-    from
-        refresh_token rt1_0 
-    where
-        rt1_0.user_id=?
-Hibernate: 
-    insert 
-    into
-        refresh_token
-        (expiry_date, token, user_id) 
-    values
-        (?, ?, ?)
-2026-01-02T16:03:34.664+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /oauth2/authorization/kakao
-2026-01-02T16:03:34.665+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-8] o.s.s.web.DefaultRedirectStrategy        : Redirecting to https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=89b63443fe35d95b4e29b1e8e1ba7d4c&scope=profile_nickname%20profile_image&state=kjNLhMVlqMBVyAbjr2DEjgWt7nmuyP6kiwzEMPkuv6Q%3D&redirect_uri=http://localhost:8080/login/oauth2/code/kakao
-2026-01-02T16:03:46.204+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.security.web.FilterChainProxy        : Securing GET /login/oauth2/code/kakao?code=oOcqCaB1wpcLWqYxXzyngVsdtXSRa5TGYMZndThXFA4uYoy57M8P_QAAAAQKDQxeAAABm32E_VTSDh85zpcCzQ&state=kjNLhMVlqMBVyAbjr2DEjgWt7nmuyP6kiwzEMPkuv6Q%3D
-2026-01-02T16:03:46.205+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.web.client.RestTemplate              : HTTP POST https://kauth.kakao.com/oauth/token
-2026-01-02T16:03:46.206+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
-2026-01-02T16:03:46.206+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.web.client.RestTemplate              : Writing [{grant_type=[authorization_code], code=[oOcqCaB1wpcLWqYxXzyngVsdtXSRa5TGYMZndThXFA4uYoy57M8P_QAAAAQKDQxeAAABm32E_VTSDh85zpcCzQ], redirect_uri=[http://localhost:8080/login/oauth2/code/kakao], client_id=[89b63443fe35d95b4e29b1e8e1ba7d4c], client_secret=[nz0TL4yPpuImzr43EyhuB4MMwPtRrgoy]}] as "application/x-www-form-urlencoded;charset=UTF-8"
-2026-01-02T16:03:46.378+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.web.client.RestTemplate              : Response 200 OK
-2026-01-02T16:03:46.379+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.web.client.RestTemplate              : Reading to [org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse] as "application/json;charset=UTF-8"
-2026-01-02T16:03:46.382+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.web.client.RestTemplate              : HTTP GET https://kapi.kakao.com/v2/user/me
-2026-01-02T16:03:46.382+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
-2026-01-02T16:03:46.487+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.web.client.RestTemplate              : Response 200 OK
-2026-01-02T16:03:46.487+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] o.s.web.client.RestTemplate              : Reading to [java.util.Map<java.lang.String, java.lang.Object>]
-2026-01-02T16:03:46.492+09:00  INFO 9471 --- [user-service] [nio-8081-exec-9] c.c.user.config.CustomOauth2UserService  : [kakao] OAuth2 전체 attributes: {id=4598748647, connected_at=2025-11-25T08:06:54Z, properties={nickname=박신희, profile_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, thumbnail_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg}, kakao_account={profile_nickname_needs_agreement=false, profile_image_needs_agreement=false, profile={nickname=박신희, thumbnail_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg, profile_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, is_default_image=false, is_default_nickname=false}}}
-2026-01-02T16:03:46.494+09:00  INFO 9471 --- [user-service] [nio-8081-exec-9] c.c.user.config.CustomOauth2UserService  : [KAKAO] id=4598748647, nickname=박신희 (이메일은 가져오지 않음)
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.email,
-        u1_0.nickname,
-        u1_0.profile_image,
-        u1_0.provider,
-        u1_0.social_id,
-        u1_0.updated_at 
-    from
-        user u1_0 
-    where
-        u1_0.social_id=?
-2026-01-02T16:03:46.508+09:00  INFO 9471 --- [user-service] [nio-8081-exec-9] c.c.user.config.CustomOauth2UserService  : [kakao] 새 유저 생성: socialId=4598748647, email=null
-Hibernate: 
-    insert 
-    into
-        user
-        (created_at, email, nickname, profile_image, provider, social_id, updated_at, id) 
-    values
-        (?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-02T16:03:46.512+09:00  INFO 9471 --- [user-service] [nio-8081-exec-9] c.c.user.config.CustomOauth2UserService  : [kakao] 최종 User 정보: id=53, email=null
-2026-01-02T16:03:46.513+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] .s.ChangeSessionIdAuthenticationStrategy : Changed session id from 077FE6ADA38F0B80AA12CF7CE9F36452
-2026-01-02T16:03:46.513+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=OAuth2AuthenticationToken [Principal=Name: [4598748647], Granted Authorities: [[OAUTH2_USER, SCOPE_profile_image, SCOPE_profile_nickname]], User Attributes: [{id=4598748647, connected_at=2025-11-25T08:06:54Z, properties={nickname=박신희, profile_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, thumbnail_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg}, kakao_account={profile_nickname_needs_agreement=false, profile_image_needs_agreement=false, profile={nickname=박신희, thumbnail_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg, profile_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, is_default_image=false, is_default_nickname=false}}}], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=[0:0:0:0:0:0:0:1], SessionId=077FE6ADA38F0B80AA12CF7CE9F36452], Granted Authorities=[OAUTH2_USER, SCOPE_profile_image, SCOPE_profile_nickname]]] to HttpSession [org.apache.catalina.session.StandardSessionFacade@176203b1]
-2026-01-02T16:03:46.513+09:00 DEBUG 9471 --- [user-service] [nio-8081-exec-9] .s.o.c.w.OAuth2LoginAuthenticationFilter : Set SecurityContextHolder to OAuth2AuthenticationToken [Principal=Name: [4598748647], Granted Authorities: [[OAUTH2_USER, SCOPE_profile_image, SCOPE_profile_nickname]], User Attributes: [{id=4598748647, connected_at=2025-11-25T08:06:54Z, properties={nickname=박신희, profile_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, thumbnail_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg}, kakao_account={profile_nickname_needs_agreement=false, profile_image_needs_agreement=false, profile={nickname=박신희, thumbnail_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg, profile_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, is_default_image=false, is_default_nickname=false}}}], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=[0:0:0:0:0:0:0:1], SessionId=077FE6ADA38F0B80AA12CF7CE9F36452], Granted Authorities=[OAUTH2_USER, SCOPE_profile_image, SCOPE_profile_nickname]]
-2026-01-02T16:03:46.513+09:00  INFO 9471 --- [user-service] [nio-8081-exec-9] c.c.user.config.OAuth2SuccessHandler     : [OAuth2SuccessHandler] 전체 attributes: {id=4598748647, connected_at=2025-11-25T08:06:54Z, properties={nickname=박신희, profile_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, thumbnail_image=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg}, kakao_account={profile_nickname_needs_agreement=false, profile_image_needs_agreement=false, profile={nickname=박신희, thumbnail_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_110x110.jpg, profile_image_url=http://k.kakaocdn.net/dn/m0hDN/btsMFJrxqFr/nB9nxhtFjkPXcfufqcggM0/img_640x640.jpg, is_default_image=false, is_default_nickname=false}}}
-2026-01-02T16:03:46.513+09:00  INFO 9471 --- [user-service] [nio-8081-exec-9] c.c.user.config.OAuth2SuccessHandler     : [KAKAO] id=4598748647, nickname=박신희 (이메일은 가져오지 않음)
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.email,
-        u1_0.nickname,
-        u1_0.profile_image,
-        u1_0.provider,
-        u1_0.social_id,
-        u1_0.updated_at 
-    from
-        user u1_0 
-    where
-        u1_0.social_id=?
-2026-01-02T16:03:46.514+09:00  INFO 9471 --- [user-service] [nio-8081-exec-9] c.c.user.config.OAuth2SuccessHandler     : [kakao] 최종 User 정보: id=53, email=null
-Hibernate: 
-    select
-        rt1_0.id,
-        rt1_0.expiry_date,
-        rt1_0.token,
-        rt1_0.user_id 
-    from
-        refresh_token rt1_0 
-    where
-        rt1_0.user_id=?
-Hibernate: 
-    insert 
-    into
-        refresh_token
-        (expiry_date, token, user_id) 
-    values
-        (?, ?, ?)
-2026-01-02T18:28:03.874+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m37s541ms).
-2026-01-02T18:57:49.954+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=29m46s93ms).
-2026-01-02T19:16:27.177+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=18m37s223ms).
-2026-01-02T20:41:25.120+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h24m57s943ms).
-2026-01-02T21:42:09.567+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h44s447ms).
-2026-01-02T23:17:21.713+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h35m12s146ms).
-2026-01-03T00:17:45.931+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h24s218ms).
-2026-01-03T01:52:31.864+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h34m45s933ms).
-2026-01-03T02:17:04.716+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=24m32s852ms).
-2026-01-03T02:32:14.283+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=15m9s567ms).
-2026-01-03T03:22:22.534+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=50m8s251ms).
-2026-01-03T03:41:02.861+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=18m40s327ms).
-2026-01-03T04:34:11.073+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=53m8s212ms).
-2026-01-03T04:37:11.357+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m284ms).
-2026-01-03T05:42:57.524+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h3m46s144ms).
-2026-01-03T07:01:42.324+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h18m44s801ms).
-2026-01-03T07:48:24.517+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=46m42s193ms).
-2026-01-03T08:45:59.619+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=57m35s101ms).
-2026-01-03T09:48:05.981+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h2m6s363ms).
-2026-01-03T10:45:17.481+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=57m11s499ms).
-2026-01-03T11:27:26.330+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=42m8s850ms).
-2026-01-03T11:47:27.913+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=20m1s583ms).
-2026-01-03T12:12:56.884+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=25m28s971ms).
-2026-01-03T12:26:22.857+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=12m55s968ms).
-2026-01-03T12:47:38.399+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=21m15s542ms).
-2026-01-03T13:02:22.403+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=14m44s4ms).
-2026-01-03T13:04:42.095+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2m19s692ms).
-2026-01-03T13:55:40.980+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=58s373ms).
-2026-01-03T14:02:18.037+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m7s42ms).
-2026-01-03T14:03:46.439+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=58s397ms).
-2026-01-03T14:06:32.328+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2m45s888ms).
-2026-01-03T14:07:50.362+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=48s29ms).
-2026-01-03T14:08:51.996+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m1s634ms).
-2026-01-03T14:10:10.376+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=48s376ms).
-2026-01-03T14:11:11.923+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m1s546ms).
-2026-01-03T14:12:34.378+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=52s418ms).
-2026-01-03T14:17:34.284+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=4m29s902ms).
-2026-01-03T14:20:49.473+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m15s189ms).
-2026-01-03T15:44:19.169+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h23m29s696ms).
-2026-01-03T16:50:34.261+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h6m15s92ms).
-2026-01-03T16:51:58.709+09:00  WARN 9471 --- [user-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m24s448ms).
-2026-01-03T18:53:48.579+09:00  INFO 9471 --- [user-service] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-01-03T18:53:48.618+09:00  INFO 9471 --- [user-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2026-01-03T18:53:48.623+09:00  INFO 9471 --- [user-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-01-05T15:11:54.784+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /oauth2/authorization/kakao
+2026-01-05T15:11:54.785+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-3] o.s.s.web.DefaultRedirectStrategy        : Redirecting to https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=89b63443fe35d95b4e29b1e8e1ba7d4c&scope=profile_nickname%20profile_image&state=6GRD8wiREuJm0tFc133845HqkEdxvrwyueQYNmYaM_A%3D&redirect_uri=http://localhost:8080/login/oauth2/code/kakao
+2026-01-05T15:13:22.429+09:00 DEBUG 241091 --- [user-service] [nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /login/oauth2/code/kakao?code=YutRiNO_iLE7ZGoe-4jBPyDBpoMu1n36FVpC_9FOkxtFkFXC57bd8gAAAAQKFwvXAAABm4zJ7fbmTYKY7N6ACw&state=6edLsyANB-5C31PAlYY_7A6rFBmRQTxC4qWaX76pg9k%3D
+Exception in thread "SpringApplicationShutdownHook" java.lang.NoClassDefFoundError: ch/qos/logback/classic/spi/ThrowableProxy
+	at ch.qos.logback.classic.spi.LoggingEvent.<init>(LoggingEvent.java:143)
+	at ch.qos.logback.classic.Logger.buildLoggingEventAndAppend(Logger.java:424)
+	at ch.qos.logback.classic.Logger.filterAndLog_0_Or3Plus(Logger.java:386)
+	at ch.qos.logback.classic.Logger.log(Logger.java:780)
+	at org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog.warn(LogAdapter.java:445)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1142)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.lang.ClassNotFoundException: ch.qos.logback.classic.spi.ThrowableProxy
+	... 12 more

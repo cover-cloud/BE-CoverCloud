@@ -1,5 +1,6 @@
 server:
   port: 8080
+  forward-headers-strategy: framework
 
 spring:
   application:
@@ -7,6 +8,8 @@ spring:
     
   cloud:
     gateway:
+      forwarded:
+        enabled: true
       routes:
         # User Service
         - id: user-service

@@ -7,71 +7,27 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.4)
 
-2026-01-02T15:57:59.077+09:00  INFO 9474 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : Starting MusicServiceApplicationKt v0.0.1 using Java 21.0.9 with PID 9474 (/Users/sini/Documents/개발/BE-CoverCloud/music-service/build/libs/music-service-0.0.1.jar started by sini in /Users/sini/Documents/개발/BE-CoverCloud)
-2026-01-02T15:57:59.078+09:00  INFO 9474 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : No active profile set, falling back to 1 default profile: "default"
-2026-01-02T15:57:59.420+09:00  INFO 9474 --- [music-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-01-02T15:57:59.479+09:00  INFO 9474 --- [music-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 56 ms. Found 1 JPA repository interface.
-2026-01-02T15:57:59.670+09:00  INFO 9474 --- [music-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8083 (http)
-2026-01-02T15:57:59.675+09:00  INFO 9474 --- [music-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-01-02T15:57:59.675+09:00  INFO 9474 --- [music-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
-2026-01-02T15:57:59.691+09:00  INFO 9474 --- [music-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-01-02T15:57:59.692+09:00  INFO 9474 --- [music-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 581 ms
-2026-01-02T15:57:59.762+09:00  INFO 9474 --- [music-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-01-02T15:57:59.782+09:00  INFO 9474 --- [music-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2026-01-02T15:57:59.794+09:00  INFO 9474 --- [music-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-01-02T15:57:59.877+09:00  INFO 9474 --- [music-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-01-02T15:57:59.887+09:00  INFO 9474 --- [music-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-01-02T15:58:00.010+09:00  INFO 9474 --- [music-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7cdc4070
-2026-01-02T15:58:00.011+09:00  INFO 9474 --- [music-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-01-02T15:58:00.306+09:00  INFO 9474 --- [music-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-01-02T15:58:00.323+09:00  INFO 9474 --- [music-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-01-02T15:58:00.601+09:00 ERROR 9474 --- [music-service] [           main] i.n.r.d.DnsServerAddressStreamProviders  : Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider, fallback to system defaults. This may result in incorrect DNS resolutions on MacOS. Check whether you have a dependency on 'io.netty:netty-resolver-dns-native-macos'. Use DEBUG level to see the full stack: java.lang.UnsatisfiedLinkError: failed to load the required native library
-2026-01-02T15:58:00.660+09:00  WARN 9474 --- [music-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-01-02T15:58:00.760+09:00  INFO 9474 --- [music-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8083 (http) with context path ''
-2026-01-02T15:58:00.767+09:00  INFO 9474 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : Started MusicServiceApplicationKt in 1.848 seconds (process running for 2.06)
-2026-01-02T18:28:08.972+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m37s537ms).
-2026-01-02T18:57:55.055+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=29m46s99ms).
-2026-01-02T19:32:07.087+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=34m12s32ms).
-2026-01-02T20:41:30.214+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h9m23s127ms).
-2026-01-02T21:58:52.175+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h17m21s961ms).
-2026-01-02T23:28:38.292+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h29m46s117ms).
-2026-01-03T00:29:42.505+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h1m4s213ms).
-2026-01-03T01:52:36.970+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h22m54s465ms).
-2026-01-03T02:17:09.821+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=24m32s851ms).
-2026-01-03T02:32:19.389+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=15m9s568ms).
-2026-01-03T03:22:27.640+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=50m8s251ms).
-2026-01-03T03:57:47.623+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=35m19s983ms).
-2026-01-03T04:35:12.532+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=37m24s908ms).
-2026-01-03T04:37:16.469+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2m3s938ms).
-2026-01-03T04:56:15.839+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=17m29s344ms).
-2026-01-03T05:43:02.644+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=46m46s805ms).
-2026-01-03T07:01:47.451+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h18m44s806ms).
-2026-01-03T08:03:54.360+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h2m6s910ms).
-2026-01-03T09:01:29.686+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=57m35s326ms).
-2026-01-03T10:05:24.116+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h3m54s429ms).
-2026-01-03T11:01:47.025+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=56m22s910ms).
-2026-01-03T11:37:22.044+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=35m35s19ms).
-2026-01-03T11:49:53.817+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=12m31s773ms).
-2026-01-03T12:13:02.005+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=23m8s188ms).
-2026-01-03T12:17:11.456+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=4m9s451ms).
-2026-01-03T12:36:20.841+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=19m9s385ms).
-2026-01-03T12:56:20.723+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=19m59s882ms).
-2026-01-03T13:02:48.445+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m27s722ms).
-2026-01-03T13:04:47.222+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m58s777ms).
-2026-01-03T13:55:46.078+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=58s374ms).
-2026-01-03T14:02:23.134+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m7s41ms).
-2026-01-03T14:03:21.533+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=58s399ms).
-2026-01-03T14:06:37.424+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2m45s889ms).
-2026-01-03T14:07:55.463+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=48s29ms).
-2026-01-03T14:08:57.096+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m1s633ms).
-2026-01-03T14:10:15.476+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=48s376ms).
-2026-01-03T14:11:17.031+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m1s555ms).
-2026-01-03T14:12:39.477+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=52s417ms).
-2026-01-03T14:16:17.850+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m38s372ms).
-2026-01-03T14:17:39.390+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m21s541ms).
-2026-01-03T14:20:54.580+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m15s190ms).
-2026-01-03T16:01:52.809+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h40m58s229ms).
-2026-01-03T16:51:24.386+09:00  WARN 9474 --- [music-service] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=49m31s577ms).
-2026-01-03T18:53:50.728+09:00  INFO 9474 --- [music-service] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-01-03T18:53:50.751+09:00  INFO 9474 --- [music-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2026-01-03T18:53:50.758+09:00  INFO 9474 --- [music-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-01-05T15:11:03.759+09:00  INFO 241295 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : Starting MusicServiceApplicationKt v0.0.1 using Java 21.0.9 with PID 241295 (/home/pduser/pd3/work/BE-CoverCloud/music-service/build/libs/music-service-0.0.1.jar started by pduser in /home/pduser/pd3/work/BE-CoverCloud)
+2026-01-05T15:11:03.762+09:00  INFO 241295 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : No active profile set, falling back to 1 default profile: "default"
+2026-01-05T15:11:04.666+09:00  INFO 241295 --- [music-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-05T15:11:04.794+09:00  INFO 241295 --- [music-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 121 ms. Found 1 JPA repository interface.
+2026-01-05T15:11:05.361+09:00  INFO 241295 --- [music-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8083 (http)
+2026-01-05T15:11:05.376+09:00  INFO 241295 --- [music-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-05T15:11:05.377+09:00  INFO 241295 --- [music-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-01-05T15:11:05.414+09:00  INFO 241295 --- [music-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-01-05T15:11:05.415+09:00  INFO 241295 --- [music-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1568 ms
+2026-01-05T15:11:05.623+09:00  INFO 241295 --- [music-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-05T15:11:05.691+09:00  INFO 241295 --- [music-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-01-05T15:11:05.718+09:00  INFO 241295 --- [music-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-01-05T15:11:05.932+09:00  INFO 241295 --- [music-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-05T15:11:05.951+09:00  INFO 241295 --- [music-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-05T15:11:06.207+09:00  INFO 241295 --- [music-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5fc1e4fb
+2026-01-05T15:11:06.208+09:00  INFO 241295 --- [music-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-05T15:11:06.806+09:00  INFO 241295 --- [music-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-05T15:11:06.840+09:00  INFO 241295 --- [music-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-05T15:11:07.695+09:00  WARN 241295 --- [music-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-05T15:11:07.966+09:00  INFO 241295 --- [music-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8083 (http) with context path ''
+2026-01-05T15:11:07.978+09:00  INFO 241295 --- [music-service] [           main] c.c.music.MusicServiceApplicationKt      : Started MusicServiceApplicationKt in 4.699 seconds (process running for 5.26)
+2026-01-05T15:38:27.249+09:00  INFO 241295 --- [music-service] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-01-05T15:38:27.267+09:00  INFO 241295 --- [music-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-01-05T15:38:27.295+09:00  INFO 241295 --- [music-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
