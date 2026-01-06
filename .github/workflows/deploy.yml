@@ -54,6 +54,25 @@ jobs:
           source: "dist/*.jar"
           target: "/home/covercloudofficial/upload/"
           strip_components: 1
+          
+      - name: Write .env on GCE
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            set -euo pipefail
+            mkdir -p /home/covercloudofficial/deploy
+            cat > /home/covercloudofficial/deploy/.env <<EOF
+            KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+            KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+            NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
+            NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
+            EOF
+            chmod 600 /home/covercloudofficial/deploy/.env
+            echo "wrote /home/covercloudofficial/deploy/.env"
 
       - name: Deploy on GCE (ssh)
         uses: appleboy/ssh-action@v1.1.0
