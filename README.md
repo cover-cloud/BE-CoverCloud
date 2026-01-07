@@ -1,3 +1,4 @@
+
 # BE-CoverCloud
 
 ## 프로젝트 소개
@@ -86,4 +87,3 @@ cd music-service && ./gradlew bootRun
 - 모든 서비스는 독립적으로 실행 및 배포 가능
 - 로그는 logs/ 디렉터리에 저장
 - 서비스 간 통신은 REST API 기반
-# BE-CoverCloud
