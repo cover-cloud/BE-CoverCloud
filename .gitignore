@@ -1,13 +1,14 @@
+# 로그 파일
+logs/
+*.log
+
+# 환경 변수 파일
+*.env
 # Ignore Gradle project-specific cache directory
 .gradle
 
 # Ignore Gradle build output directory
 build
-
-# 로그 파일 및 PID 파일 무시
-logs/
-*.log
-*.pid
 
 # # Application configuration
 # **/application.yml
