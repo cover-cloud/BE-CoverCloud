@@ -79,14 +79,6 @@ class OAuth2SuccessHandler(
 
         val tokens = authService.generateTokens(user.id!!)
 
-        // 토큰을 HttpOnly, Secure 쿠키로 설정
-        val accessTokenCookie = jakarta.servlet.http.Cookie("accessToken", tokens.accessToken).apply {
-            path = "/"
-            isHttpOnly = true
-            secure = false
-            maxAge = 60 * 60 // 1시간
-            // domain = "34.47.76.202"
-        }
         val refreshTokenCookie = jakarta.servlet.http.Cookie("refreshToken", tokens.refreshToken).apply {
             path = "/"
             isHttpOnly = true
@@ -94,11 +86,10 @@ class OAuth2SuccessHandler(
             maxAge = 60 * 60 * 24 * 7 // 7일
             // domain = "34.47.76.202"
         }
-        response.addCookie(accessTokenCookie)
         response.addCookie(refreshTokenCookie)
 
-        // 인증 성공 후 gateway(8080)로 리다이렉트
-        response.sendRedirect("http://localhost:3000/auth/callback")
+        // 인증 성공 후 gateway(8080)로 accessToken을 쿼리로 리다이렉트
+        response.sendRedirect("http://localhost:3000/auth/callback?accessToken=" + tokens.accessToken)
     }
 
     data class Quintuple<A, B, C, D, E>(
