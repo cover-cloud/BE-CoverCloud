@@ -8,6 +8,7 @@ import com.covercloud.music.service.dto.SpotifySearchRequest
 import com.covercloud.music.service.dto.SpotifyTrackSummary
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,6 +26,11 @@ class MusicController(
     fun saveMusic(@RequestBody request: MusicRequest) : MusicResponse {
         val musicResponse = musicService.saveMusic(request.toDto())
         return musicResponse
+    }
+
+    @GetMapping("/{musicId}")
+    fun getMusic(@PathVariable musicId: Long): MusicResponse {
+        return musicService.getMusicById(musicId)
     }
 
     @PostMapping("/spotify/search")

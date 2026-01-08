@@ -78,7 +78,8 @@ class CoverController (
     fun getTrendingCovers(
         @RequestParam period: String,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "20") size: Int
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(required = false) genre: String?
     ): ResponseEntity<ApiResponse<PageResponse<TrendingCoverResponse>>> {
         val trendingPeriod = when (period.uppercase()) {
             "DAILY" -> TrendingPeriod.DAILY
@@ -87,7 +88,7 @@ class CoverController (
             else -> throw IllegalArgumentException("Invalid period: $period. Use DAILY, WEEKLY, or MONTHLY")
         }
         
-        val trendingCovers = coverService.getTrendingCovers(trendingPeriod, page, size)
+        val trendingCovers = coverService.getTrendingCovers(trendingPeriod, page, size, genre)
         return ResponseEntity.ok(ApiResponse(success = true, data = trendingCovers))
     }
 
