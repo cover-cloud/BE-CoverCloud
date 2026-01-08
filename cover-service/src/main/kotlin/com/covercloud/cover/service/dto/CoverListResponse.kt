@@ -8,6 +8,8 @@ data class CoverListResponse(
     val userId: Long,
     val coverArtist: String?,
     val coverTitle: String?,
+    val originalArtist: String?,
+    val originalTitle: String?,
     val coverGenre: CoverGenre?,
     val link: String?,
     val viewCount: Long,

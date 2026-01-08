@@ -164,23 +164,7 @@ class CoverService(
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         
         val content = coverPage.content.map { cover ->
-            val tags = coverTagRepository.findAllByCoverId(cover.id!!)
-                .map { it.tag.name }
-            
-            CoverListResponse(
-                coverId = cover.id!!,
-                musicId = cover.musicId,
-                userId = cover.userId,
-                coverArtist = cover.coverArtist,
-                coverTitle = cover.coverTitle,
-                coverGenre = cover.coverGenre,
-                link = cover.link,
-                viewCount = cover.viewCount,
-                likeCount = cover.likeCount,
-                commentCount = cover.commentCount,
-                tags = tags,
-                createdAt = cover.createdAt?.format(dateFormatter) ?: ""
-            )
+            buildCoverListResponse(cover, dateFormatter, includeMusic = false)
         }
         
         return PageResponse(
@@ -203,17 +187,41 @@ class CoverService(
         cover.viewCount++
         coverRepository.save(cover)
         
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        // 원본 음악 정보를 포함하여 응답 생성
+        return buildCoverListResponse(cover, dateFormatter, includeMusic = true)
+    }
+
+    private fun buildCoverListResponse(
+        cover: Cover,
+        dateFormatter: java.time.format.DateTimeFormatter,
+        includeMusic: Boolean = false
+    ): CoverListResponse {
         val tags = coverTagRepository.findAllByCoverId(cover.id!!)
             .map { it.tag.name }
         
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        
+        var originalTitle: String? = null
+        var originalArtist: String? = null
+
+        if (includeMusic) {
+            try {
+                val music = musicClient.getMusic(cover.musicId)
+                originalTitle = music.title
+                originalArtist = music.artist
+            } catch (e: Exception) {
+                // Music 정보 조회 실패 시 무시
+            }
+        }
+
         return CoverListResponse(
             coverId = cover.id!!,
             musicId = cover.musicId,
             userId = cover.userId,
             coverArtist = cover.coverArtist,
             coverTitle = cover.coverTitle,
+            originalArtist = originalArtist,
+            originalTitle = originalTitle,
             coverGenre = cover.coverGenre,
             link = cover.link,
             viewCount = cover.viewCount,
@@ -227,7 +235,8 @@ class CoverService(
     fun getTrendingCovers(
         period: TrendingPeriod,
         page: Int = 0,
-        size: Int = 20
+        size: Int = 20,
+        genre: String? = null
     ): PageResponse<TrendingCoverResponse> {
         // 기간 시작 시점 계산
         val startDate = when (period) {
@@ -243,7 +252,15 @@ class CoverService(
             .associate { array -> (array[0] as Long) to (array[1] as Long) }
 
         // 모든 커버 가져와서 증가량 계산 (좋아요 없어도 포함)
-        val trendingCovers = coverRepository.findAll()
+        var allCovers = coverRepository.findAll()
+
+        // 장르 필터링
+        if (genre != null) {
+            val coverGenre = CoverGenre.valueOf(genre.uppercase().replace("-", "_"))
+            allCovers = allCovers.filter { it.coverGenre == coverGenre }
+        }
+
+        val trendingCovers = allCovers
             .map { cover ->
                 val periodLikes = periodLikeCounts[cover.id!!] ?: 0L
                 Triple(cover, cover.likeCount - periodLikes, periodLikes)
@@ -316,23 +333,7 @@ class CoverService(
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
         val content = coverPage.content.map { cover ->
-            val tags = coverTagRepository.findAllByCoverId(cover.id!!)
-                .map { it.tag.name }
-
-            CoverListResponse(
-                coverId = cover.id!!,
-                musicId = cover.musicId,
-                userId = cover.userId,
-                coverArtist = cover.coverArtist,
-                coverTitle = cover.coverTitle,
-                coverGenre = cover.coverGenre,
-                link = cover.link,
-                viewCount = cover.viewCount,
-                likeCount = cover.likeCount,
-                commentCount = cover.commentCount,
-                tags = tags,
-                createdAt = cover.createdAt?.format(dateFormatter) ?: ""
-            )
+            buildCoverListResponse(cover, dateFormatter, includeMusic = false)
         }
 
         return PageResponse(

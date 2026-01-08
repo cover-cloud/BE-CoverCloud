@@ -5,6 +5,7 @@ import com.covercloud.music.repository.MusicRepository
 import com.covercloud.music.service.dto.CreateMusicDto
 import com.covercloud.music.service.dto.MusicResponse
 import jakarta.transaction.Transactional
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -35,6 +36,17 @@ class MusicService(
             artist = savedMusic.artist,
         )
 
+    }
+
+    fun getMusicById(musicId: Long): MusicResponse {
+        val music = musicRepository.findByIdOrNull(musicId)
+            ?: throw IllegalArgumentException("Music not found with id: $musicId")
+
+        return MusicResponse(
+            id = music.id!!,
+            title = music.title,
+            artist = music.artist,
+        )
     }
 
 }
