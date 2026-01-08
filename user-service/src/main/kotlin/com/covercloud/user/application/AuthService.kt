@@ -50,7 +50,7 @@ class AuthService(
     }
 
     /**
-     * Refresh Token으로 새로운 Access Token 발급
+     * Refresh Token으로 새로운 Access Token 발급 (Refresh Token은 유지)
      */
     @Transactional
     fun refreshAccessToken(request: RefreshTokenRequest): TokenResponse {
@@ -78,8 +78,13 @@ class AuthService(
 
         val userId = savedToken.userId
 
-        // 새로운 토큰 생성
-        return generateTokens(userId)
+        // 새로운 Access Token만 생성 (Refresh Token은 유지)
+        val newAccessToken = jwtProvider.generateAccessToken(userId)
+
+        return TokenResponse(
+            accessToken = newAccessToken,
+            refreshToken = refreshToken  // 기존 Refresh Token 그대로 반환
+        )
     }
 
     /**
