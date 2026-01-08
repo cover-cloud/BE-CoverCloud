@@ -10,6 +10,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("org.mockito:mockito-inline:4.11.0")
+
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.glassfish.jaxb:jaxb-runtime:4.0.4")
@@ -25,4 +30,8 @@ dependencies {
     implementation(project(":shared-library"))
 
     runtimeOnly("com.mysql:mysql-connector-j")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
