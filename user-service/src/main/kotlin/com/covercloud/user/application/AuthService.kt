@@ -82,8 +82,8 @@ class AuthService(
         val newAccessToken = jwtProvider.generateAccessToken(userId)
 
         return TokenResponse(
-            accessToken = newAccessToken,
-            refreshToken = refreshToken  // 기존 Refresh Token 그대로 반환
+            accessToken = newAccessToken
+            // refreshToken은 반환하지 않음 (클라이언트가 기존 것을 계속 사용)
         )
     }
 
