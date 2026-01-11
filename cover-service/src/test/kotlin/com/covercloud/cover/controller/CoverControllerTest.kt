@@ -1,0 +1,215 @@
+package com.covercloud.cover.controller
+
+import com.covercloud.cover.domain.Cover
+import com.covercloud.cover.domain.CoverGenre
+import com.covercloud.cover.domain.TrendingPeriod
+import com.covercloud.cover.repository.CoverRepository
+import com.covercloud.cover.repository.CoverLikeRepository
+import com.covercloud.cover.repository.CoverTagRepository
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.transaction.annotation.Transactional
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+class CoverControllerTest {
+
+    @Autowired
+    private lateinit var mockMvc: MockMvc
+
+    @Autowired
+    private lateinit var coverRepository: CoverRepository
+
+    @Autowired
+    private lateinit var coverLikeRepository: CoverLikeRepository
+
+    @Autowired
+    private lateinit var coverTagRepository: CoverTagRepository
+
+    @BeforeEach
+    fun setup() {
+        // 테스트 데이터 초기화
+        coverLikeRepository.deleteAll()
+        coverTagRepository.deleteAll()
+        coverRepository.deleteAll()
+
+        // 테스트 커버 생성
+        val cover1 = Cover(
+            userId = 1L,
+            coverTitle = "Test Cover 1",
+            coverArtist = "Artist 1",
+            coverGenre = CoverGenre.K_POP,
+            link = "https://example.com/video1",
+            musicId = 1L
+        )
+
+        val cover2 = Cover(
+            userId = 2L,
+            coverTitle = "Test Cover 2",
+            coverArtist = "Artist 2",
+            coverGenre = CoverGenre.POP,
+            link = "https://example.com/video2",
+            musicId = 2L
+
+        )
+
+        val cover3 = Cover(
+            userId = 3L,
+            coverTitle = "Test Cover 3",
+            coverArtist = "Artist 3",
+            coverGenre = CoverGenre.J_POP,
+            link = "https://example.com/video3",
+            musicId = 3L
+
+        )
+
+        coverRepository.saveAll(listOf(cover1, cover2, cover3))
+    }
+
+    @Test
+    @DisplayName("period 없이 호출 시 전체 기간 데이터 반환")
+    fun testGetTrendingCoversWithoutPeriod() {
+        mockMvc.perform(get("/api/cover/trending"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content").isArray)
+            .andExpect(jsonPath("$.data.content.length()").value(3))
+    }
+
+    @Test
+    @DisplayName("period=DAILY로 호출 시 일간 트렌딩 반환")
+    fun testGetTrendingCoversWithDaily() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("period", "DAILY"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content").isArray)
+    }
+
+    @Test
+    @DisplayName("period=WEEKLY로 호출 시 주간 트렌딩 반환")
+    fun testGetTrendingCoversWithWeekly() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("period", "WEEKLY"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content").isArray)
+    }
+
+    @Test
+    @DisplayName("period=MONTHLY로 호출 시 월간 트렌딩 반환")
+    fun testGetTrendingCoversWithMonthly() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("period", "MONTHLY"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content").isArray)
+    }
+
+    @Test
+    @DisplayName("잘못된 period 값으로 호출 시 500 에러 (예외 핸들러 미구현)")
+    fun testGetTrendingCoversWithInvalidPeriod() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("period", "INVALID"))
+            .andDo(print())
+            .andExpect(status().isInternalServerError)
+    }
+
+    @Test
+    @DisplayName("genre 필터링 없이 호출 시 모든 장르 반환")
+    fun testGetTrendingCoversWithoutGenre() {
+        mockMvc.perform(get("/api/cover/trending"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(3))  // ROCK 2개 + HIPHOP 1개
+    }
+
+    @Test
+    @DisplayName("genre=K_POP으로 필터링 시 K_POP 장르만 반환")
+    fun testGetTrendingCoversWithRockGenre() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("genre", "K_POP"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(1))  // K_POP 1개만
+    }
+
+    @Test
+    @DisplayName("genre=POP으로 필터링 시 POP 장르만 반환")
+    fun testGetTrendingCoversWithHiphopGenre() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("genre", "POP"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(1))  // POP 1개만
+    }
+
+    @Test
+    @DisplayName("period와 genre를 함께 사용")
+    fun testGetTrendingCoversWithPeriodAndGenre() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("period", "WEEKLY")
+            .param("genre", "K_POP"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(1))
+    }
+
+    @Test
+    @DisplayName("페이징 처리 확인 - page=0, size=2")
+    fun testGetTrendingCoversWithPagination() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("page", "0")
+            .param("size", "2"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(2))
+            .andExpect(jsonPath("$.data.totalElements").value(3))
+            .andExpect(jsonPath("$.data.totalPages").value(2))
+    }
+
+    @Test
+    @DisplayName("페이징 처리 확인 - page=1, size=2")
+    fun testGetTrendingCoversWithSecondPage() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("page", "1")
+            .param("size", "2"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(1))  // 마지막 1개
+            .andExpect(jsonPath("$.data.totalElements").value(3))
+    }
+
+    @Test
+    @DisplayName("모든 파라미터 조합 테스트")
+    fun testGetTrendingCoversWithAllParams() {
+        mockMvc.perform(get("/api/cover/trending")
+            .param("period", "WEEKLY")
+            .param("genre", "K_POP")
+            .param("page", "0")
+            .param("size", "10"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content").isArray)
+    }
+}

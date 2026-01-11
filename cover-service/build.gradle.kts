@@ -38,8 +38,19 @@ dependencies {
     implementation(project(":shared-library")) {
         exclude(group = "org.springframework.boot", module = "spring-boot-starter-security")
     }
+
+    // Test dependencies
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
+    testRuntimeOnly("com.h2database:h2")
 }
 
 tasks.bootJar {
     mainClass.set("com.covercloud.cover.CoverServiceApplicationKt")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

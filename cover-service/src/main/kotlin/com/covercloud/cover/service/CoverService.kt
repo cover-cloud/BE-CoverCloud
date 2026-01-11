@@ -233,18 +233,19 @@ class CoverService(
     }
 
     fun getTrendingCovers(
-        period: TrendingPeriod,
+        period: TrendingPeriod?,
         page: Int = 0,
         size: Int = 20,
         genre: String? = null
     ): PageResponse<TrendingCoverResponse> {
-        // 기간 시작 시점 계산
+        // period가 null이면 전체 기간, 있으면 해당 기간 시작 시점 계산
         val startDate = when (period) {
             TrendingPeriod.DAILY -> LocalDateTime.now().toLocalDate().atStartOfDay()
             TrendingPeriod.WEEKLY -> LocalDateTime.now()
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .toLocalDate().atStartOfDay()
             TrendingPeriod.MONTHLY -> LocalDateTime.now().withDayOfMonth(1).toLocalDate().atStartOfDay()
+            null -> LocalDateTime.of(2000, 1, 1, 0, 0)  // 전체 기간
         }
 
         // 기간 내 좋아요 수 조회

@@ -76,15 +76,16 @@ class CoverController (
 
     @GetMapping("/trending")
     fun getTrendingCovers(
-        @RequestParam period: String,
+        @RequestParam(required = false) period: String?,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,
         @RequestParam(required = false) genre: String?
     ): ResponseEntity<ApiResponse<PageResponse<TrendingCoverResponse>>> {
-        val trendingPeriod = when (period.uppercase()) {
+        val trendingPeriod = when (period?.uppercase()) {
             "DAILY" -> TrendingPeriod.DAILY
             "WEEKLY" -> TrendingPeriod.WEEKLY
             "MONTHLY" -> TrendingPeriod.MONTHLY
+            null -> null  // period가 없으면 전체
             else -> throw IllegalArgumentException("Invalid period: $period. Use DAILY, WEEKLY, or MONTHLY")
         }
         

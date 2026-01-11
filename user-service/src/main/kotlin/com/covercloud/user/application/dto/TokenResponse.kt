@@ -2,7 +2,7 @@ package com.covercloud.user.application.dto
 
 data class TokenResponse(
     val accessToken: String,
-    val refreshToken: String,
+    val refreshToken: String? = null,  // refresh 시에는 null
     val tokenType: String = "Bearer"
 )
 
