@@ -7,12 +7,12 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud" />
-            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/api-gateway" />
-            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/cover-service" />
-            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/music-service" />
-            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/shared-library" />
-            <option value="$PROJECT_DIR$/../../개발/BE-CoverCloud/user-service" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/api-gateway" />
+            <option value="$PROJECT_DIR$/cover-service" />
+            <option value="$PROJECT_DIR$/music-service" />
+            <option value="$PROJECT_DIR$/shared-library" />
+            <option value="$PROJECT_DIR$/user-service" />
           </set>
         </option>
       </GradleProjectSettings>

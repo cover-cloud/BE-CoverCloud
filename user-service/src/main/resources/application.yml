@@ -2,6 +2,9 @@ server:
   port: 8081
   forward-headers-strategy: framework
 
+cookie:
+  domain: ${COOKIE_DOMAIN:}
+
 spring:
   application:
     name: user-service
