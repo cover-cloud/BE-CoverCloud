@@ -70,6 +70,9 @@ jobs:
             KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
             NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
             NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
+            SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
+            SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
+            COOKIE_DOMAIN=${{ secrets.COOKIE_DOMAIN }}
             EOF
             chmod 600 /home/covercloudofficial/deploy/.env
             echo "wrote /home/covercloudofficial/deploy/.env"
