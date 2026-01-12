@@ -7,6 +7,7 @@ import com.covercloud.user.infrastructure.UserRepository
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Component
 @Component
 class OAuth2SuccessHandler(
     private val authService: AuthService,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    @Value("\${cookie.domain:}")
+    private val cookieDomain: String
 ) : AuthenticationSuccessHandler {
 
     private val logger = LoggerFactory.getLogger(OAuth2SuccessHandler::class.java)
@@ -84,7 +87,9 @@ class OAuth2SuccessHandler(
             isHttpOnly = true
             secure = false
             maxAge = 60 * 60 * 24 * 7 // 7일
-            // domain = "34.47.76.202"
+            if (cookieDomain.isNotBlank()) {
+                domain = cookieDomain
+            }
         }
         response.addCookie(refreshTokenCookie)
 
