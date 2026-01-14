@@ -138,7 +138,7 @@ class CoverServiceTest {
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
 
         // When
-        val result = coverService.getTrendingCovers(TrendingPeriod.WEEKLY, 0, 10, "K_POP")
+    val result = coverService.getTrendingCovers(TrendingPeriod.WEEKLY, 0, 10, listOf("K_POP"))
 
         // Then
         assertEquals(2, result.content.size)
