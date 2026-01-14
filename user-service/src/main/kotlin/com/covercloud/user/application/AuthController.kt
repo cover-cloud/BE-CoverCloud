@@ -1,7 +1,8 @@
 package com.covercloud.user.application
 
 import com.covercloud.shared.response.ApiResponse
-import com.covercloud.user.application.dto.RefreshTokenRequest
+import org.springframework.web.bind.annotation.CookieValue
+import jakarta.servlet.http.HttpServletResponse
 import com.covercloud.user.application.dto.TokenResponse
 import com.covercloud.user.application.dto.UserInfoResponse
 import org.springframework.http.ResponseEntity
@@ -131,12 +132,26 @@ class AuthController(
 
     /**
      * Refresh Token으로 Access Token 재발급
+     * refreshToken은 HttpOnly 쿠키에서 자동으로 가져옴
      */
     @PostMapping("/refresh")
     fun refreshToken(
-        @RequestBody request: RefreshTokenRequest
+        @CookieValue(name = "refreshToken", required = false) refreshToken: String?,
+        response: HttpServletResponse
     ): ResponseEntity<ApiResponse<TokenResponse>> {
-        val tokens = authService.refreshAccessToken(request)
+        if (refreshToken == null) {
+            return ResponseEntity.status(401).body(
+                ApiResponse(
+                    success = false,
+                    data = null,
+                    message = "Refresh token not found in cookies"
+                )
+            )
+        }
+
+        val tokens = authService.refreshAccessToken(refreshToken)
+
+        // 새로운 accessToken을 응답 바디에만 담음
         return ResponseEntity.ok(
             ApiResponse(
                 success = true,

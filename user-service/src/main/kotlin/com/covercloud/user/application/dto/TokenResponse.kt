@@ -6,9 +6,10 @@ data class TokenResponse(
     val tokenType: String = "Bearer"
 )
 
-data class RefreshTokenRequest(
-    val refreshToken: String
-)
+// Deprecated: RefreshTokenRequest는 쿠키로 대체됨
+// data class RefreshTokenRequest(
+//     val refreshToken: String
+// )
 
 data class UserInfoResponse(
     val userId: Long,
