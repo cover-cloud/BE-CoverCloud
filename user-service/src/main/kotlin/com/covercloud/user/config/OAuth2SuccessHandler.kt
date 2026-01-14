@@ -87,7 +87,7 @@ class OAuth2SuccessHandler(
         val cookieBuilder = org.springframework.http.ResponseCookie.from("refreshToken", tokens.refreshToken)
             .path("/")
             .httpOnly(true)
-            .secure(true)
+            .secure(false)
             .sameSite("None")
             .maxAge(60L * 60L * 24L * 7L) // 7일
 
