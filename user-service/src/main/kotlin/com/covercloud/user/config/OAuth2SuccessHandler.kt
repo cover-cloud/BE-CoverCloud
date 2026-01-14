@@ -82,16 +82,21 @@ class OAuth2SuccessHandler(
 
         val tokens = authService.generateTokens(user.id!!)
 
-        val refreshTokenCookie = jakarta.servlet.http.Cookie("refreshToken", tokens.refreshToken).apply {
-            path = "/"
-            isHttpOnly = true
-            secure = false
-            maxAge = 60 * 60 * 24 * 7 // 7일
-            if (cookieDomain.isNotBlank()) {
-                domain = cookieDomain
-            }
+        // 브라우저가 SameSite=None 인 경우 Secure=true를 요구하므로 SameSite=None, Secure, HttpOnly 로 설정
+        // Servlet Cookie는 SameSite를 직접 설정할 수 없으므로 ResponseCookie를 사용해 Set-Cookie 헤더로 추가합니다.
+        val cookieBuilder = org.springframework.http.ResponseCookie.from("refreshToken", tokens.refreshToken)
+            .path("/")
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .maxAge(60L * 60L * 24L * 7L) // 7일
+
+        if (cookieDomain.isNotBlank()) {
+            cookieBuilder.domain(cookieDomain)
         }
-        response.addCookie(refreshTokenCookie)
+
+        val responseCookie = cookieBuilder.build()
+        response.addHeader("Set-Cookie", responseCookie.toString())
 
         // 인증 성공 후 gateway(8080)로 accessToken을 쿼리로 리다이렉트
         response.sendRedirect("http://localhost:3000/auth/callback?accessToken=" + tokens.accessToken)
