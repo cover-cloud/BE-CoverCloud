@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import com.covercloud.cover.controller.dto.TrendingRequest
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -74,22 +75,36 @@ class CoverController (
         return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
     }
 
-    @GetMapping("/trending")
-    fun getTrendingCovers(
-        @RequestParam(required = false) period: String?,
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "20") size: Int,
-        @RequestParam(required = false) genre: String?
-    ): ResponseEntity<ApiResponse<PageResponse<TrendingCoverResponse>>> {
-        val trendingPeriod = when (period?.uppercase()) {
+//    @GetMapping("/trending")
+//    fun getTrendingCovers(
+//        @RequestParam(required = false) period: String?,
+//        @RequestParam(defaultValue = "0") page: Int,
+//        @RequestParam(defaultValue = "20") size: Int,
+//        @RequestParam(name = "genre", required = false) genres: List<String>?
+//    ): ResponseEntity<ApiResponse<PageResponse<TrendingCoverResponse>>> {
+//        val trendingPeriod = when (period?.uppercase()) {
+//            "DAILY" -> TrendingPeriod.DAILY
+//            "WEEKLY" -> TrendingPeriod.WEEKLY
+//            "MONTHLY" -> TrendingPeriod.MONTHLY
+//            null -> null  // period가 없으면 전체
+//            else -> throw IllegalArgumentException("Invalid period: $period. Use DAILY, WEEKLY, or MONTHLY")
+//        }
+//
+//    val trendingCovers = coverService.getTrendingCovers(trendingPeriod, page, size, genres)
+//        return ResponseEntity.ok(ApiResponse(success = true, data = trendingCovers))
+//    }
+
+    @PostMapping("/trending/search")
+    fun searchTrending(@RequestBody req: TrendingRequest): ResponseEntity<ApiResponse<PageResponse<TrendingCoverResponse>>> {
+        val trendingPeriod = when (req.period?.uppercase()) {
             "DAILY" -> TrendingPeriod.DAILY
             "WEEKLY" -> TrendingPeriod.WEEKLY
             "MONTHLY" -> TrendingPeriod.MONTHLY
             null -> null  // period가 없으면 전체
-            else -> throw IllegalArgumentException("Invalid period: $period. Use DAILY, WEEKLY, or MONTHLY")
+            else -> throw IllegalArgumentException("Invalid period: ${req.period}. Use DAILY, WEEKLY, or MONTHLY")
         }
-        
-        val trendingCovers = coverService.getTrendingCovers(trendingPeriod, page, size, genre)
+
+        val trendingCovers = coverService.getTrendingCovers(trendingPeriod, req.page, req.size, req.genres)
         return ResponseEntity.ok(ApiResponse(success = true, data = trendingCovers))
     }
 
