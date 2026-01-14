@@ -236,7 +236,7 @@ class CoverService(
         period: TrendingPeriod?,
         page: Int = 0,
         size: Int = 20,
-        genre: String? = null
+        genres: List<String>? = null
     ): PageResponse<TrendingCoverResponse> {
         // period가 null이면 전체 기간, 있으면 해당 기간 시작 시점 계산
         val startDate = when (period) {
@@ -255,10 +255,19 @@ class CoverService(
         // 모든 커버 가져와서 증가량 계산 (좋아요 없어도 포함)
         var allCovers = coverRepository.findAll()
 
-        // 장르 필터링
-        if (genre != null) {
-            val coverGenre = CoverGenre.valueOf(genre.uppercase().replace("-", "_"))
-            allCovers = allCovers.filter { it.coverGenre == coverGenre }
+        // 장르 필터링: 여러 장르가 전달되면 OR 조건으로 포함
+        if (!genres.isNullOrEmpty()) {
+            val coverGenres = genres.mapNotNull { g ->
+                try {
+                    CoverGenre.valueOf(g.uppercase().replace("-", "_"))
+                } catch (e: Exception) {
+                    null
+                }
+            }.toSet()
+
+            if (coverGenres.isNotEmpty()) {
+                allCovers = allCovers.filter { it.coverGenre in coverGenres }
+            }
         }
 
         val trendingCovers = allCovers
