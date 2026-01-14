@@ -1,6 +1,5 @@
 package com.covercloud.user.application
 
-import com.covercloud.user.application.dto.RefreshTokenRequest
 import com.covercloud.user.application.dto.TokenResponse
 import com.covercloud.user.application.dto.UserInfoResponse
 import com.covercloud.user.config.JwtProvider
@@ -53,9 +52,7 @@ class AuthService(
      * Refresh Token으로 새로운 Access Token 발급 (Refresh Token은 유지)
      */
     @Transactional
-    fun refreshAccessToken(request: RefreshTokenRequest): TokenResponse {
-        val refreshToken = request.refreshToken
-
+    fun refreshAccessToken(refreshToken: String): TokenResponse {
         // Refresh Token 유효성 검증
         if (!jwtProvider.validateToken(refreshToken)) {
             throw IllegalArgumentException("Invalid refresh token")
