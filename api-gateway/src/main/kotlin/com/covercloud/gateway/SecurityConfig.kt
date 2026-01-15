@@ -30,6 +30,7 @@ class SecurityConfig(
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/list"),
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/list/**"),
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/trending"),
+                        ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, "/api/cover/trending/search"),
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/comment/list"),
                         ServerWebExchangeMatchers.pathMatchers("/api/auth/**"),
                         ServerWebExchangeMatchers.pathMatchers("/oauth2/**"),
@@ -56,6 +57,7 @@ class SecurityConfig(
                     .pathMatchers(HttpMethod.GET, "/api/cover/list").permitAll()
                     .pathMatchers(HttpMethod.GET, "/api/cover/list/**").permitAll()
                     .pathMatchers(HttpMethod.GET, "/api/cover/trending").permitAll()
+                    .pathMatchers(HttpMethod.POST, "/api/cover/trending/search").permitAll()
                     .pathMatchers(HttpMethod.GET, "/api/cover/comment/list").permitAll()
                     .pathMatchers("/api/auth/**").permitAll()
                     .pathMatchers("/oauth2/**").permitAll()
