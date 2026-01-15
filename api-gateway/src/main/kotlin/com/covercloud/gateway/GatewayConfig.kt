@@ -13,7 +13,6 @@ class GatewayConfig {
     fun corsWebFilter(): CorsWebFilter {
         val corsConfig = CorsConfiguration()
         corsConfig.allowedOrigins = listOf("http://localhost:3000", "http://localhost:3001")
-        corsConfig.allowedOriginPatterns = listOf("*")  // 모든 origin 허용
         corsConfig.maxAge = 3600L
         corsConfig.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
         corsConfig.allowedHeaders = listOf("*")

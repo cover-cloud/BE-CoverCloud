@@ -88,7 +88,7 @@ class OAuth2SuccessHandler(
             .path("/")
             .httpOnly(true)
             .secure(true)
-            .sameSite("None")
+            .sameSite("None") 
             .maxAge(60L * 60L * 24L * 7L) // 7일
 
         if (cookieDomain.isNotBlank()) {
