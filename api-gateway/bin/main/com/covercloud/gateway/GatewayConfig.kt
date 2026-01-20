@@ -12,7 +12,7 @@ class GatewayConfig {
     @Bean
     fun corsWebFilter(): CorsWebFilter {
         val corsConfig = CorsConfiguration()
-    corsConfig.allowedOrigins = listOf("http://localhost:3000", "http://localhost:3001", "https://www.covercloud.kr")
+    corsConfig.allowedOrigins = listOf("http://localhost:3000", "http://localhost:3001", "https://www.covercloud.kr", "https://covercloud-dev.netlify.app")
     corsConfig.allowedOriginPatterns = listOf("*")  // 모든 origin 허용
         corsConfig.maxAge = 3600L
         corsConfig.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")

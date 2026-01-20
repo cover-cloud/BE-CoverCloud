@@ -18,7 +18,9 @@ class OAuth2SuccessHandler(
     private val authService: AuthService,
     private val userRepository: UserRepository,
     @Value("\${cookie.domain:}")
-    private val cookieDomain: String
+    private val cookieDomain: String,
+    @Value("\${frontend.redirect.base-url:https://covercloud-dev.netlify.app/main}")
+    private val frontendRedirectBase: String
 ) : AuthenticationSuccessHandler {
 
     private val logger = LoggerFactory.getLogger(OAuth2SuccessHandler::class.java)
@@ -98,12 +100,13 @@ class OAuth2SuccessHandler(
         val responseCookie = cookieBuilder.build()
         response.addHeader("Set-Cookie", responseCookie.toString())
 
-        // 인증 성공 후 production 리디렉트 URL은 https를 사용하도록 설정
-        // 로컬 테스트는 여전히 localhost로 동작할 수 있으므로 Origin/Host 기반으로 선택할 수 있음
+        // 인증 성공 후 리다이렉트 URL을 환경에 따라 구성
+        // 로컬 개발일 경우 http localhost로, 그 외는 frontendRedirectBase(보통 https)로 리다이렉트합니다.
+        // 경고: accessToken을 쿼리 파라미터로 전달하면 브라우저 히스토리/리퍼러에 남을 수 있어 보안상 위험합니다.
         val redirectUrl = if (request.serverName == "localhost") {
             "http://localhost:3000/auth/callback?accessToken=${tokens.accessToken}"
         } else {
-            "https://www.covercloud.kr/auth/callback?accessToken=${tokens.accessToken}"
+            "${frontendRedirectBase}?accessToken=${tokens.accessToken}"
         }
 
         response.sendRedirect(redirectUrl)
