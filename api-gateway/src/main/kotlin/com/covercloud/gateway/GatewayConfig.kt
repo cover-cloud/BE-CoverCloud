@@ -12,11 +12,11 @@ class GatewayConfig {
     @Bean
     fun corsWebFilter(): CorsWebFilter {
         val corsConfig = CorsConfiguration()
-        corsConfig.allowedOrigins = listOf("http://localhost:3000", "http://localhost:3001")
-        corsConfig.maxAge = 3600L
+    corsConfig.allowedOrigins = listOf("http://localhost:3000", "http://localhost:3001", "https://www.covercloud.kr")
+    corsConfig.maxAge = 3600L
         corsConfig.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
         corsConfig.allowedHeaders = listOf("*")
-        corsConfig.exposedHeaders = listOf("Authorization", "Content-Type", "X-User-Id")  // 응답 헤더 노출
+    corsConfig.exposedHeaders = listOf("Authorization", "Content-Type", "X-User-Id", "Set-Cookie")  // 응답 헤더 노출
         corsConfig.allowCredentials = true
 
         val source = UrlBasedCorsConfigurationSource()

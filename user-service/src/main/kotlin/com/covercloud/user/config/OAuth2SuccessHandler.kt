@@ -98,8 +98,15 @@ class OAuth2SuccessHandler(
         val responseCookie = cookieBuilder.build()
         response.addHeader("Set-Cookie", responseCookie.toString())
 
-        // 인증 성공 후 gateway(8080)로 accessToken을 쿼리로 리다이렉트
-        response.sendRedirect("http://localhost:3000/auth/callback?accessToken=" + tokens.accessToken)
+        // 인증 성공 후 production 리디렉트 URL은 https를 사용하도록 설정
+        // 로컬 테스트는 여전히 localhost로 동작할 수 있으므로 Origin/Host 기반으로 선택할 수 있음
+        val redirectUrl = if (request.serverName == "localhost") {
+            "http://localhost:3000/auth/callback?accessToken=${tokens.accessToken}"
+        } else {
+            "https://www.covercloud.kr/auth/callback?accessToken=${tokens.accessToken}"
+        }
+
+        response.sendRedirect(redirectUrl)
     }
 
     data class Quintuple<A, B, C, D, E>(
