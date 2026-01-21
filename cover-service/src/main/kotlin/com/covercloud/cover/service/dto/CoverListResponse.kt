@@ -16,5 +16,6 @@ data class CoverListResponse(
     val likeCount: Long,
     val commentCount: Long,
     val tags: List<String>,
-    val createdAt: String
+    val createdAt: String,
+    val isLiked: Boolean = false
 )

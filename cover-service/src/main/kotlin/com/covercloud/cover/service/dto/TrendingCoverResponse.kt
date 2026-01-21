@@ -16,5 +16,6 @@ data class TrendingCoverResponse(
     val viewCount: Long,
     val commentCount: Long,
     val tags: List<String>,
-    val createdAt: String
+    val createdAt: String,
+    val isLiked: Boolean = false
 )
