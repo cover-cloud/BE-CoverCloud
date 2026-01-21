@@ -145,7 +145,8 @@ class CoverService(
         size: Int = 20,
         sortBy: String = "createdAt",
         sortDirection: String = "DESC",
-        genre: String? = null
+        genre: String? = null,
+        userId: Long? = null
     ): PageResponse<CoverListResponse> {
         val sort = if (sortDirection.uppercase() == "ASC") {
             Sort.by(sortBy).ascending()
@@ -164,7 +165,7 @@ class CoverService(
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         
         val content = coverPage.content.map { cover ->
-            buildCoverListResponse(cover, dateFormatter, includeMusic = false)
+            buildCoverListResponse(cover, dateFormatter, includeMusic = false, userId = userId)
         }
         
         return PageResponse(
@@ -179,8 +180,8 @@ class CoverService(
     }
 
     @Transactional
-    fun getCoverById(coverId: Long): CoverListResponse {
-        val cover = coverRepository.findByIdOrNull(coverId) 
+    fun getCoverById(coverId: Long, userId: Long? = null): CoverListResponse {
+        val cover = coverRepository.findByIdOrNull(coverId)
             ?: throw IllegalArgumentException("Cover not found with id: $coverId")
         
         // 조회수 증가
@@ -190,13 +191,14 @@ class CoverService(
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
         // 원본 음악 정보를 포함하여 응답 생성
-        return buildCoverListResponse(cover, dateFormatter, includeMusic = true)
+        return buildCoverListResponse(cover, dateFormatter, includeMusic = true, userId = userId)
     }
 
     private fun buildCoverListResponse(
         cover: Cover,
         dateFormatter: java.time.format.DateTimeFormatter,
-        includeMusic: Boolean = false
+        includeMusic: Boolean = false,
+        userId: Long? = null
     ): CoverListResponse {
         val tags = coverTagRepository.findAllByCoverId(cover.id!!)
             .map { it.tag.name }
@@ -214,6 +216,12 @@ class CoverService(
             }
         }
 
+        val isLiked = if (userId != null) {
+            coverLikeRepository.existsByCoverIdAndUserId(cover.id!!, userId)
+        } else {
+            false
+        }
+
         return CoverListResponse(
             coverId = cover.id!!,
             musicId = cover.musicId,
@@ -228,7 +236,8 @@ class CoverService(
             likeCount = cover.likeCount,
             commentCount = cover.commentCount,
             tags = tags,
-            createdAt = cover.createdAt?.format(dateFormatter) ?: ""
+            createdAt = cover.createdAt?.format(dateFormatter) ?: "",
+            isLiked = isLiked
         )
     }
 
@@ -236,7 +245,8 @@ class CoverService(
         period: TrendingPeriod?,
         page: Int = 0,
         size: Int = 20,
-        genres: List<String>? = null
+        genres: List<String>? = null,
+        userId: Long? = null
     ): PageResponse<TrendingCoverResponse> {
         // period가 null이면 전체 기간, 있으면 해당 기간 시작 시점 계산
         val startDate = when (period) {
@@ -293,6 +303,12 @@ class CoverService(
             val tags = coverTagRepository.findAllByCoverId(cover.id!!)
                 .map { it.tag.name }
 
+            val isLiked = if (userId != null) {
+                coverLikeRepository.existsByCoverIdAndUserId(cover.id!!, userId)
+            } else {
+                false
+            }
+
             TrendingCoverResponse(
                 coverId = cover.id!!,
                 musicId = cover.musicId,
@@ -307,7 +323,8 @@ class CoverService(
                 viewCount = cover.viewCount,
                 commentCount = cover.commentCount,
                 tags = tags,
-                createdAt = cover.createdAt?.format(dateFormatter) ?: ""
+                createdAt = cover.createdAt?.format(dateFormatter) ?: "",
+                isLiked = isLiked
             )
         }
 
@@ -343,7 +360,75 @@ class CoverService(
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
         val content = coverPage.content.map { cover ->
-            buildCoverListResponse(cover, dateFormatter, includeMusic = false)
+            buildCoverListResponse(cover, dateFormatter, includeMusic = false, userId = userId)
+        }
+
+        return PageResponse(
+            content = content,
+            pageNumber = coverPage.number,
+            pageSize = coverPage.size,
+            totalElements = coverPage.totalElements,
+            totalPages = coverPage.totalPages,
+            isFirst = coverPage.isFirst,
+            isLast = coverPage.isLast
+        )
+    }
+
+    fun searchCoversByTitle(
+        title: String,
+        page: Int = 0,
+        size: Int = 20,
+        sortBy: String = "createdAt",
+        sortDirection: String = "DESC",
+        userId: Long? = null
+    ): PageResponse<CoverListResponse> {
+        val sort = if (sortDirection.uppercase() == "ASC") {
+            Sort.by(sortBy).ascending()
+        } else {
+            Sort.by(sortBy).descending()
+        }
+
+        val pageable: Pageable = PageRequest.of(page, size, sort)
+        val coverPage = coverRepository.searchByTitle(title, pageable)
+
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        val content = coverPage.content.map { cover ->
+            buildCoverListResponse(cover, dateFormatter, includeMusic = false, userId = userId)
+        }
+
+        return PageResponse(
+            content = content,
+            pageNumber = coverPage.number,
+            pageSize = coverPage.size,
+            totalElements = coverPage.totalElements,
+            totalPages = coverPage.totalPages,
+            isFirst = coverPage.isFirst,
+            isLast = coverPage.isLast
+        )
+    }
+
+    fun searchCoversByTags(
+        tags: String,
+        page: Int = 0,
+        size: Int = 20,
+        sortBy: String = "createdAt",
+        sortDirection: String = "DESC",
+        userId: Long? = null
+    ): PageResponse<CoverListResponse> {
+        val sort = if (sortDirection.uppercase() == "ASC") {
+            Sort.by(sortBy).ascending()
+        } else {
+            Sort.by(sortBy).descending()
+        }
+
+        val pageable: Pageable = PageRequest.of(page, size, sort)
+        val coverPage = coverRepository.searchByTags(tags, pageable)
+
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        val content = coverPage.content.map { cover ->
+            buildCoverListResponse(cover, dateFormatter, includeMusic = false, userId = userId)
         }
 
         return PageResponse(

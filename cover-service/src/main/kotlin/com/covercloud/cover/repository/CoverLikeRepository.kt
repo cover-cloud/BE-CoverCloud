@@ -14,7 +14,8 @@ interface CoverLikeRepository : JpaRepository<CoverLike, Long> {
     fun deleteByCoverIdAndUserId(coverId: Long, userId: Long)
     fun findAllByCoverId(coverId: Long): List<CoverLike>
     fun countByCoverId(coverId: Long): Long
-    
+    fun existsByCoverIdAndUserId(coverId: Long, userId: Long): Boolean
+
     @Query("""
         SELECT cl.cover.id, COUNT(cl.id)
         FROM CoverLike cl

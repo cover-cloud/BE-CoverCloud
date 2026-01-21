@@ -228,9 +228,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -249,9 +251,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -269,9 +273,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -289,9 +295,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -309,9 +317,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isInternalServerError)
     }
@@ -327,9 +337,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -347,9 +359,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -368,9 +382,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -389,9 +405,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -408,9 +426,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -429,9 +449,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -451,9 +473,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -472,9 +496,11 @@ class CoverControllerTest {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -486,12 +512,130 @@ class CoverControllerTest {
     fun testSearchTrendingWithMinimalRequest() {
         val request = "{}"
 
-        mockMvc.perform(post("/api/cover/trending/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(request))
+        mockMvc.perform(
+            post("/api/cover/trending/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+        )
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.data.content").isArray)
+    }
+
+    @Test
+    @DisplayName("GET /search/title - 제목으로 검색 성공")
+    fun testSearchCoversByTitle() {
+        mockMvc.perform(
+            get("/api/cover/search/title")
+                .param("title", "Test Cover 1")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content").isArray)
+            .andExpect(jsonPath("$.data.content.length()").value(1))
+            .andExpect(jsonPath("$.data.content[0].coverTitle").value("Test Cover 1"))
+    }
+
+    @Test
+    @DisplayName("GET /search/title - 제목 부분 검색")
+    fun testSearchCoversByTitlePartialMatch() {
+        mockMvc.perform(
+            get("/api/cover/search/title")
+                .param("title", "Test")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(3))
+    }
+
+    @Test
+    @DisplayName("GET /search/title - 검색 결과 없음")
+    fun testSearchCoversByTitleNoResult() {
+        mockMvc.perform(
+            get("/api/cover/search/title")
+                .param("title", "NonExistent")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(0))
+            .andExpect(jsonPath("$.data.totalElements").value(0))
+    }
+
+    @Test
+    @DisplayName("GET /search/title - 페이징 처리")
+    fun testSearchCoversByTitleWithPagination() {
+        mockMvc.perform(
+            get("/api/cover/search/title")
+                .param("title", "Test")
+                .param("page", "0")
+                .param("size", "2")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(2))
+            .andExpect(jsonPath("$.data.totalElements").value(3))
+            .andExpect(jsonPath("$.data.totalPages").value(2))
+            .andExpect(jsonPath("$.data.isFirst").value(true))
+    }
+
+    @Test
+    @DisplayName("GET /search/title - 정렬 내림차순")
+    fun testSearchCoversByTitleWithDescSort() {
+        mockMvc.perform(
+            get("/api/cover/search/title")
+                .param("title", "Test")
+                .param("sortBy", "createdAt")
+                .param("sortDirection", "DESC")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(3))
+    }
+
+    @Test
+    @DisplayName("GET /search/title - 정렬 오름차순")
+    fun testSearchCoversByTitleWithAscSort() {
+        mockMvc.perform(
+            get("/api/cover/search/title")
+                .param("title", "Test")
+                .param("sortBy", "createdAt")
+                .param("sortDirection", "ASC")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(3))
+    }
+
+    @Test
+    @DisplayName("GET /search/tags - 태그로 검색")
+    fun testSearchCoversByTags() {
+        mockMvc.perform(
+            get("/api/cover/search/tags")
+                .param("tags", "test")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content").isArray)
+    }
+
+    @Test
+    @DisplayName("GET /search/tags - 검색 결과 없음")
+    fun testSearchCoversByTagsNoResult() {
+        mockMvc.perform(
+            get("/api/cover/search/tags")
+                .param("tags", "nonexistent")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data.content.length()").value(0))
     }
 }

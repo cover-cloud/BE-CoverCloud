@@ -54,9 +54,11 @@ class CommentController(
 
     @GetMapping("/list")
     fun getComments(
-        @RequestParam coverId: Long
+        @RequestParam coverId: Long,
+        httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Any>> {
-        val comments = commentService.getCommentsByCoverId(coverId)
+        val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
+        val comments = commentService.getCommentsByCoverId(coverId, userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = comments))
     }
 
@@ -67,6 +69,16 @@ class CommentController(
         val userId = authenticationContext.requireUserId(httpRequest)
         val comments = commentService.getCommentsByUserId(userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = comments))
+    }
+
+    @PostMapping("/like")
+    fun toggleLike(
+        @RequestParam commentId: Long,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<Any>> {
+        val userId = authenticationContext.requireUserId(httpRequest)
+        val commentResponse = commentService.toggleLike(commentId, userId)
+        return ResponseEntity.ok(ApiResponse(success = true, data = commentResponse))
     }
 
 }
