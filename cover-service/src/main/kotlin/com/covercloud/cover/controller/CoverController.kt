@@ -58,8 +58,12 @@ class CoverController (
     }
 
     @GetMapping("/list/{coverId}")
-    fun getCover(@PathVariable coverId: Long): ResponseEntity<ApiResponse<CoverListResponse>> {
-        val cover = coverService.getCoverById(coverId)
+    fun getCover(
+        @PathVariable coverId: Long,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<CoverListResponse>> {
+        val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
+        val cover = coverService.getCoverById(coverId, userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = cover))
     }
 
@@ -69,13 +73,41 @@ class CoverController (
         @RequestParam(defaultValue = "20") size: Int,
         @RequestParam(defaultValue = "createdAt") sortBy: String,
         @RequestParam(defaultValue = "DESC") sortDirection: String,
-        @RequestParam(required = false) genre: String?
+        @RequestParam(required = false) genre: String?,
+        httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
-        val coverList = coverService.getCovers(page, size, sortBy, sortDirection, genre)
+        val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
+        val coverList = coverService.getCovers(page, size, sortBy, sortDirection, genre, userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
     }
 
-//    @GetMapping("/trending")
+    @GetMapping("/search/title")
+    fun searchCoversByTitle(
+        @RequestParam title: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "createdAt") sortBy: String,
+        @RequestParam(defaultValue = "DESC") sortDirection: String,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
+        val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
+        val searchResult = coverService.searchCoversByTitle(title, page, size, sortBy, sortDirection, userId)
+        return ResponseEntity.ok(ApiResponse(success = true, data = searchResult))
+    }
+
+    @GetMapping("/search/tags")
+    fun searchCoversByTags(
+        @RequestParam tags: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "createdAt") sortBy: String,
+        @RequestParam(defaultValue = "DESC") sortDirection: String,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
+        val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
+        val searchResult = coverService.searchCoversByTags(tags, page, size, sortBy, sortDirection, userId)
+        return ResponseEntity.ok(ApiResponse(success = true, data = searchResult))
+    }
 //    fun getTrendingCovers(
 //        @RequestParam(required = false) period: String?,
 //        @RequestParam(defaultValue = "0") page: Int,
@@ -95,7 +127,11 @@ class CoverController (
 //    }
 
     @PostMapping("/trending/search")
-    fun searchTrending(@RequestBody req: TrendingRequest): ResponseEntity<ApiResponse<PageResponse<TrendingCoverResponse>>> {
+    fun searchTrending(
+        @RequestBody req: TrendingRequest,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<PageResponse<TrendingCoverResponse>>> {
+        val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
         val trendingPeriod = when (req.period?.uppercase()) {
             "DAILY" -> TrendingPeriod.DAILY
             "WEEKLY" -> TrendingPeriod.WEEKLY
@@ -104,7 +140,7 @@ class CoverController (
             else -> throw IllegalArgumentException("Invalid period: ${req.period}. Use DAILY, WEEKLY, or MONTHLY")
         }
 
-        val trendingCovers = coverService.getTrendingCovers(trendingPeriod, req.page, req.size, req.genres)
+        val trendingCovers = coverService.getTrendingCovers(trendingPeriod, req.page, req.size, req.genres, userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = trendingCovers))
     }
 

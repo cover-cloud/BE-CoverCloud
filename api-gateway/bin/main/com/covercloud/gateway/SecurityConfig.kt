@@ -29,7 +29,10 @@ class SecurityConfig(
                     OrServerWebExchangeMatcher(
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/list"),
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/list/**"),
+                        ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/list/search/**"),
+
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/trending"),
+                        ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/trending/**"),
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/comment/list"),
                         ServerWebExchangeMatchers.pathMatchers("/api/auth/**"),
                         ServerWebExchangeMatchers.pathMatchers("/oauth2/**"),
