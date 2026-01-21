@@ -81,6 +81,7 @@ class CoverController (
         return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
     }
 
+
     @GetMapping("/search/title")
     fun searchCoversByTitle(
         @RequestParam title: String,
