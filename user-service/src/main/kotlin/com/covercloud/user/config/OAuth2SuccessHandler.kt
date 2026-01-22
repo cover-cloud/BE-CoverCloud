@@ -100,13 +100,23 @@ class OAuth2SuccessHandler(
         val responseCookie = cookieBuilder.build()
         response.addHeader("Set-Cookie", responseCookie.toString())
 
-        // 인증 성공 후 리다이렉트 URL을 환경에 따라 구성
-        // 로컬 개발일 경우 http localhost로, 그 외는 frontendRedirectBase(보통 https)로 리다이렉트합니다.
-        // 경고: accessToken을 쿼리 파라미터로 전달하면 브라우저 히스토리/리퍼러에 남을 수 있어 보안상 위험합니다.
-        val redirectUrl = if (request.serverName == "localhost") {
-            "http://localhost:3000/auth/callback?accessToken=${tokens.accessToken}"
-        } else {
-            "${frontendRedirectBase}?accessToken=${tokens.accessToken}"
+        // 인증 성공 후: 보안상 accessToken을 URL에 담지 않습니다.
+        // 대신 refreshToken은 HttpOnly 쿠키로 설정되어 있으므로
+        // 프론트엔드의 콜백 페이지(/auth/callback)로 리다이렉트한 뒤
+        // 프론트엔드에서 POST /api/auth/refresh 를 호출하여 JSON으로 accessToken을 받아가도록 합니다.
+
+        val redirectUrl = try {
+            if (request.serverName == "localhost") {
+                "http://localhost:3000/auth/callback"
+            } else {
+                // frontendRedirectBase 값에서 origin 부분만 추출해서 /auth/callback 으로 리다이렉트
+                val uri = java.net.URI.create(frontendRedirectBase)
+                val portPart = if (uri.port == -1) "" else ":${uri.port}"
+                "${uri.scheme}://${uri.host}${portPart}/auth/callback"
+            }
+        } catch (e: Exception) {
+            logger.warn("[OAuth2SuccessHandler] frontendRedirectBase parse failed, fallback to /auth/callback", e)
+            "/auth/callback"
         }
 
         response.sendRedirect(redirectUrl)
