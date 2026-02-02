@@ -59,10 +59,17 @@ class CoverController (
     }
 
     @PostMapping("/delete")
-    fun deleteCover(@RequestParam coverId: Long): ResponseEntity<ApiResponse<String>>{
-        coverService.deleteCover(coverId)
-        return ResponseEntity.ok(ApiResponse(success = true, message = "Cover deleted successfully"))
-
+    fun deleteCover(
+        @RequestParam coverId: Long,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<String>> {
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            coverService.deleteCover(coverId)
+            ResponseEntity.ok(ApiResponse(success = true, message = "Cover deleted successfully"))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
     @GetMapping("/list/{coverId}")
