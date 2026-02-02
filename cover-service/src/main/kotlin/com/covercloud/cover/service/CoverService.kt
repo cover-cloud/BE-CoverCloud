@@ -262,7 +262,10 @@ class CoverService(
             tags = tags,
             createdAt = cover.createdAt?.format(dateFormatter) ?: "",
             isLiked = isLiked,
-            isAuthorDeleted = isAuthorDeleted
+            isAuthorDeleted = isAuthorDeleted,
+            isReported = cover.isReported,
+            reportReason = cover.reportReason,
+            reportDescription = cover.reportDescription
         )
     }
 
