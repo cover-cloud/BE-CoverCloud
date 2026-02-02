@@ -1,6 +1,7 @@
 package com.covercloud.cover.service.dto
 
 import com.covercloud.cover.domain.CoverGenre
+import com.covercloud.cover.domain.ReportReason
 
 data class CoverListResponse(
     val coverId: Long,
@@ -20,5 +21,8 @@ data class CoverListResponse(
     val tags: List<String>,
     val createdAt: String,
     val isLiked: Boolean = false,
-    val isAuthorDeleted: Boolean = false  // 작성자가 삭제된 계정인지 표시
+    val isAuthorDeleted: Boolean = false,  // 작성자가 삭제된 계정인지 표시
+    val isReported: Boolean = false,  // 신고 여부
+    val reportReason: ReportReason? = null,  // 신고 사유
+    val reportDescription: String? = null  // 신고 설명
 )
