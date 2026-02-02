@@ -6,14 +6,12 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
-import com.covercloud.cover.domain.Cover
 
 @Repository
 interface CoverLikeRepository : JpaRepository<CoverLike, Long> {
-    fun findByCoverIdAndUserId(coverId: Long, userId: Long): CoverLike?
     fun deleteByCoverIdAndUserId(coverId: Long, userId: Long)
+    fun deleteAllByCoverId(coverId: Long)
     fun findAllByCoverId(coverId: Long): List<CoverLike>
-    fun countByCoverId(coverId: Long): Long
     fun existsByCoverIdAndUserId(coverId: Long, userId: Long): Boolean
 
     @Query("""

@@ -33,9 +33,13 @@ class CoverController (
         @RequestBody request: CoverRequest,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Any>>  {
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val coverResponse = coverService.uploadCover(request.toDto(), userId)
-        return ResponseEntity.ok(ApiResponse(success = true, data = coverResponse))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val coverResponse = coverService.uploadCover(request.toDto(), userId)
+            ResponseEntity.ok(ApiResponse(success = true, data = coverResponse))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
 
@@ -45,9 +49,13 @@ class CoverController (
         @RequestBody request: CoverRequest,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Any>>  {
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val coverResponse = coverService.updateCover(coverId, request.toDto())
-        return ResponseEntity.ok(ApiResponse(success = true, data = coverResponse))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val coverResponse = coverService.updateCover(coverId, request.toDto())
+            ResponseEntity.ok(ApiResponse(success = true, data = coverResponse))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
     @PostMapping("/delete")
@@ -154,9 +162,13 @@ class CoverController (
         @RequestParam(defaultValue = "createdAt") sortBy: String,
         @RequestParam(defaultValue = "DESC") sortDirection: String
     ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val coverList = coverService.getCoversByUserId(userId, page, size, sortBy, sortDirection)
-        return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val coverList = coverService.getCoversByUserId(userId, page, size, sortBy, sortDirection)
+            ResponseEntity.ok(ApiResponse(success = true, data = coverList))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
     @PostMapping("/{coverId}/like")
@@ -164,23 +176,27 @@ class CoverController (
         @PathVariable coverId: Long,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Map<String, Any>>> {
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val success = likeService.like(coverId, userId)
-        
-        if (success) {
-            val newCount = likeService.getLikeCount(coverId)
-            return ResponseEntity.ok(ApiResponse(
-                success = true, 
-                data = mapOf(
-                    "liked" to true,
-                    "likeCount" to newCount
-                )
-            ))
-        } else {
-            return ResponseEntity.ok(ApiResponse(
-                success = false, 
-                message = "Already liked or cover not found"
-            ))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val success = likeService.like(coverId, userId)
+
+            if (success) {
+                val newCount = likeService.getLikeCount(coverId)
+                ResponseEntity.ok(ApiResponse(
+                    success = true,
+                    data = mapOf(
+                        "liked" to true,
+                        "likeCount" to newCount
+                    )
+                ))
+            } else {
+                ResponseEntity.ok(ApiResponse(
+                    success = false,
+                    message = "Already liked or cover not found"
+                ))
+            }
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
         }
     }
 
@@ -189,23 +205,27 @@ class CoverController (
         @PathVariable coverId: Long,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Map<String, Any>>> {
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val success = likeService.unlike(coverId, userId)
-        
-        if (success) {
-            val newCount = likeService.getLikeCount(coverId)
-            return ResponseEntity.ok(ApiResponse(
-                success = true, 
-                data = mapOf(
-                    "liked" to false,
-                    "likeCount" to newCount
-                )
-            ))
-        } else {
-            return ResponseEntity.ok(ApiResponse(
-                success = false, 
-                message = "Not liked previously or cover not found"
-            ))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val success = likeService.unlike(coverId, userId)
+
+            if (success) {
+                val newCount = likeService.getLikeCount(coverId)
+                ResponseEntity.ok(ApiResponse(
+                    success = true,
+                    data = mapOf(
+                        "liked" to false,
+                        "likeCount" to newCount
+                    )
+                ))
+            } else {
+                ResponseEntity.ok(ApiResponse(
+                    success = false,
+                    message = "Not liked previously or cover not found"
+                ))
+            }
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
         }
     }
 
@@ -214,17 +234,39 @@ class CoverController (
         @PathVariable coverId: Long,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Map<String, Any>>> {
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val hasLiked = likeService.hasLiked(coverId, userId)
-        val likeCount = likeService.getLikeCount(coverId)
-        
-        return ResponseEntity.ok(ApiResponse(
-            success = true,
-            data = mapOf(
-                "hasLiked" to hasLiked,
-                "likeCount" to likeCount
-            )
-        ))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val hasLiked = likeService.hasLiked(coverId, userId)
+            val likeCount = likeService.getLikeCount(coverId)
+
+            ResponseEntity.ok(ApiResponse(
+                success = true,
+                data = mapOf(
+                    "hasLiked" to hasLiked,
+                    "likeCount" to likeCount
+                )
+            ))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
+    }
+
+    // ✅ 사용자가 댓글을 단 커버들 조회
+    @GetMapping("/my/comments")
+    fun getCoversByUserComments(
+        httpRequest: HttpServletRequest,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "createdAt") sortBy: String,
+        @RequestParam(defaultValue = "DESC") sortDirection: String
+    ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val coverList = coverService.getCoversByUserComments(userId, page, size, sortBy, sortDirection)
+            ResponseEntity.ok(ApiResponse(success = true, data = coverList))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
 }

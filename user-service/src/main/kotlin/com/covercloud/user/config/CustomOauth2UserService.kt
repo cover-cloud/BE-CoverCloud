@@ -74,6 +74,12 @@ class CustomOauth2UserService (
                 )
             }
 
+        // ✅ 삭제된 계정의 로그인 방지
+        if (user.isDeleted) {
+            logger.warn("[$provider] 삭제된 계정으로의 로그인 시도: socialId=$socialId")
+            throw IllegalArgumentException("This account has been deleted and cannot be accessed")
+        }
+
         logger.info("[$provider] 최종 User 정보: id=${user.id}, email=${user.email}")
 
         val userNameAttribute = userRequest.clientRegistration

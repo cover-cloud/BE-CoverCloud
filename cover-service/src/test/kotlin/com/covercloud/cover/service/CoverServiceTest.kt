@@ -12,17 +12,21 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import java.time.LocalDateTime
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 class CoverServiceTest {
@@ -346,4 +350,69 @@ class CoverServiceTest {
         assertEquals(3, result.content.size)
         verify(coverRepository).searchByTitle(eq(searchTitle), any())
     }
+
+    @Test
+    @DisplayName("deleteCover - 좋아요가 있는 커버 삭제 성공")
+    fun testDeleteCoverWithLikes() {
+        // Given
+        val coverId = 1L
+        val cover = testCovers[0]
+
+        whenever(coverRepository.findById(coverId)).thenReturn(Optional.of(cover))
+
+        // When
+        coverService.deleteCover(coverId)
+
+        // Then
+        verify(coverLikeRepository).deleteAllByCoverId(coverId)
+        verify(coverTagRepository).deleteAllByCoverId(cover.id!!)
+        verify(coverRepository).delete(cover)
+    }
+
+    @Test
+    @DisplayName("deleteCover - 좋아요 없는 커버 삭제 성공")
+    fun testDeleteCoverWithoutLikes() {
+        // Given
+        val coverId = 2L
+        val cover = Cover(
+            userId = 2L,
+            musicId = 2L,
+            link = "https://example.com/2",
+            coverTitle = "Cover 2",
+            coverArtist = "Artist 2",
+            coverGenre = CoverGenre.POP
+        ).apply {
+            id = coverId
+            likeCount = 0
+        }
+
+        whenever(coverRepository.findById(coverId)).thenReturn(Optional.of(cover))
+
+        // When
+        coverService.deleteCover(coverId)
+
+        // Then
+        verify(coverLikeRepository).deleteAllByCoverId(coverId)
+        verify(coverTagRepository).deleteAllByCoverId(cover.id!!)
+        verify(coverRepository).delete(cover)
+    }
+
+    @Test
+    @DisplayName("deleteCover - 존재하지 않는 커버 삭제 실패")
+    fun testDeleteCoverNotFound() {
+        // Given
+        val coverId = 999L
+
+        whenever(coverRepository.findById(coverId)).thenReturn(Optional.empty())
+
+        // When & Then
+        assertThrows<ChangeSetPersister.NotFoundException> {
+            coverService.deleteCover(coverId)
+        }
+
+        verify(coverLikeRepository, Mockito.never()).deleteAllByCoverId(coverId)
+        verify(coverTagRepository, Mockito.never()).deleteAllByCoverId(any())
+        verify(coverRepository, Mockito.never()).delete(any())
+    }
+
 }

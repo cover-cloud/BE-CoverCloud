@@ -9,13 +9,21 @@ logs/
 
 # Ignore Gradle build output directory
 build
+build/
+.gradle/
+*.gradle.bak
+
 
 # # Application configuration
 # **/application.yml
 # **/application.yaml
 # **/application-*.yml
 # **/application-*.yaml
-
+/logs/
+/out/
+*.pid
+*.log
+*.class
 # IDE
 .idea/
 .vscode/

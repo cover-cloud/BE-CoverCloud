@@ -8,7 +8,6 @@ import com.covercloud.user.application.dto.UserInfoResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -149,16 +148,24 @@ class AuthController(
             )
         }
 
-        val tokens = authService.refreshAccessToken(refreshToken)
-
-        // 새로운 accessToken을 응답 바디에만 담음
-        return ResponseEntity.ok(
-            ApiResponse(
-                success = true,
-                data = tokens,
-                message = "Token refreshed successfully"
+        return try {
+            val tokens = authService.refreshAccessToken(refreshToken)
+            ResponseEntity.ok(
+                ApiResponse(
+                    success = true,
+                    data = tokens,
+                    message = "Token refreshed successfully"
+                )
             )
-        )
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(401).body(
+                ApiResponse(
+                    success = false,
+                    data = null,
+                    message = "Invalid or expired refresh token"
+                )
+            )
+        }
     }
 
     /**
@@ -168,14 +175,24 @@ class AuthController(
     fun getUserInfo(
         @RequestHeader("Authorization") authHeader: String
     ): ResponseEntity<ApiResponse<UserInfoResponse>> {
-        val token = authHeader.removePrefix("Bearer ")
-        val userInfo = authService.getUserInfo(token)
-        return ResponseEntity.ok(
-            ApiResponse(
-                success = true,
-                data = userInfo
+        return try {
+            val token = authHeader.removePrefix("Bearer ")
+            val userInfo = authService.getUserInfo(token)
+            ResponseEntity.ok(
+                ApiResponse(
+                    success = true,
+                    data = userInfo
+                )
             )
-        )
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(401).body(
+                ApiResponse(
+                    success = false,
+                    data = null,
+                    message = "Invalid or expired access token"
+                )
+            )
+        }
     }
 
     /**
@@ -185,15 +202,24 @@ class AuthController(
     fun logout(
         @RequestHeader("Authorization") authHeader: String
     ): ResponseEntity<ApiResponse<String>> {
-        val token = authHeader.removePrefix("Bearer ")
-        val userId = authService.getUserInfo(token).userId
-        authService.logout(userId)
-        return ResponseEntity.ok(
-            ApiResponse(
-                success = true,
-                message = "Logged out successfully"
+        return try {
+            val token = authHeader.removePrefix("Bearer ")
+            val userId = authService.getUserInfo(token).userId
+            authService.logout(userId)
+            ResponseEntity.ok(
+                ApiResponse(
+                    success = true,
+                    message = "Logged out successfully"
+                )
             )
-        )
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(401).body(
+                ApiResponse(
+                    success = false,
+                    message = "Invalid or expired access token"
+                )
+            )
+        }
     }
 
     /**
