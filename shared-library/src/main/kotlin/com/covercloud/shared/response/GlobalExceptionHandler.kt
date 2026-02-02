@@ -15,9 +15,16 @@ class GlobalExceptionHandler {
             .body(ApiResponse(false, null, ex.message))
     }
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgument(ex: IllegalArgumentException): ResponseEntity<ApiResponse<Nothing>> {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(ApiResponse(false, null, ex.message ?: "Invalid or expired access token"))
+    }
+
     @ExceptionHandler(Exception::class)
     fun handleException(ex: Exception): ResponseEntity<ApiResponse<Nothing>> {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ApiResponse(false, null, ex.message ?: "Unknown error"))
     }
 }
+

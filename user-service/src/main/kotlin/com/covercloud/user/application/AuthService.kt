@@ -97,6 +97,11 @@ class AuthService(
             throw IllegalArgumentException("User not found")
         }
 
+        // ✅ 삭제된 계정의 접근 방지
+        if (user.isDeleted) {
+            throw IllegalArgumentException("This account has been deleted and cannot be accessed")
+        }
+
         return UserInfoResponse(
             userId = user.id!!,
             nickname = user.nickname,

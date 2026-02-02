@@ -26,9 +26,13 @@ class CommentController(
         @RequestBody request:CommentRequest,
         httpRequest: HttpServletRequest,
     ): ResponseEntity<ApiResponse<Any>>{
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val commentResponse = commentService.addComment(request.toDto(), userId)
-        return ResponseEntity.ok(ApiResponse(success = true, data = commentResponse))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val commentResponse = commentService.addComment(request.toDto(), userId)
+            ResponseEntity.ok(ApiResponse(success = true, data = commentResponse))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
     @PostMapping("/update")
@@ -37,9 +41,13 @@ class CommentController(
         @RequestBody request:UpdateCommentRequest,
         httpRequest: HttpServletRequest,
     ): ResponseEntity<ApiResponse<Any>>{
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val commentResponse = commentService.updateComment(commentId, request.toDto(), userId)
-        return ResponseEntity.ok(ApiResponse(success = true, data = commentResponse))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val commentResponse = commentService.updateComment(commentId, request.toDto(), userId)
+            ResponseEntity.ok(ApiResponse(success = true, data = commentResponse))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
     @PostMapping("/delete")
@@ -47,28 +55,26 @@ class CommentController(
         @RequestParam commentId: Long,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<String>> {
-        val userId = authenticationContext.requireUserId(httpRequest)
-        commentService.deleteComment(commentId, userId)
-        return ResponseEntity.ok(ApiResponse(success = true, message = "Comment deleted successfully"))
-    }
-
-    @GetMapping("/list")
-    fun getComments(
-        @RequestParam coverId: Long,
-        httpRequest: HttpServletRequest
-    ): ResponseEntity<ApiResponse<Any>> {
-        val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
-        val comments = commentService.getCommentsByCoverId(coverId, userId)
-        return ResponseEntity.ok(ApiResponse(success = true, data = comments))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            commentService.deleteComment(commentId, userId)
+            ResponseEntity.ok(ApiResponse(success = true, message = "Comment deleted successfully"))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
     @GetMapping("/my")
     fun getMyComments(
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Any>> {
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val comments = commentService.getCommentsByUserId(userId)
-        return ResponseEntity.ok(ApiResponse(success = true, data = comments))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val comments = commentService.getCommentsByUserId(userId)
+            ResponseEntity.ok(ApiResponse(success = true, data = comments))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
     @PostMapping("/like")
@@ -76,9 +82,13 @@ class CommentController(
         @RequestParam commentId: Long,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<Any>> {
-        val userId = authenticationContext.requireUserId(httpRequest)
-        val commentResponse = commentService.toggleLike(commentId, userId)
-        return ResponseEntity.ok(ApiResponse(success = true, data = commentResponse))
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val commentResponse = commentService.toggleLike(commentId, userId)
+            ResponseEntity.ok(ApiResponse(success = true, data = commentResponse))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
     }
 
 }

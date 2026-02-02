@@ -25,4 +25,11 @@ interface CoverRepository : JpaRepository<Cover, Long> {
 		@Param("tags") tags: String,
 		pageable: Pageable
 	): Page<Cover>
+
+	// ✅ 사용자가 댓글을 단 커버들 조회
+	@Query("SELECT DISTINCT c FROM Cover c INNER JOIN Comment com ON c.id = com.cover.id WHERE com.userId = :userId ORDER BY c.createdAt DESC")
+	fun findCoversByUserComments(
+		@Param("userId") userId: Long,
+		pageable: Pageable
+	): Page<Cover>
 }
