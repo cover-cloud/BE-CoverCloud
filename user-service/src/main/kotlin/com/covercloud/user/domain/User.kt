@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "user")
@@ -21,9 +22,16 @@ class User(
 ) : BaseEntity() {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null
-    
+    var isDeleted: Boolean = false
+    var deletedAt: LocalDateTime? = null
+
     fun updateProfile(newNickname: String?, newProfileImage: String?) {
         newNickname?.let { this.nickname = it }
         newProfileImage?.let { this.profileImage = it }
+    }
+
+    fun delete() {
+        this.isDeleted = true
+        this.deletedAt = LocalDateTime.now()
     }
 }

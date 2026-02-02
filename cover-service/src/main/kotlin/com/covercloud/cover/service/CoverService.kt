@@ -13,6 +13,7 @@ import com.covercloud.cover.domain.CoverGenre
 //import com.covercloud.cover.global.security.SecurityUtil
 import com.covercloud.cover.infrastructure.dto.CreateMusicRequest
 import com.covercloud.cover.infrastructure.feign.MusicClient
+import com.covercloud.cover.infrastructure.feign.UserClient
 import com.covercloud.cover.repository.CoverRepository
 import com.covercloud.cover.repository.CoverTagRepository
 import com.covercloud.cover.repository.TagRepository
@@ -35,6 +36,7 @@ class CoverService(
     private val tagRepository: TagRepository,
     private val coverTagRepository: CoverTagRepository,
     private val musicClient: MusicClient,
+    private val userClient: UserClient,
     private val coverLikeRepository: CoverLikeRepository,
 ) {
     @Transactional
@@ -136,6 +138,7 @@ class CoverService(
     @Transactional
     fun deleteCover(coverId: Long) {
         val cover = coverRepository.findByIdOrNull(coverId) ?: throw NotFoundException()
+        coverLikeRepository.deleteAllByCoverId(coverId)
         coverTagRepository.deleteAllByCoverId(cover.id!!)
         coverRepository.delete(cover)
     }
@@ -222,10 +225,31 @@ class CoverService(
             false
         }
 
+        // ✅ 사용자 정보 조회 및 삭제된 사용자 처리
+        var nickname = "Unknown"
+        var profileImage: String? = null
+        var isAuthorDeleted = false
+
+        try {
+            val userProfile = userClient.getUserProfile(cover.userId).data
+            if (userProfile?.isDeleted == true) {
+                nickname = "익명 사용자"
+                profileImage = null
+                isAuthorDeleted = true
+            } else {
+                nickname = userProfile?.nickname ?: "Unknown"
+                profileImage = userProfile?.profileImageUrl
+            }
+        } catch (e: Exception) {
+            // 사용자 정보 조회 실패 시 기본값 유지
+        }
+
         return CoverListResponse(
             coverId = cover.id!!,
             musicId = cover.musicId,
             userId = cover.userId,
+            nickname = nickname,
+            profileImage = profileImage,
             coverArtist = cover.coverArtist,
             coverTitle = cover.coverTitle,
             originalArtist = originalArtist,
@@ -237,7 +261,8 @@ class CoverService(
             commentCount = cover.commentCount,
             tags = tags,
             createdAt = cover.createdAt?.format(dateFormatter) ?: "",
-            isLiked = isLiked
+            isLiked = isLiked,
+            isAuthorDeleted = isAuthorDeleted
         )
     }
 
@@ -424,6 +449,40 @@ class CoverService(
 
         val pageable: Pageable = PageRequest.of(page, size, sort)
         val coverPage = coverRepository.searchByTags(tags, pageable)
+
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        val content = coverPage.content.map { cover ->
+            buildCoverListResponse(cover, dateFormatter, includeMusic = false, userId = userId)
+        }
+
+        return PageResponse(
+            content = content,
+            pageNumber = coverPage.number,
+            pageSize = coverPage.size,
+            totalElements = coverPage.totalElements,
+            totalPages = coverPage.totalPages,
+            isFirst = coverPage.isFirst,
+            isLast = coverPage.isLast
+        )
+    }
+
+    // ✅ 사용자가 댓글을 단 커버들 조회
+    fun getCoversByUserComments(
+        userId: Long,
+        page: Int = 0,
+        size: Int = 20,
+        sortBy: String = "createdAt",
+        sortDirection: String = "DESC"
+    ): PageResponse<CoverListResponse> {
+        val sort = if (sortDirection.uppercase() == "ASC") {
+            Sort.by(sortBy).ascending()
+        } else {
+            Sort.by(sortBy).descending()
+        }
+
+        val pageable: Pageable = PageRequest.of(page, size, sort)
+        val coverPage = coverRepository.findCoversByUserComments(userId, pageable)
 
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
