@@ -38,7 +38,7 @@ class UserController(
         }
     }
 
-    @DeleteMapping("/account")
+    @PostMapping("/account/delete")
     fun deleteAccount(
         @CookieValue("accessToken") accessToken: String?
     ): ResponseEntity<ApiResponse<String>> {
