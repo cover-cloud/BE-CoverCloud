@@ -64,6 +64,17 @@ class CommentController(
         }
     }
 
+    @GetMapping("/list")
+    fun getComments(
+        @RequestParam coverId: Long,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ApiResponse<Any>> {
+        val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
+        val comments = commentService.getCommentsByCoverId(coverId, userId)
+        return ResponseEntity.ok(ApiResponse(success = true, data = comments))
+    }
+
+
     @GetMapping("/my")
     fun getMyComments(
         httpRequest: HttpServletRequest
