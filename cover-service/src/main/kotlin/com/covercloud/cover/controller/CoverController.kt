@@ -1,6 +1,7 @@
 package com.covercloud.cover.controller
 
 import com.covercloud.cover.controller.dto.CoverRequest
+import com.covercloud.cover.controller.dto.SearchSort
 import com.covercloud.cover.domain.TrendingPeriod
 import com.covercloud.cover.service.CoverService
 import com.covercloud.cover.service.LikeService
@@ -84,15 +85,19 @@ class CoverController (
 
     @GetMapping("/list")
     fun getCovers(
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "20") size: Int,
+        @RequestBody req: TrendingRequest,
         @RequestParam(defaultValue = "createdAt") sortBy: String,
-        @RequestParam(defaultValue = "DESC") sortDirection: String,
-        @RequestParam(required = false) genre: String?,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
+        val trendingPeriod = when (req.period?.uppercase()) {
+            "DAILY" -> TrendingPeriod.DAILY
+            "WEEKLY" -> TrendingPeriod.WEEKLY
+            "MONTHLY" -> TrendingPeriod.MONTHLY
+            null -> null  // period가 없으면 전체
+            else -> throw IllegalArgumentException("Invalid period: ${req.period}. Use DAILY, WEEKLY, or MONTHLY")
+        }
         val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
-        val coverList = coverService.getCovers(page, size, sortBy, sortDirection, genre, userId)
+        val coverList = coverService.getCovers(trendingPeriod,req.page, req.size, req.genres, userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = coverList))
     }
 
@@ -102,12 +107,11 @@ class CoverController (
         @RequestParam title: String,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,
-        @RequestParam(defaultValue = "createdAt") sortBy: String,
-        @RequestParam(defaultValue = "DESC") sortDirection: String,
+        @RequestParam(defaultValue = "LATEST") sortBy: SearchSort,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
         val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
-        val searchResult = coverService.searchCoversByTitle(title, page, size, sortBy, sortDirection, userId)
+        val searchResult = coverService.searchCoversByTitle(title, page, size, sortBy, userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = searchResult))
     }
 
@@ -116,31 +120,14 @@ class CoverController (
         @RequestParam tags: String,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,
-        @RequestParam(defaultValue = "createdAt") sortBy: String,
-        @RequestParam(defaultValue = "DESC") sortDirection: String,
+        @RequestParam(defaultValue = "LATEST") sortBy: SearchSort,
         httpRequest: HttpServletRequest
     ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
         val userId = try { authenticationContext.requireUserId(httpRequest) } catch (e: Exception) { null }
-        val searchResult = coverService.searchCoversByTags(tags, page, size, sortBy, sortDirection, userId)
+        val searchResult = coverService.searchCoversByTags(tags, page, size, sortBy, userId)
         return ResponseEntity.ok(ApiResponse(success = true, data = searchResult))
     }
-//    fun getTrendingCovers(
-//        @RequestParam(required = false) period: String?,
-//        @RequestParam(defaultValue = "0") page: Int,
-//        @RequestParam(defaultValue = "20") size: Int,
-//        @RequestParam(name = "genre", required = false) genres: List<String>?
-//    ): ResponseEntity<ApiResponse<PageResponse<TrendingCoverResponse>>> {
-//        val trendingPeriod = when (period?.uppercase()) {
-//            "DAILY" -> TrendingPeriod.DAILY
-//            "WEEKLY" -> TrendingPeriod.WEEKLY
-//            "MONTHLY" -> TrendingPeriod.MONTHLY
-//            null -> null  // period가 없으면 전체
-//            else -> throw IllegalArgumentException("Invalid period: $period. Use DAILY, WEEKLY, or MONTHLY")
-//        }
-//
-//    val trendingCovers = coverService.getTrendingCovers(trendingPeriod, page, size, genres)
-//        return ResponseEntity.ok(ApiResponse(success = true, data = trendingCovers))
-//    }
+
 
     @PostMapping("/trending/search")
     fun searchTrending(

@@ -20,4 +20,15 @@ class AuthenticationContext {
         return getCurrentUserId(request) 
             ?: throw IllegalStateException("User not authenticated")
     }
+
+    /**
+     * 요청에서 액세스 토큰 가져오기 (Authorization 헤더에서)
+     */
+    fun getAccessToken(request: HttpServletRequest): String? {
+        val authHeader = request.getHeader("Authorization")
+        if (!authHeader.isNullOrBlank() && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7)
+        }
+        return null
+    }
 }
