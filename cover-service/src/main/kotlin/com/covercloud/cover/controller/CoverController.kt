@@ -83,7 +83,7 @@ class CoverController (
         return ResponseEntity.ok(ApiResponse(success = true, data = cover))
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     fun getCovers(
         @RequestBody req: TrendingRequest,
         @RequestParam(defaultValue = "createdAt") sortBy: String,
