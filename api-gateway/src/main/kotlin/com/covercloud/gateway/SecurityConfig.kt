@@ -27,7 +27,7 @@ class SecurityConfig(
             setRequiresAuthenticationMatcher(
                 NegatedServerWebExchangeMatcher(
                     OrServerWebExchangeMatcher(
-                        ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/list"),
+                        ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, "/api/cover/list"),
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/list/**"),
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/search/**"),
                         ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/api/cover/trending"),
@@ -55,7 +55,7 @@ class SecurityConfig(
                     .pathMatchers("/css/**").permitAll()
                     .pathMatchers("/js/**").permitAll()
                     .pathMatchers("/images/**").permitAll()
-                    .pathMatchers(HttpMethod.GET, "/api/cover/list").permitAll()
+                    .pathMatchers(HttpMethod.POST, "/api/cover/list").permitAll()
                     .pathMatchers(HttpMethod.GET, "/api/cover/list/**").permitAll()
                     .pathMatchers(HttpMethod.GET, "/api/cover/search/**").permitAll()
                     .pathMatchers(HttpMethod.GET, "/api/cover/trending").permitAll()
