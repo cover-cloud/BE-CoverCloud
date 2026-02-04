@@ -14,6 +14,11 @@ import java.time.LocalDateTime
 interface CoverRepository : JpaRepository<Cover, Long> {
 	fun findAllByUserId(userId: Long, pageable: Pageable): Page<Cover>
 	fun findAllByCoverGenre(genre: CoverGenre, pageable: Pageable): Page<Cover>
+	@Query("""
+        SELECT c FROM Cover c 
+        WHERE (:startDate IS NULL OR c.createdAt >= :startDate) 
+          AND (:genres IS NULL OR c.coverGenre IN :genres)
+    """)
 	fun findCovers(
 		startDate: LocalDateTime?,
 		genres: List<CoverGenre>?,
