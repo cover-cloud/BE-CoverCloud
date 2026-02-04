@@ -18,6 +18,7 @@ interface CoverRepository : JpaRepository<Cover, Long> {
         SELECT c FROM Cover c 
         WHERE (:startDate IS NULL OR c.createdAt >= :startDate) 
           AND (:genres IS NULL OR c.coverGenre IN :genres)
+		ORDER BY c.createdAt DESC
     """)
 	fun findCovers(
 		startDate: LocalDateTime?,
@@ -26,7 +27,7 @@ interface CoverRepository : JpaRepository<Cover, Long> {
 	): Page<Cover>
 
 
-	@Query("SELECT c FROM Cover c WHERE LOWER(c.coverTitle) LIKE LOWER(CONCAT('%', :title, '%')) order by c.likeCount desc")
+	@Query("SELECT c FROM Cover c WHERE LOWER(c.coverTitle) LIKE LOWER(CONCAT('%', :title, '%'))")
 	fun searchByTitle(
 		@Param("title") title: String,
 		pageable: Pageable
