@@ -1,8 +1,8 @@
 package com.covercloud.user.application
 
+import com.covercloud.shared.jwt.JwtProvider
 import com.covercloud.user.application.dto.TokenResponse
 import com.covercloud.user.application.dto.UserInfoResponse
-import com.covercloud.user.config.JwtProvider
 import com.covercloud.user.domain.RefreshToken
 import com.covercloud.user.infrastructure.RefreshTokenRepository
 import com.covercloud.user.infrastructure.UserRepository
