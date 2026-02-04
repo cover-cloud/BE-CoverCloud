@@ -8,13 +8,20 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 interface CoverRepository : JpaRepository<Cover, Long> {
 	fun findAllByUserId(userId: Long, pageable: Pageable): Page<Cover>
 	fun findAllByCoverGenre(genre: CoverGenre, pageable: Pageable): Page<Cover>
+	fun findCovers(
+		startDate: LocalDateTime?,
+		genres: List<CoverGenre>?,
+		pageable: Pageable
+	): Page<Cover>
 
-	@Query("SELECT c FROM Cover c WHERE LOWER(c.coverTitle) LIKE LOWER(CONCAT('%', :title, '%'))")
+
+	@Query("SELECT c FROM Cover c WHERE LOWER(c.coverTitle) LIKE LOWER(CONCAT('%', :title, '%')) order by c.likeCount desc")
 	fun searchByTitle(
 		@Param("title") title: String,
 		pageable: Pageable

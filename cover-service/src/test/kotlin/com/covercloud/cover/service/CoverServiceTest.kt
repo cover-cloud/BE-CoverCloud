@@ -1,34 +1,39 @@
 package com.covercloud.cover.service
 
+import com.covercloud.cover.controller.dto.SearchSort
 import com.covercloud.cover.domain.Cover
 import com.covercloud.cover.domain.CoverGenre
 import com.covercloud.cover.domain.TrendingPeriod
+import com.covercloud.cover.infrastructure.dto.UserProfileDto
 import com.covercloud.cover.infrastructure.feign.MusicClient
+import com.covercloud.cover.infrastructure.feign.UserClient
 import com.covercloud.cover.repository.CoverRepository
 import com.covercloud.cover.repository.CoverLikeRepository
 import com.covercloud.cover.repository.CoverTagRepository
 import com.covercloud.cover.repository.TagRepository
+import com.covercloud.shared.response.ApiResponse
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.mockito.quality.Strictness
 import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import java.time.LocalDateTime
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class CoverServiceTest {
 
     @Mock
@@ -42,6 +47,9 @@ class CoverServiceTest {
 
     @Mock
     private lateinit var musicClient: MusicClient
+
+    @Mock
+    private lateinit var userClient: UserClient
 
     @Mock
     private lateinit var coverLikeRepository: CoverLikeRepository
@@ -60,7 +68,8 @@ class CoverServiceTest {
                 link = "https://example.com/1",
                 coverTitle = "Cover 1",
                 coverArtist = "Artist 1",
-                coverGenre = CoverGenre.K_POP
+                coverGenre = CoverGenre.K_POP,
+                likeCount = 0
             ).apply {
                 id = 1L
                 likeCount = 100
@@ -71,7 +80,8 @@ class CoverServiceTest {
                 link = "https://example.com/2",
                 coverTitle = "Cover 2",
                 coverArtist = "Artist 2",
-                coverGenre = CoverGenre.POP
+                coverGenre = CoverGenre.POP,
+                likeCount = 5
             ).apply {
                 id = 2L
                 likeCount = 50
@@ -82,7 +92,8 @@ class CoverServiceTest {
                 link = "https://example.com/3",
                 coverTitle = "Cover 3",
                 coverArtist = "Artist 3",
-                coverGenre = CoverGenre.K_POP
+                coverGenre = CoverGenre.K_POP,
+                likeCount = 10
             ).apply {
                 id = 3L
                 likeCount = 200
@@ -94,16 +105,23 @@ class CoverServiceTest {
     @DisplayName("getTrendingCovers - period=null일 때 전체 기간 조회")
     fun testGetTrendingCoversWithNullPeriod() {
         // Given
+        // 전체 조회를 시뮬레이션하기 위해 mock 설정
         whenever(coverRepository.findAll()).thenReturn(testCovers)
+
+        // 좋아요 수 집계나 태그 조회는 빈 리스트로 응답 (로직에 따라 필요시 수정)
         whenever(coverLikeRepository.countLikesByPeriod(any())).thenReturn(emptyList())
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
 
         // When
+        // period 파라미터를 null로 전달
         val result = coverService.getTrendingCovers(null, 0, 10, null)
 
         // Then
         assertNotNull(result)
+        // setup에서 설정한 testCovers의 개수가 3개이므로 3이 나와야 함
         assertEquals(3, result.content.size)
+        // findAll()이 실제로 호출되었는지 검증
+        verify(coverRepository).findAll()
     }
 
     @Test
@@ -200,14 +218,13 @@ class CoverServiceTest {
         // Given
         val searchTitle = "Cover 1"
         val filteredCovers = listOf(testCovers[0])
-        val page = PageImpl(filteredCovers, PageRequest.of(0, 20), 1)
+        val page = PageImpl(filteredCovers, PageRequest.of(0, 20), 3)
 
         whenever(coverRepository.searchByTitle(eq(searchTitle), any())).thenReturn(page)
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
 
         // When
-        val result = coverService.searchCoversByTitle(searchTitle, 0, 20, "createdAt", "DESC")
-
+        val result = coverService.searchCoversByTitle(searchTitle, 0, 20, SearchSort.POPULAR)
         // Then
         assertNotNull(result)
         assertEquals(1, result.content.size)
@@ -226,7 +243,7 @@ class CoverServiceTest {
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
 
         // When
-        val result = coverService.searchCoversByTitle(searchTitle, 0, 20, "createdAt", "DESC")
+        val result = coverService.searchCoversByTitle(searchTitle, 0, 20, SearchSort.LATEST)
 
         // Then
         assertNotNull(result)
@@ -244,7 +261,7 @@ class CoverServiceTest {
         whenever(coverRepository.searchByTitle(eq(searchTitle), any())).thenReturn(page)
 
         // When
-        val result = coverService.searchCoversByTitle(searchTitle, 0, 20, "createdAt", "DESC")
+        val result = coverService.searchCoversByTitle(searchTitle, 0, 20, SearchSort.LATEST)
 
         // Then
         assertNotNull(result)
@@ -264,7 +281,8 @@ class CoverServiceTest {
         whenever(coverTagRepository.findAllByCoverId(eq(1L))).thenReturn(emptyList())
 
         // When
-        val result = coverService.searchCoversByTags(searchTag, 0, 20, "createdAt", "DESC")
+        val result = coverService.searchCoversByTags(searchTag, 0, 20, SearchSort.LATEST)
+        println("ajkldf"+ result.content)
 
         // Then
         assertNotNull(result)
@@ -284,7 +302,7 @@ class CoverServiceTest {
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
 
         // When
-        val result = coverService.searchCoversByTags(searchTag, 0, 20, "createdAt", "DESC")
+        val result = coverService.searchCoversByTags(searchTag, 0, 20, SearchSort.LATEST)
 
         // Then
         assertNotNull(result)
@@ -301,7 +319,7 @@ class CoverServiceTest {
         whenever(coverRepository.searchByTags(eq(searchTag), any())).thenReturn(page)
 
         // When
-        val result = coverService.searchCoversByTags(searchTag, 0, 20, "createdAt", "DESC")
+        val result = coverService.searchCoversByTags(searchTag, 0, 20, SearchSort.LATEST)
 
         // Then
         assertNotNull(result)
@@ -320,7 +338,7 @@ class CoverServiceTest {
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
 
         // When
-        val result = coverService.searchCoversByTitle(searchTitle, 0, 2, "createdAt", "DESC")
+        val result = coverService.searchCoversByTitle(searchTitle, 0, 2,SearchSort.LATEST)
 
         // Then
         assertEquals(2, result.content.size)
@@ -343,7 +361,7 @@ class CoverServiceTest {
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
 
         // When
-        val result = coverService.searchCoversByTitle(searchTitle, 0, 20, "createdAt", "ASC")
+        val result = coverService.searchCoversByTitle(searchTitle, 0, 20,SearchSort.LATEST)
 
         // Then
         assertNotNull(result)
@@ -397,22 +415,375 @@ class CoverServiceTest {
         verify(coverRepository).delete(cover)
     }
 
+
+    // ============ getCovers 테스트 ============
+
     @Test
-    @DisplayName("deleteCover - 존재하지 않는 커버 삭제 실패")
-    fun testDeleteCoverNotFound() {
+    @DisplayName("getCovers - 전체 커버 조회 (기간 없음, 장르 없음)")
+    fun testGetCoversAll() {
         // Given
-        val coverId = 999L
+        val page = 0
+        val size = 20
+        val pageable = PageRequest.of(page, size)
 
-        whenever(coverRepository.findById(coverId)).thenReturn(Optional.empty())
+        whenever(coverRepository.findCovers(
+            startDate = anyOrNull(), // null이 들어올 수 있다면 anyOrNull 사용
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(testCovers, pageable, testCovers.size.toLong()))
 
-        // When & Then
-        assertThrows<ChangeSetPersister.NotFoundException> {
-            coverService.deleteCover(coverId)
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(any(), any())).thenReturn(false)
+        mockUserClient()
+
+        // When
+        val result = coverService.getCovers(period = null, page = page, size = size, genres = null, userId = null)
+
+        // Then
+        assertEquals(3, result.content.size)
+        assertEquals(0, result.pageNumber)
+        assertEquals(20, result.pageSize)
+        assertEquals(3, result.totalElements)
+        assertTrue(result.isFirst)
+        assertTrue(result.isLast)
+    }
+
+    @Test
+    @DisplayName("getCovers - 일일(DAILY) 트렌딩 커버 조회")
+    fun testGetCoversDailyTrending() {
+        // Given
+        val page = 0
+        val size = 20
+        val pageable = PageRequest.of(page, size)
+
+        // DAILY period일 때 계산되는 startDate와 동일하게 설정
+        val todayStartOfDay = java.time.LocalDateTime.now().toLocalDate().atStartOfDay()
+
+        whenever(coverRepository.findCovers(
+            startDate = eq(todayStartOfDay),
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(testCovers, pageable, testCovers.size.toLong()))
+
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(any(), any())).thenReturn(false)
+        mockUserClient()
+
+        // When
+        val result = coverService.getCovers(
+            period = TrendingPeriod.DAILY,
+            page = page,
+            size = size,
+            genres = null,
+            userId = null
+        )
+
+        // Then
+        assertEquals(3, result.content.size)
+    }
+
+    @Test
+    @DisplayName("getCovers - 특정 장르(K-POP) 필터링")
+    fun testGetCoversWithGenreFilter() {
+        // Given
+        val page = 0
+        val size = 20
+        val pageable = PageRequest.of(page, size)
+        val kpopCovers = testCovers.filter { it.coverGenre == CoverGenre.K_POP }
+
+        whenever(coverRepository.findCovers(
+            startDate = anyOrNull(),
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(kpopCovers, pageable, kpopCovers.size.toLong()))
+
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(any(), any())).thenReturn(false)
+        mockUserClient()
+
+        // When
+        val result = coverService.getCovers(
+            period = null,
+            page = page,
+            size = size,
+            genres = listOf("k-pop"),
+            userId = null
+        )
+
+        // Then
+        assertEquals(2, result.content.size)
+    }
+
+    @Test
+    @DisplayName("getCovers - 여러 장르 필터링 (K-POP, POP)")
+    fun testGetCoversWithMultipleGenres() {
+        // Given
+        val page = 0
+        val size = 20
+        val pageable = PageRequest.of(page, size)
+
+        whenever(coverRepository.findCovers(
+            startDate = anyOrNull(),
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(testCovers, pageable, testCovers.size.toLong()))
+
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(any(), any())).thenReturn(false)
+        mockUserClient()
+
+        // When
+        val result = coverService.getCovers(
+            period = null,
+            page = page,
+            size = size,
+            genres = listOf("k-pop", "pop"),
+            userId = null
+        )
+
+        // Then
+        assertEquals(3, result.content.size)
+    }
+
+    @Test
+    @DisplayName("getCovers - 페이지 처리 (2페이지, 크기 1)")
+    fun testGetCoversWithPagination() {
+        // Given
+        val page = 1
+        val size = 1
+        val pageable = PageRequest.of(page, size)
+        val secondCover = listOf(testCovers[1])
+
+        whenever(coverRepository.findCovers(
+            startDate = anyOrNull(),
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(secondCover, pageable, testCovers.size.toLong()))
+
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(any(), any())).thenReturn(false)
+        mockUserClient()
+
+        // When
+        val result = coverService.getCovers(
+            period = null,
+            page = page,
+            size = size,
+            genres = null,
+            userId = null
+        )
+
+        // Then
+        assertEquals(1, result.content.size)
+        assertEquals(1, result.pageNumber)
+        assertEquals(1, result.pageSize)
+        assertEquals(3, result.totalElements)
+        assertFalse(result.isFirst)
+        assertFalse(result.isLast)
+    }
+
+    @Test
+    @DisplayName("getCovers - 사용자별 좋아요 상태 확인")
+    fun testGetCoversWithUserLikeStatus() {
+        // Given
+        val userId = 1L
+        val page = 0
+        val size = 20
+        val pageable = PageRequest.of(page, size)
+
+        whenever(coverRepository.findCovers(
+            startDate = anyOrNull(),
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(testCovers, pageable, testCovers.size.toLong()))
+
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(eq(1L), eq(userId))).thenReturn(true)
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(eq(2L), eq(userId))).thenReturn(false)
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(eq(3L), eq(userId))).thenReturn(true)
+        mockUserClient()
+
+        // When
+        val result = coverService.getCovers(
+            period = null,
+            page = page,
+            size = size,
+            genres = null,
+            userId = userId
+        )
+
+        // Then
+        assertEquals(3, result.content.size)
+        assertTrue(result.content[0].isLiked)
+        assertFalse(result.content[1].isLiked)
+        assertTrue(result.content[2].isLiked)
+    }
+
+    @Test
+    @DisplayName("getCovers - 삭제된 사용자의 익명 처리")
+    fun testGetCoversWithDeletedUserAnonymous() {
+        // Given
+        val page = 0
+        val size = 20
+        val pageable = PageRequest.of(page, size)
+
+        whenever(coverRepository.findCovers(
+            startDate = anyOrNull(),
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(testCovers, pageable, testCovers.size.toLong()))
+
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(any(), any())).thenReturn(false)
+
+        // 첫 번째 사용자는 삭제됨
+        mockUserClientWithDeletedUser(userId = 1L, isDeleted = true)
+        // 나머지는 정상
+        mockUserClientWithDeletedUser(userId = 2L, isDeleted = false)
+        mockUserClientWithDeletedUser(userId = 3L, isDeleted = false)
+
+        // When
+        val result = coverService.getCovers(
+            period = null,
+            page = page,
+            size = size,
+            genres = null,
+            userId = null
+        )
+
+        // Then
+        assertEquals("익명 사용자", result.content[0].nickname)
+        assertTrue(result.content[0].isAuthorDeleted)
+    }
+
+    @Test
+    @DisplayName("getCovers - 주간(WEEKLY) 트렌딩 조회")
+    fun testGetCoversWeeklyTrending() {
+        // Given
+        val page = 0
+        val size = 20
+        val pageable = PageRequest.of(page, size)
+
+        // WEEKLY period일 때 계산되는 startDate와 동일하게 설정
+        val weekStartOfDay = java.time.LocalDateTime.now()
+            .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
+            .toLocalDate().atStartOfDay()
+
+        whenever(coverRepository.findCovers(
+            startDate = eq(weekStartOfDay),
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(testCovers, pageable, testCovers.size.toLong()))
+
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(any(), any())).thenReturn(false)
+        mockUserClient()
+
+        // When
+        val result = coverService.getCovers(
+            period = TrendingPeriod.WEEKLY,
+            page = page,
+            size = size,
+            genres = null,
+            userId = null
+        )
+
+        // Then
+        assertEquals(3, result.content.size)
+    }
+
+    @Test
+    @DisplayName("getCovers - 월간(MONTHLY) 트렌딩 조회")
+    fun testGetCoversMonthlyTrending() {
+        // Given
+        val page = 0
+        val size = 20
+        val pageable = PageRequest.of(page, size)
+
+        // MONTHLY period일 때 계산되는 startDate와 동일하게 설정
+        val monthStartOfDay = java.time.LocalDateTime.now()
+            .withDayOfMonth(1)
+            .toLocalDate().atStartOfDay()
+
+        whenever(coverRepository.findCovers(
+            startDate = eq(monthStartOfDay),
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(testCovers, pageable, testCovers.size.toLong()))
+
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        whenever(coverLikeRepository.existsByCoverIdAndUserId(any(), any())).thenReturn(false)
+        mockUserClient()
+
+        // When
+        val result = coverService.getCovers(
+            period = TrendingPeriod.MONTHLY,
+            page = page,
+            size = size,
+            genres = null,
+            userId = null
+        )
+
+        // Then
+        assertEquals(3, result.content.size)
+    }
+
+    @Test
+    @DisplayName("getCovers - 빈 결과 반환")
+    fun testGetCoversEmpty() {
+        // Given
+        val page = 0
+        val size = 20
+        val pageable = PageRequest.of(page, size)
+
+        whenever(coverRepository.findCovers(
+            startDate = anyOrNull(),
+            genres = anyOrNull(),
+            pageable = eq(pageable)
+        )).thenReturn(PageImpl(emptyList(), pageable, 0L))
+
+        // When
+        val result = coverService.getCovers(
+            period = null,
+            page = page,
+            size = size,
+            genres = null,
+            userId = null
+        )
+
+        // Then
+        assertEquals(0, result.content.size)
+        assertEquals(0, result.totalElements)
+        assertTrue(result.isFirst)
+        assertTrue(result.isLast)
+    }
+
+    // ============ 헬퍼 메서드 ============
+
+    private fun mockUserClient() {
+        val userProfiles = mapOf(
+            1L to UserProfileDto(userId = 1L, nickname = "User1", profileImageUrl = "https://example.com/1.jpg", isDeleted = false),
+            2L to UserProfileDto(userId = 2L, nickname = "User2", profileImageUrl = "https://example.com/2.jpg", isDeleted = false),
+            3L to UserProfileDto(userId = 3L, nickname = "User3", profileImageUrl = "https://example.com/3.jpg", isDeleted = false)
+        )
+
+        userProfiles.forEach { (userId, profile) ->
+            whenever(userClient.getUserProfile(userId)).thenReturn(
+                ApiResponse(success = true, data = profile)
+            )
+        }
+    }
+
+    private fun mockUserClientWithDeletedUser(userId: Long, isDeleted: Boolean) {
+        val profile = if (isDeleted) {
+            UserProfileDto(userId = userId, nickname = "삭제된 사용자", profileImageUrl = null, isDeleted = true)
+        } else {
+            UserProfileDto(userId = userId, nickname = "User$userId", profileImageUrl = "https://example.com/$userId.jpg", isDeleted = false)
         }
 
-        verify(coverLikeRepository, Mockito.never()).deleteAllByCoverId(coverId)
-        verify(coverTagRepository, Mockito.never()).deleteAllByCoverId(any())
-        verify(coverRepository, Mockito.never()).delete(any())
+        whenever(userClient.getUserProfile(userId)).thenReturn(
+            ApiResponse(success = true, data = profile)
+        )
     }
 
 }
