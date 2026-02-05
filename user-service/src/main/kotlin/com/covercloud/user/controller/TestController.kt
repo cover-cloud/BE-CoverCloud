@@ -1,10 +1,9 @@
-package com.covercloud.user.application
+package com.covercloud.user.controller
 
 import com.covercloud.shared.jwt.JwtProvider
 import com.covercloud.shared.response.ApiResponse
-import com.covercloud.user.application.dto.TokenResponse
+import com.covercloud.user.service.dto.TokenResponse
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

@@ -1,9 +1,11 @@
-package com.covercloud.user.application
+package com.covercloud.user.service
 
-import com.covercloud.user.application.dto.UpdateProfileRequest
-import com.covercloud.user.application.dto.UserInfoResponse
-import com.covercloud.user.infrastructure.UserRepository
-import com.covercloud.user.infrastructure.RefreshTokenRepository
+import com.covercloud.user.controller.dto.ProfileImageUploadUrlResponse
+import com.covercloud.user.service.dto.UpdateProfileRequest
+import com.covercloud.user.service.dto.UserInfoResponse
+import com.covercloud.user.repository.UserRepository
+import com.covercloud.user.repository.RefreshTokenRepository
+import com.covercloud.user.service.dto.UploadUrlResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 class UserService(
     private val userRepository: UserRepository,
     private val refreshTokenRepository: RefreshTokenRepository,
+    private val gcsSignedUrlService: GcsSignedUrlService,
     private val authService: AuthService
 ) {
 
@@ -21,8 +24,18 @@ class UserService(
 
         val user = userRepository.findById(userId).orElseThrow { IllegalArgumentException("User not found") }
 
+        val finalProfileImageUrl = request.profileImage?.let { imagePath ->
+            if (imagePath.startsWith("http")) {
+                imagePath // 이미 전체 URL인 경우 그대로 사용
+            } else {
+                // GCS 버킷 도메인 결합 (버킷명은 본인의 것으로 수정하세요)
+                "https://storage.googleapis.com/covercloud-bucket/$imagePath"
+            }
+        }
+
         // 닉네임과 프로필사진만 업데이트 (소셜로그인이라 이메일은 변경 불가)
-        user.updateProfile(request.nickname, request.profileImage)
+        user.updateProfile(request.nickname ?: user.nickname,
+            finalProfileImageUrl ?: user.profileImage)
 
         val savedUser = userRepository.save(user)
 
@@ -58,4 +71,15 @@ class UserService(
 
         return "Account deleted successfully"
     }
+
+    fun createProfileImageUploadUrl(
+        userId: Long,
+        contentType: String
+    ): UploadUrlResponse {
+        return gcsSignedUrlService.createProfileUploadUrl(
+            userId = userId,
+            contentType = contentType
+        )
+    }
+
 }
