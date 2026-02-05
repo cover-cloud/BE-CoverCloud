@@ -1,4 +1,4 @@
-package com.covercloud.user.application.dto
+package com.covercloud.user.service.dto
 
 data class UpdateProfileRequest(
     val nickname: String?,

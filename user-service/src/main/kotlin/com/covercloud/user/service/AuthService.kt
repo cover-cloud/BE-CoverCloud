@@ -1,11 +1,11 @@
-package com.covercloud.user.application
+package com.covercloud.user.service
 
 import com.covercloud.shared.jwt.JwtProvider
-import com.covercloud.user.application.dto.TokenResponse
-import com.covercloud.user.application.dto.UserInfoResponse
+import com.covercloud.user.service.dto.TokenResponse
+import com.covercloud.user.service.dto.UserInfoResponse
 import com.covercloud.user.domain.RefreshToken
-import com.covercloud.user.infrastructure.RefreshTokenRepository
-import com.covercloud.user.infrastructure.UserRepository
+import com.covercloud.user.repository.RefreshTokenRepository
+import com.covercloud.user.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime

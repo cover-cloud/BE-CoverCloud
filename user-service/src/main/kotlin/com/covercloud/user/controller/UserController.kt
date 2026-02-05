@@ -1,8 +1,9 @@
-package com.covercloud.user.application
+package com.covercloud.user.controller
 
 import com.covercloud.shared.response.ApiResponse
 import com.covercloud.shared.security.AuthenticationContext
-import com.covercloud.user.application.dto.UpdateProfileRequest
+import com.covercloud.user.service.dto.UpdateProfileRequest
+import com.covercloud.user.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

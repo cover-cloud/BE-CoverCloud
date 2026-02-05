@@ -2,13 +2,6 @@ server:
   port: 8081
   forward-headers-strategy: framework
 
-cookie:
-  domain: ${COOKIE_DOMAIN:.covercloud.kr}
-
-frontend:
-  redirect:
-    base-url: https://covercloud-dev.netlify.app/main
-
 spring:
   application:
     name: user-service
@@ -16,7 +9,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/covercloud_user?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: NewPassword123!
+    password: root1234!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -32,16 +25,16 @@ spring:
       client:
         registration:
           kakao:
-            client-id: ${KAKAO_CLIENT_ID}
-            client-secret: ${KAKAO_CLIENT_SECRET}
-            redirect-uri: "https://www.covercloud.kr/login/oauth2/code/kakao"
+            client-id: 89b63443fe35d95b4e29b1e8e1ba7d4c
+            client-secret: nz0TL4yPpuImzr43EyhuB4MMwPtRrgoy
+            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
             scope: [profile_nickname, profile_image]
           naver:
-            client-id: ${NAVER_CLIENT_ID}
-            client-secret: ${NAVER_CLIENT_SECRET}
-            redirect-uri: "https://www.covercloud.kr/login/oauth2/code/naver"
+            client-id: 9VmhBqrcqFK_3XKAA6J0
+            client-secret: 6AkffDlV0N
+            redirect-uri: "http://localhost:8080/login/oauth2/code/naver"
             authorization-grant-type: authorization_code
             scope: [name, nickname, profile_image, email]
         provider:
@@ -61,5 +54,3 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
     com.covercloud: DEBUG
-gcs:
-  bucket: covercloud-bucket
