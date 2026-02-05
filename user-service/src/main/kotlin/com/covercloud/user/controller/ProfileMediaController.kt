@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/user/profile")
 class ProfileMediaController(
     private val userService: UserService,
+    private val authenticationContext: AuthenticationContext
+
 
 
 ) {
@@ -27,8 +29,7 @@ class ProfileMediaController(
         @RequestBody request: CreateUploadUrlRequest
     ): ResponseEntity<ApiResponse<ProfileImageUploadUrlResponse>> {
         return try {
-            val userId = 1L
-
+            val userId = authenticationContext.requireUserId(httpRequest)
             val serviceResponse = userService.createProfileImageUploadUrl(
                 userId = userId,
                 contentType = request.contentType
