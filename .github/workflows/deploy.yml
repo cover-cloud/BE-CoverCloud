@@ -1,6 +1,5 @@
 name: Deploy CoverCloud (GCE)
 
-
 on:
   push:
     branches: ["main"]
