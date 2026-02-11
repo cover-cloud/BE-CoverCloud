@@ -27,11 +27,12 @@ interface CoverRepository : JpaRepository<Cover, Long> {
 	): Page<Cover>
 
 
-	@Query("SELECT c FROM Cover c WHERE LOWER(c.coverTitle) LIKE LOWER(CONCAT('%', :title, '%'))")
-	fun searchByTitle(
-		@Param("title") title: String,
+	// @Query 없이 선언만 합니다.
+	fun findByCoverTitleContainingIgnoreCase(
+		title: String,
 		pageable: Pageable
 	): Page<Cover>
+
 
 	@Query("SELECT DISTINCT c FROM Cover c INNER JOIN CoverTag ct ON c = ct.cover WHERE LOWER(ct.tag.name) LIKE LOWER(CONCAT('%', :tags, '%'))")
 	fun searchByTags(

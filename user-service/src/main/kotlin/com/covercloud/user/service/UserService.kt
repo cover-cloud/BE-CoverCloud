@@ -1,6 +1,7 @@
 package com.covercloud.user.service
 
 import com.covercloud.user.controller.dto.ProfileImageUploadUrlResponse
+import com.covercloud.user.domain.User
 import com.covercloud.user.service.dto.UpdateProfileRequest
 import com.covercloud.user.service.dto.UserInfoResponse
 import com.covercloud.user.repository.UserRepository
@@ -39,8 +40,6 @@ class UserService(
 
         val savedUser = userRepository.save(user)
 
-        // 닉네임 변경 후 새로운 토큰 발급
-        val newTokens = authService.generateTokens(userId)
 
         return mapOf(
             "userInfo" to UserInfoResponse(
@@ -49,9 +48,7 @@ class UserService(
                 profileImage = savedUser.profileImage,
                 provider = savedUser.provider.name,
                 email = savedUser.email
-            ),
-            "accessToken" to newTokens.accessToken,
-            "refreshToken" to newTokens.refreshToken
+            )
         )
     }
 
@@ -82,4 +79,16 @@ class UserService(
         )
     }
 
+    fun getUsersByIds(ids: List<Long>): List<User> {
+        if (ids.isEmpty()) return emptyList()
+
+        // findAllById는 기본적으로 제공되는 메서드입니다.
+        return userRepository.findAllById(ids)
+    }
+
+    fun getUserById(userId: Long): User {
+        return userRepository.findById(userId).orElseThrow {
+            IllegalArgumentException("User not found")
+        }
+    }
 }
