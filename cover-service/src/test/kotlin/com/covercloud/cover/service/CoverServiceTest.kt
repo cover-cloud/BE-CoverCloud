@@ -432,7 +432,7 @@ class CoverServiceTest {
         val coverId = 1L
         val cover = testCovers[0]
 
-        whenever(coverRepository.findById(coverId)).thenReturn(Optional.of(cover))
+        whenever(coverRepository.findByIdOrNull(coverId)).thenReturn(cover)
 
         // When
         coverService.deleteCover(coverId)
@@ -460,7 +460,7 @@ class CoverServiceTest {
             likeCount = 0
         }
 
-        whenever(coverRepository.findById(coverId)).thenReturn(Optional.of(cover))
+        whenever(coverRepository.findByIdOrNull(coverId)).thenReturn(cover)
 
         // When
         coverService.deleteCover(coverId)
