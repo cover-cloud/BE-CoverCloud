@@ -72,7 +72,9 @@ class UserController(
                 UserProfileDto(
                     userId = user.id!!,
                     nickname = user.nickname,
-                    profileImageUrl = user.profileImage
+                    profileImageUrl = user.profileImage,
+                    email = user.email!!,
+                    isDeleted = user.isDeleted
                 )
             }
             ResponseEntity.ok(ApiResponse(success = true,data=users))
@@ -93,7 +95,9 @@ class UserController(
             val profile = UserProfileDto(
                 userId = user.id!!,
                 nickname = user.nickname,
-                profileImageUrl = user.profileImage
+                profileImageUrl = user.profileImage,
+                email = user.email!!,
+                isDeleted = user.isDeleted
             )
 
             ResponseEntity.ok(
