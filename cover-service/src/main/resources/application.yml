@@ -3,6 +3,7 @@ server:
 
 spring:
 
+
   application:
     name: cover-service
 
@@ -23,6 +24,7 @@ spring:
         min-idle: 0
 
   jpa:
+    show-sql: true
     hibernate:
       ddl-auto: update
 

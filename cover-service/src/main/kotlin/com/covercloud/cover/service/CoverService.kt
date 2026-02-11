@@ -379,7 +379,7 @@ class CoverService(
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
         }
 
-        val coverPage = coverRepository.searchByTitle(title, pageable)
+        val coverPage = coverRepository.findByCoverTitleContainingIgnoreCase(title, pageable)
 
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 

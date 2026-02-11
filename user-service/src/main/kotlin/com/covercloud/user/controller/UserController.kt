@@ -2,13 +2,16 @@ package com.covercloud.user.controller
 
 import com.covercloud.shared.response.ApiResponse
 import com.covercloud.shared.security.AuthenticationContext
+import com.covercloud.user.controller.dto.UserProfileDto
 import com.covercloud.user.service.dto.UpdateProfileRequest
 import com.covercloud.user.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -17,6 +20,8 @@ class UserController(
     private val userService: UserService,
     private val authenticationContext: AuthenticationContext
 ) {
+
+
 
     @PostMapping("/profile")
     fun updateProfile(
@@ -55,6 +60,53 @@ class UserController(
             ResponseEntity.status(401).body(ApiResponse(success = false, message = e.message ?: "Invalid or expired access token"))
         } catch (_: Exception) {
             ResponseEntity.status(500).body(ApiResponse(success = false, message = "Internal server error"))
+        }
+    }
+
+    @GetMapping("/profiles/bulk")
+    fun getUsersByIds(
+        @RequestParam ids: List<Long>
+    ): ResponseEntity<ApiResponse<List<UserProfileDto>>> {
+        return try {
+            val users = userService.getUsersByIds(ids).map { user ->
+                UserProfileDto(
+                    userId = user.id!!,
+                    nickname = user.nickname,
+                    profileImageUrl = user.profileImage
+                )
+            }
+            ResponseEntity.ok(ApiResponse(success = true,data=users))
+
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(
+                ApiResponse(success = false, message = "Failed to retrieve user profiles: ${e.message}")
+            )
+        }
+    }
+
+    @GetMapping("/profile")
+    fun getUserProfile(
+        @RequestParam userId: Long,
+    ): ResponseEntity<ApiResponse<UserProfileDto>> { // Map 대신 DTO 권장
+        return try {
+            val user = userService.getUserById(userId) // 서비스에서 유저 엔티티 혹은 DTO 조회
+            val profile = UserProfileDto(
+                userId = user.id!!,
+                nickname = user.nickname,
+                profileImageUrl = user.profileImage
+            )
+
+            ResponseEntity.ok(
+                ApiResponse(success = true,data=profile)
+            )
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(404).body(
+                ApiResponse(success = false, message = e.message ?: "User not found")
+            )
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(
+                ApiResponse(success = false, message = "Internal server error")
+            )
         }
     }
 
