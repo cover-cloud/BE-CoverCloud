@@ -73,7 +73,7 @@ class UserController(
                     userId = user.id!!,
                     nickname = user.nickname,
                     profileImageUrl = user.profileImage,
-                    email = user.email!!,
+                    email = user.email,
                     isDeleted = user.isDeleted
                 )
             }
@@ -96,7 +96,7 @@ class UserController(
                 userId = user.id!!,
                 nickname = user.nickname,
                 profileImageUrl = user.profileImage,
-                email = user.email!!,
+                email = user.email,
                 isDeleted = user.isDeleted
             )
 

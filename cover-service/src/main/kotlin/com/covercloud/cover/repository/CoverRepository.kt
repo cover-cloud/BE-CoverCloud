@@ -27,9 +27,9 @@ interface CoverRepository : JpaRepository<Cover, Long> {
 	): Page<Cover>
 
 
-	// @Query 없이 선언만 합니다.
+	@Query("SELECT c FROM Cover c WHERE LOWER(c.coverTitle) LIKE LOWER(CONCAT('%', :title, '%'))")
 	fun findByCoverTitleContainingIgnoreCase(
-		title: String,
+		@Param("title") title: String,
 		pageable: Pageable
 	): Page<Cover>
 
@@ -41,7 +41,7 @@ interface CoverRepository : JpaRepository<Cover, Long> {
 	): Page<Cover>
 
 	// ✅ 사용자가 댓글을 단 커버들 조회
-	@Query("SELECT DISTINCT c FROM Cover c INNER JOIN Comment com ON c.id = com.cover.id WHERE com.userId = :userId ORDER BY c.createdAt DESC")
+	@Query("SELECT DISTINCT c FROM Cover c INNER JOIN Comment com ON c.id = com.cover.id WHERE com.userId = :userId")
 	fun findCoversByUserComments(
 		@Param("userId") userId: Long,
 		pageable: Pageable
