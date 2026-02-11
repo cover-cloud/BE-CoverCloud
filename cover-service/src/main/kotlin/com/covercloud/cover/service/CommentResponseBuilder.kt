@@ -31,10 +31,11 @@ class CommentResponseBuilder(
         var profileImageUrl: String? = null
 
         try {
-            val userProfile = userClient.getUserProfile(comment.userId)
-            if (userProfile.success && userProfile.data != null) {
-                nickname = userProfile.data!!.nickname
-                profileImageUrl = userProfile.data!!.profileImageUrl
+            val userProfiles = userClient.getUsersByIds(listOf(comment.userId))
+            if (userProfiles.success && userProfiles.data != null && userProfiles.data!!.isNotEmpty()) {
+                val userProfile = userProfiles.data!!.first()
+                nickname = userProfile.nickname
+                profileImageUrl = userProfile.profileImageUrl
             }
         } catch (e: Exception) {
             // User 정보 조회 실패 시 무시

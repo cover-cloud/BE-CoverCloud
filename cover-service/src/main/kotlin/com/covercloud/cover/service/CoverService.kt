@@ -13,6 +13,7 @@ import com.covercloud.cover.domain.TrendingPeriod
 import com.covercloud.cover.domain.CoverGenre
 //import com.covercloud.cover.global.security.SecurityUtil
 import com.covercloud.cover.infrastructure.dto.CreateMusicRequest
+import com.covercloud.cover.infrastructure.dto.UserProfileDto
 import com.covercloud.cover.infrastructure.feign.MusicClient
 import com.covercloud.cover.infrastructure.feign.UserClient
 import com.covercloud.cover.repository.CoverRepository
@@ -561,7 +562,8 @@ class CoverService(
         var isAuthorDeleted = false
 
         try {
-            val userProfile = userClient.getUserProfile(cover.userId).data
+            val userProfiles = userClient.getUsersByIds(listOf(cover.userId))
+            val userProfile = userProfiles.data?.firstOrNull()
             if (userProfile?.isDeleted == true) {
                 nickname = "익명 사용자"
                 profileImage = null
