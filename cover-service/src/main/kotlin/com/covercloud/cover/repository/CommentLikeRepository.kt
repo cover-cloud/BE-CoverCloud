@@ -10,5 +10,6 @@ interface CommentLikeRepository : JpaRepository<CommentLike, Long> {
     fun deleteByCommentIdAndUserId(commentId: Long, userId: Long)
     fun countByCommentId(commentId: Long): Long
     fun existsByCommentIdAndUserId(commentId: Long, userId: Long): Boolean
+    fun deleteByCommentId(commentId: Long)
 }
 

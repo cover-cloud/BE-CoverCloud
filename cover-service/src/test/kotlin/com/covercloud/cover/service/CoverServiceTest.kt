@@ -29,6 +29,7 @@ import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness
 import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.data.domain.PageImpl
+import java.util.*
 import org.springframework.data.domain.PageRequest
 import java.util.Optional
 
@@ -426,13 +427,13 @@ class CoverServiceTest {
     }
 
     @Test
-    @DisplayName("deleteCover - 좋아요가 있는 커버 삭제 성공")
+    @DisplayName("deleteCover - 좋아요 있는 커버 삭제 성공")
     fun testDeleteCoverWithLikes() {
         // Given
         val coverId = 1L
         val cover = testCovers[0]
 
-        whenever(coverRepository.findByIdOrNull(coverId)).thenReturn(cover)
+        whenever(coverRepository.findById(coverId)).thenReturn(Optional.of(cover))
 
         // When
         coverService.deleteCover(coverId)
@@ -460,7 +461,7 @@ class CoverServiceTest {
             likeCount = 0
         }
 
-        whenever(coverRepository.findByIdOrNull(coverId)).thenReturn(cover)
+        whenever(coverRepository.findById(coverId)).thenReturn(Optional.of(cover))
 
         // When
         coverService.deleteCover(coverId)
