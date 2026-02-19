@@ -19,7 +19,7 @@ class OAuth2SuccessHandler(
     private val userRepository: UserRepository,
     @Value("\${cookie.domain:}")
     private val cookieDomain: String,
-    @Value("\${frontend.redirect.base-url:https://covercloud-dev.netlify.app/main}")
+    @Value("\${frontend.redirect.base-url:https://covercloud.netlify.app/main}")
     private val frontendRedirectBase: String
 ) : AuthenticationSuccessHandler {
 
