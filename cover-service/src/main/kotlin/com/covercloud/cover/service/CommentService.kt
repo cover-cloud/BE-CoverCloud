@@ -93,7 +93,6 @@ class CommentService(
     fun deleteComment(id: Long, userId: Long) {
         val comment = commentRepository.findByIdOrNull(id)
             ?: throw NotFoundException()
-        commentLikeRepository.deleteByCommentId(id);
 
         // 본인 댓글인지 확인
         if (comment.userId != userId) {
