@@ -7,7 +7,7 @@ cookie:
 
 frontend:
   redirect:
-    base-url: https://covercloud.netlify.app/main
+    base-url: https://cover-cloud.netlify.app/main
 
 spring:
   application:
