@@ -3,7 +3,7 @@ server:
   forward-headers-strategy: framework
 
 cookie:
-  domain: ${COOKIE_DOMAIN:.covercloud.kr}
+  domain: ${COOKIE_DOMAIN:""}
 
 frontend:
   redirect:
