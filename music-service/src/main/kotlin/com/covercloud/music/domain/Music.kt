@@ -12,6 +12,7 @@ import jakarta.persistence.Table
 class Music (
     val title: String,
     val artist: String,
+    val originalCoverImageUrl: String
 ): BaseEntity() {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null

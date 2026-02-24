@@ -9,5 +9,6 @@ data class CreateServiceCoverRequest(
     val coverArtist: String?,
     val title: String?,
     val tags: List<String>?,
-    val videoUrl: String?
+    val videoUrl: String?,
+    val originalCoverImageUrl: String?
 )

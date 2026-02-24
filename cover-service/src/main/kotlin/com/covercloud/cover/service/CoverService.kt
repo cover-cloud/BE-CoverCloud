@@ -46,14 +46,15 @@ class CoverService(
         val musicResult = musicClient.saveMusic(
             CreateMusicRequest(
                 title = request.originalTitle,
-                artist = request.originalArtist
+                artist = request.originalArtist,
+                originalCoverImageUrl = request.originalCoverImageUrl?: ""
             )
         )
         val cover = Cover(
             musicId = musicResult.id,
             userId = userId,
             link = request.videoUrl,
-            coverArtist = request.originalArtist,
+            coverArtist = request.coverArtist,
             coverGenre = request.genre,
             coverTitle = request.title
         )
@@ -90,7 +91,8 @@ class CoverService(
             val musicResult = musicClient.saveMusic(
                 CreateMusicRequest(
                     title = request.originalTitle,
-                    artist = request.originalArtist
+                    artist = request.originalArtist,
+                    originalCoverImageUrl = request.originalCoverImageUrl ?: ""
                 )
             )
             cover.musicId = musicResult.id
