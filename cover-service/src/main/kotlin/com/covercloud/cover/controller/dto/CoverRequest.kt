@@ -10,7 +10,8 @@ data class CoverRequest(
     val coverArtist: String?,
     val title: String?,
     val tags: List<String>?,
-    val videoUrl: String?
+    val videoUrl: String?,
+    val originalCoverImageUrl: String?,
 ){
     fun toDto(): CreateServiceCoverRequest{
         val coverGenre = genre?.let { 
@@ -23,7 +24,8 @@ data class CoverRequest(
             coverArtist = coverArtist,
             title = title,
             tags = tags,
-            videoUrl = videoUrl
+            videoUrl = videoUrl,
+            originalCoverImageUrl = originalCoverImageUrl
         )
     }
 }
