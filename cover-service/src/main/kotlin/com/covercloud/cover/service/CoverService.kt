@@ -75,7 +75,8 @@ class CoverService(
             coverArtist = savedCover.coverArtist,
             coverGenre = savedCover.coverGenre,
             tags = request.tags,
-            link = savedCover.link
+            link = savedCover.link,
+            originalCoverImageUrl = request.originalCoverImageUrl
         )
     }
 
@@ -135,7 +136,8 @@ class CoverService(
             coverArtist = cover.coverArtist,
             coverGenre = cover.coverGenre,
             tags = responseTags,
-            link = cover.link
+            link = cover.link,
+            originalCoverImageUrl = request.originalCoverImageUrl
         )
     }
 
@@ -541,12 +543,14 @@ class CoverService(
 
         var originalTitle: String? = null
         var originalArtist: String? = null
+        var originalCoverImageUrl: String? = null
 
         if (includeMusic) {
             try {
                 val music = musicClient.getMusic(cover.musicId)
                 originalTitle = music.title
                 originalArtist = music.artist
+                originalCoverImageUrl = music.originalCoverImageUrl
             } catch (_: Exception) {
                 // Music 정보 조회 실패 시 무시
             }
@@ -588,6 +592,7 @@ class CoverService(
             coverTitle = cover.coverTitle,
             originalArtist = originalArtist,
             originalTitle = originalTitle,
+            originalCoverImageUrl = originalCoverImageUrl,
             coverGenre = cover.coverGenre,
             link = cover.link,
             viewCount = cover.viewCount,
