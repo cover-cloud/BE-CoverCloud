@@ -27,6 +27,19 @@ interface CoverRepository : JpaRepository<Cover, Long> {
 	): Page<Cover>
 
 
+	@Query("""
+    SELECT c FROM Cover c 
+    WHERE c.id IN :ids 
+    AND (:genres IS NULL OR c.coverGenre IN :genres)
+    ORDER BY function('FIELD', c.id, :ids)
+""")
+	fun findTrendingCovers(
+		@Param("ids") ids: List<Long>,
+		@Param("genres") genres: List<CoverGenre>?,
+		pageable: Pageable
+	): Page<Cover>
+
+
 	@Query("SELECT c FROM Cover c WHERE LOWER(c.coverTitle) LIKE LOWER(CONCAT('%', :title, '%'))")
 	fun findByCoverTitleContainingIgnoreCase(
 		@Param("title") title: String,
