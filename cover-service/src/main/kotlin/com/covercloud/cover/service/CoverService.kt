@@ -169,36 +169,72 @@ class CoverService(
         genres: List<String>? = null,
         userId: Long? = null
     ): PageResponse<CoverListResponse> {
+        val genreEnums = convertToGenreEnums(genres)
+        val now = LocalDateTime.now()
 
-        val genreEnums = convertToGenreEnums(genres) // 장르 변환 로직
-        if (period != null) {
+        // 1. Redis에서 인기 ID 리스트 가져오기 (없으면 빈 리스트)
+        val trendingIds = if (period != null) {
             val redisKey = generateTrendingKey(period)
-            // 랭킹 상위권 ID들을 넉넉히 가져옴
             val topIds = redisTemplate.opsForZSet().reverseRange(redisKey, 0, 999) ?: emptySet()
-            val coverIds = topIds.mapNotNull { it.toLongOrNull() }
-
-            if (coverIds.isNotEmpty()) {
-                // 여러 장르가 담긴 genreEnums 리스트를 그대로 전달
-                val coverPage = coverRepository.findTrendingCovers(
-                    ids = coverIds,
-                    genres = genreEnums, // List<CoverGenre>
-                    pageable = PageRequest.of(page, size)
-                )
-                return toPageResponse(coverPage, userId)
-            }
+            topIds.mapNotNull { it.toLongOrNull() }
+        } else {
+            emptyList()
         }
-        println("asdjkflf" + period)
 
+        // 2. 해당 기간에 생성된 "모든" 데이터 조회 (최신순 기본)
+        // period가 MONTHLY라면 한 달 전부터 생성된 데이터를 가져옵니다.
+        val startDate = when (period) {
+            TrendingPeriod.DAILY -> now.minusDays(1)
+            TrendingPeriod.WEEKLY -> now.minusWeeks(1)
+            TrendingPeriod.MONTHLY -> now.minusMonths(1)
+            else -> null // 전체 기간
+        }
 
-        // 3️⃣ 기간이 없거나(전체) Redis에 데이터가 없는 경우: 최신순 조회 (Fallback)
-        val pageable = PageRequest.of(page, size, Sort.by("createdAt").descending())
-        val coverPage = coverRepository.findCovers(
-            startDate = null, // 전체 기간
-            genres = genreEnums,
-            pageable = pageable
+        // DB에서 조건에 맞는 모든 데이터를 일단 최신순으로 가져옵니다.
+        val allCovers = coverRepository.findAllByFilters(startDate, genreEnums)
+
+        // 3. 커스텀 정렬 적용
+        // 1순위: trendingIds에 포함된 순서대로
+        // 2순위: 그 외 데이터는 최신순(createdAt DESC)
+        val sortedContent = allCovers.sortedWith(compareByDescending<Cover> { cover ->
+            val index = trendingIds.indexOf(cover.id)
+            if (index != -1) trendingIds.size - index else -1
+            // 랭킹에 있으면 높은 점수, 없으면 -1
+        }.thenByDescending { it.createdAt })
+
+        // 4. 페이징 처리
+        val totalElements = sortedContent.size
+        val start = page * size
+        val end = (start + size).coerceAtMost(totalElements)
+
+        if (start >= totalElements) {
+            // PageResponse.empty() 대신 직접 생성
+            return PageResponse(
+                content = emptyList(),
+                pageNumber = page,
+                pageSize = size,
+                totalElements = totalElements.toLong(),
+                totalPages = (totalElements + size - 1) / size,
+                isFirst = page == 0,
+                isLast = true
+            )
+        }
+
+        val pagedList = sortedContent.subList(start, end)
+
+        // 5. 응답 변환 (기존 로직)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val content = pagedList.map { buildCoverListResponse(it, formatter, false, userId) }
+
+        return PageResponse(
+            content = content,
+            pageNumber = page,
+            pageSize = size,
+            totalElements = totalElements.toLong(),
+            totalPages = (totalElements + size - 1) / size,
+            isFirst = page == 0,
+            isLast = end == totalElements
         )
-
-        return toPageResponse(coverPage, userId)
     }
 
     // 헬퍼: Redis 키 생성
