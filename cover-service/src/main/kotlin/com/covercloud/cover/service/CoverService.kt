@@ -22,14 +22,17 @@ import com.covercloud.cover.repository.TagRepository
 import com.covercloud.cover.repository.CoverLikeRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.format.DateTimeFormatter
 import java.time.LocalDateTime
 import java.time.DayOfWeek
+import java.time.temporal.IsoFields
 import java.time.temporal.TemporalAdjusters
 
 @Service
@@ -40,7 +43,17 @@ class CoverService(
     private val musicClient: MusicClient,
     private val userClient: UserClient,
     private val coverLikeRepository: CoverLikeRepository,
-) {
+    private val redisTemplate: StringRedisTemplate
+    ) {
+    private fun convertToGenreEnums(genres: List<String>?): List<CoverGenre>? {
+        return if (genres.isNullOrEmpty()) null
+        else genres.mapNotNull { g ->
+            runCatching {
+                CoverGenre.valueOf(g.uppercase().replace("-", "_"))
+            }.getOrNull()
+        }.distinct().ifEmpty { null }
+    }
+
     @Transactional
     fun uploadCover(request: CreateServiceCoverRequest, userId: Long): CoverResponse {
         val musicResult = musicClient.saveMusic(
@@ -150,62 +163,60 @@ class CoverService(
     }
 
     fun getCovers(
-                period: TrendingPeriod?,          // null이면 전체 기간
-                page: Int = 0,
-                size: Int = 20,
-                genres: List<String>? = null,     // null/empty면 전체 장르
-                userId: Long? = null
-            ): PageResponse<CoverListResponse> {
+        period: TrendingPeriod?,
+        page: Int = 0,
+        size: Int = 20,
+        genres: List<String>? = null,
+        userId: Long? = null
+    ): PageResponse<CoverListResponse> {
 
-                // 1️⃣ period → startDate (없으면 null)
-                val startDate: LocalDateTime? = when (period) {
-                    TrendingPeriod.DAILY ->
-                        LocalDateTime.now().toLocalDate().atStartOfDay()
+        val genreEnums = convertToGenreEnums(genres) // 장르 변환 로직
+        if (period != null) {
+            val redisKey = generateTrendingKey(period)
+            // 랭킹 상위권 ID들을 넉넉히 가져옴
+            val topIds = redisTemplate.opsForZSet().reverseRange(redisKey, 0, 999) ?: emptySet()
+            val coverIds = topIds.mapNotNull { it.toLongOrNull() }
 
-                    TrendingPeriod.WEEKLY ->
-                        LocalDateTime.now()
-                            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                            .toLocalDate().atStartOfDay()
+            if (coverIds.isNotEmpty()) {
+                // 여러 장르가 담긴 genreEnums 리스트를 그대로 전달
+                val coverPage = coverRepository.findTrendingCovers(
+                    ids = coverIds,
+                    genres = genreEnums, // List<CoverGenre>
+                    pageable = PageRequest.of(page, size)
+                )
+                return toPageResponse(coverPage, userId)
+            }
+        }
+        println("asdjkflf" + period)
 
-                    TrendingPeriod.MONTHLY ->
-                        LocalDateTime.now()
-                            .withDayOfMonth(1)
-                            .toLocalDate().atStartOfDay()
 
-                    null -> null
-                }
-
-                // 2️⃣ genres String → enum (없으면 null)
-                val genreEnums: List<CoverGenre>? =
-                    if (genres.isNullOrEmpty()) null
-                    else genres?.mapNotNull { g ->
-                        runCatching {
-                            CoverGenre.valueOf(g.uppercase().replace("-", "_"))
-                        }.getOrNull()
-                    }?.distinct()?.ifEmpty { null }
-
-        // 3️⃣ 페이징 (정렬은 Repository에서 최신순 DESC 고정)
-        val pageable = PageRequest.of(page, size)
-
-        // 4️⃣ 조회
+        // 3️⃣ 기간이 없거나(전체) Redis에 데이터가 없는 경우: 최신순 조회 (Fallback)
+        val pageable = PageRequest.of(page, size, Sort.by("createdAt").descending())
         val coverPage = coverRepository.findCovers(
-            startDate = startDate,
+            startDate = null, // 전체 기간
             genres = genreEnums,
             pageable = pageable
         )
 
-        // 5️⃣ DTO 매핑
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return toPageResponse(coverPage, userId)
+    }
 
-        val content = coverPage.content.map { cover ->
-            buildCoverListResponse(
-                cover = cover,
-                dateFormatter = formatter,
-                includeMusic = false,
-                userId = userId
-            )
+    // 헬퍼: Redis 키 생성
+    private fun generateTrendingKey(period: TrendingPeriod): String {
+        val now = LocalDateTime.now()
+        return when (period) {
+            TrendingPeriod.DAILY -> "trending:daily:${now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))}"
+            TrendingPeriod.WEEKLY -> "trending:weekly:${now.get(IsoFields.WEEK_BASED_YEAR)}-W${now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)}"
+            TrendingPeriod.MONTHLY -> "trending:monthly:${now.format(DateTimeFormatter.ofPattern("yyyy-MM"))}"
         }
+    }
 
+    // 헬퍼: 공통 응답 변환
+    private fun toPageResponse(coverPage: Page<Cover>, userId: Long?): PageResponse<CoverListResponse> {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val content = coverPage.content.map { cover ->
+            buildCoverListResponse(cover, formatter, false, userId)
+        }
         return PageResponse(
             content = content,
             pageNumber = coverPage.number,

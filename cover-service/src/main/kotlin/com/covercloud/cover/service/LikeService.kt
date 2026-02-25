@@ -10,6 +10,10 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.IsoFields
 
 @Service
 class LikeService(
@@ -27,7 +31,24 @@ class LikeService(
         private const val LIKE_COUNT_PREFIX = "cover:likeCount:"
         private const val DIRTY_SET_KEY = "cover:dirty"
     }
-    
+    private fun updateTrendingScore(coverId: Long, delta: Double) {
+        val now = LocalDateTime.now()
+        val coverIdStr = coverId.toString()
+
+        val trendingConfigs = listOf(
+            "trending:daily:${now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))}" to Duration.ofDays(2),
+            "trending:weekly:${now.get(IsoFields.WEEK_BASED_YEAR)}-W${now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)}" to Duration.ofDays(14),
+            "trending:monthly:${now.format(DateTimeFormatter.ofPattern("yyyy-MM"))}" to Duration.ofDays(60)
+        )
+
+        trendingConfigs.forEach { (key, ttl) ->
+            // 스코어 업데이트
+            redisTemplate.opsForZSet().incrementScore(key, coverIdStr, delta)
+            // TTL 설정: 이미 설정되어 있어도 갱신해주거나,
+            // 랭킹 키가 처음 생성되었을 때를 위해 유지합니다.
+            redisTemplate.expire(key, ttl)
+        }
+    }
     private fun likeSetKey(coverId: Long) = "$LIKE_SET_PREFIX$coverId"
     private fun likeCountKey(coverId: Long) = "$LIKE_COUNT_PREFIX$coverId"
     
@@ -42,9 +63,11 @@ class LikeService(
             if (result != null && result > 0) {
                 // Mark as dirty for batch sync
                 redisTemplate.opsForSet().add(DIRTY_SET_KEY, coverId.toString())
+                updateTrendingScore(coverId, 1.0)
                 logger.info("User $userId liked cover $coverId. New count: $result")
                 return true
             }
+
             logger.info("User $userId already liked cover $coverId")
             return false
         } catch (e: Exception) {
@@ -64,6 +87,7 @@ class LikeService(
             if (result != null && result >= 0) {
                 // Mark as dirty for batch sync
                 redisTemplate.opsForSet().add(DIRTY_SET_KEY, coverId.toString())
+                updateTrendingScore(coverId, -1.0)
                 logger.info("User $userId unliked cover $coverId. New count: $result")
                 return true
             }
