@@ -263,4 +263,20 @@ class CoverController (
         }
     }
 
+    // ✅ 사용자가 좋아요한 커버곡 조회
+    @GetMapping("/my/likes")
+    fun getLikedCovers(
+        httpRequest: HttpServletRequest,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int
+    ): ResponseEntity<ApiResponse<PageResponse<CoverListResponse>>> {
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            val coverList = coverService.getLikedCovers(userId, page, size)
+            ResponseEntity.ok(ApiResponse(success = true, data = coverList))
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        }
+    }
+
 }

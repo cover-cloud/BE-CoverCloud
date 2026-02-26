@@ -1,7 +1,9 @@
 package com.covercloud.cover.service
 
+import com.covercloud.cover.controller.dto.UserDto
 import com.covercloud.cover.domain.Comment
 import com.covercloud.cover.domain.CommentLike
+import com.covercloud.cover.infrastructure.feign.UserClient
 import com.covercloud.cover.repository.CommentRepository
 import com.covercloud.cover.repository.CommentLikeRepository
 import com.covercloud.cover.repository.CoverRepository
@@ -18,7 +20,9 @@ class CommentService(
     private val commentRepository: CommentRepository,
     private val coverRepository: CoverRepository,
     private val commentLikeRepository: CommentLikeRepository,
-    private val commentResponseBuilder: CommentResponseBuilder
+    private val commentResponseBuilder: CommentResponseBuilder,
+    private val userClient: UserClient,
+    private val commentListResponseBuilder: CommentListResponseBuilder
 ) {
     private fun buildCommentResponse(
         comment: Comment,
@@ -26,6 +30,7 @@ class CommentService(
     ): CommentResponse {
         return commentResponseBuilder.buildCommentResponse(comment, userId)
     }
+
 
 
 
@@ -124,33 +129,45 @@ class CommentService(
     }
 
     fun getCommentsByCoverId(coverId: Long, userId: Long? = null): List<CommentResponse> {
-        // Cover 존재 여부 확인
-        coverRepository.findByIdOrNull(coverId)
-            ?: throw NotFoundException()
-        
-        val allComments = commentRepository.findAllByCoverId(coverId)
-        
-        // 부모 댓글만 필터링 (parentCommentId가 null인 것)
-        val parentComments = allComments.filter { it.parentCommentId == null }
+        coverRepository.findByIdOrNull(coverId) ?: throw NotFoundException()
 
-        // 재귀적으로 대댓글 구조 생성
+        val allComments = commentRepository.findAllByCoverId(coverId)
+        if (allComments.isEmpty()) return emptyList()
+
+        // 1. 모든 작성자 ID 추출
+        val authorIds = allComments.map { it.userId }.distinct()
+        val userResponse = userClient.getUsersByIds(authorIds)
+
+        // 2. [수정] ApiResponse에서 data(리스트)를 꺼낸 후 associateBy 호출
+        val userMap: Map<Long, UserDto> = userResponse.data?.associate { profile ->
+            profile.userId to UserDto(
+                userId = profile.userId,
+                nickname = profile.nickname,
+                profileImageUrl = profile.profileImageUrl,
+                email = "", // UserProfileDto에 없는 필드 기본값 처리
+                isDeleted = profile.isDeleted
+            )
+        } ?: emptyMap()
+
+        // 3. 재귀 함수
         fun buildCommentTree(commentId: Long): List<CommentResponse> {
             return allComments
                 .filter { it.parentCommentId == commentId }
                 .map { reply ->
-                    commentResponseBuilder.buildCommentResponse(reply, userId).copy(
-                        replies = buildCommentTree(reply.id!!)
-                    )
+                    val response = commentListResponseBuilder.buildCommentListResponse(reply, userMap, userId)
+                    response.copy(replies = buildCommentTree(reply.id!!))
                 }
         }
 
-        // 각 부모 댓글의 전체 트리 구성
-        return parentComments.map { parent ->
-            commentResponseBuilder.buildCommentResponse(parent, userId).copy(
-                replies = buildCommentTree(parent.id!!)
-            )
-        }
+        // 4. 부모 댓글 처리
+        return allComments
+            .filter { it.parentCommentId == null }
+            .map { parent ->
+                val response = commentListResponseBuilder.buildCommentListResponse(parent, userMap, userId)
+                response.copy(replies = buildCommentTree(parent.id!!))
+            }
     }
+
 
     fun getCommentsByUserId(userId: Long): List<CommentResponse> {
         return commentRepository.findAllByUserId(userId)

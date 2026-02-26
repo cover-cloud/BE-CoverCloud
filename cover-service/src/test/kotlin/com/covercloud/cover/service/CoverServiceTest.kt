@@ -29,6 +29,7 @@ import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness
 import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.data.domain.PageImpl
+import java.util.*
 import org.springframework.data.domain.PageRequest
 import java.util.Optional
 
@@ -97,7 +98,8 @@ class CoverServiceTest {
             ).apply {
                 id = 3L
                 likeCount = 200
-            }
+            },
+
         )
     }
 
@@ -212,24 +214,6 @@ class CoverServiceTest {
         assertEquals(2L, result.content[2].coverId)  // Cover 2
     }
 
-    @Test
-    @DisplayName("searchCoversByTitle - Repository 호출 확인")
-    fun testSearchCoversByTitle() {
-        // Given
-        val searchTitle = "Cover 1"
-        val filteredCovers = listOf(testCovers[0])
-        val page = PageImpl(filteredCovers, PageRequest.of(0, 20), 3)
-
-        whenever(coverRepository.searchByTitle(eq(searchTitle), any())).thenReturn(page)
-        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
-
-        // When
-        val result = coverService.searchCoversByTitle(searchTitle, 0, 20, SearchSort.POPULAR)
-        // Then
-        assertNotNull(result)
-        assertEquals(1, result.content.size)
-        verify(coverRepository).searchByTitle(eq(searchTitle), any())
-    }
 
     @Test
     @DisplayName("searchCoversByTitle - 부분 검색")
@@ -239,7 +223,7 @@ class CoverServiceTest {
         val filteredCovers = testCovers
         val page = PageImpl(filteredCovers, PageRequest.of(0, 20), 3)
 
-        whenever(coverRepository.searchByTitle(eq(searchTitle), any())).thenReturn(page)
+        whenever(coverRepository.findByCoverTitleContainingIgnoreCase(eq(searchTitle), any())).thenReturn(page)
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
 
         // When
@@ -258,7 +242,7 @@ class CoverServiceTest {
         val searchTitle = "NonExistent"
         val page = PageImpl<Cover>(emptyList(), PageRequest.of(0, 20), 0)
 
-        whenever(coverRepository.searchByTitle(eq(searchTitle), any())).thenReturn(page)
+        whenever(coverRepository.findByCoverTitleContainingIgnoreCase(eq(searchTitle), any())).thenReturn(page)
 
         // When
         val result = coverService.searchCoversByTitle(searchTitle, 0, 20, SearchSort.LATEST)
@@ -334,7 +318,7 @@ class CoverServiceTest {
         val pagedCovers = listOf(testCovers[0], testCovers[1])
         val page = PageImpl(pagedCovers, PageRequest.of(0, 2), 3)
 
-        whenever(coverRepository.searchByTitle(eq(searchTitle), any())).thenReturn(page)
+        whenever(coverRepository.findByCoverTitleContainingIgnoreCase(eq(searchTitle), any())).thenReturn(page)
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
 
         // When
@@ -349,28 +333,101 @@ class CoverServiceTest {
         assertFalse(result.isLast)
     }
 
+
     @Test
-    @DisplayName("searchCoversByTitle - 정렬 오름차순")
-    fun testSearchCoversByTitleWithAscSort() {
+    @DisplayName("searchCoversByTitle - 인기순 정렬")
+    fun testSearchCoversByTitleWithPopularSort() {
         // Given
         val searchTitle = "Cover"
-        val filteredCovers = testCovers
-        val page = PageImpl(filteredCovers, PageRequest.of(0, 20), 3)
+        // 인기순(좋아요 많은 순)으로 정렬된 커버들
+        val sortedByPopularity = listOf(
+            testCovers[2], // likeCount = 200
+            testCovers[0], // likeCount = 100
+            testCovers[1]  // likeCount = 50
+        )
+        val page = PageImpl(sortedByPopularity, PageRequest.of(0, 20), 3)
 
-        whenever(coverRepository.searchByTitle(eq(searchTitle), any())).thenReturn(page)
+        whenever(coverRepository.findByCoverTitleContainingIgnoreCase(eq(searchTitle), any())).thenReturn(page)
         whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        mockUserClient()
 
         // When
-        val result = coverService.searchCoversByTitle(searchTitle, 0, 20,SearchSort.LATEST)
+        val result = coverService.searchCoversByTitle(searchTitle, 0, 20, SearchSort.POPULAR)
+        println("Asdfkjlfd" + result)
 
         // Then
         assertNotNull(result)
         assertEquals(3, result.content.size)
-        verify(coverRepository).searchByTitle(eq(searchTitle), any())
+        // 인기순으로 정렬되어 있는지 확인: 좋아요 개수가 내림차순이어야 함
+        assertEquals(200, result.content[0].likeCount)
+        assertEquals(100, result.content[1].likeCount)
+        assertEquals(50, result.content[2].likeCount)
+        verify(coverRepository).findByCoverTitleContainingIgnoreCase(eq(searchTitle), any())
     }
 
     @Test
-    @DisplayName("deleteCover - 좋아요가 있는 커버 삭제 성공")
+    @DisplayName("searchCoversByTitle - 인기순 정렬 페이징")
+    fun testSearchCoversByTitleWithPopularSortPaging() {
+        // Given
+        val searchTitle = "Cover"
+        // 첫 페이지: 인기순으로 상위 2개만 반환
+        val sortedByPopularity = listOf(
+            testCovers[2], // likeCount = 200
+            testCovers[0]  // likeCount = 100
+        )
+        val page = PageImpl(sortedByPopularity, PageRequest.of(0, 2), 3)
+
+        whenever(coverRepository.findByCoverTitleContainingIgnoreCase(eq(searchTitle), any())).thenReturn(page)
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        mockUserClient()
+
+        // When
+        val result = coverService.searchCoversByTitle(searchTitle, 0, 2, SearchSort.POPULAR)
+
+        // Then
+        assertNotNull(result)
+        assertEquals(2, result.content.size)
+        assertEquals(3, result.totalElements)
+        assertEquals(2, result.totalPages)
+        assertEquals(0, result.pageNumber)
+        assertTrue(result.isFirst)
+        assertFalse(result.isLast)
+        // 첫 번째 페이지가 인기순으로 정렬되어 있는지 확인
+        assertEquals(200, result.content[0].likeCount)
+        assertEquals(100, result.content[1].likeCount)
+    }
+
+    @Test
+    @DisplayName("searchCoversByTitle - 인기순 vs 최신순 비교")
+    fun testSearchCoversByTitlePopularVsLatest() {
+        // Given
+        val searchTitle = "Cover"
+
+        // 인기순 정렬 결과
+        val sortedByPopularity = listOf(
+            testCovers[2], // likeCount = 200, id = 3
+            testCovers[0], // likeCount = 100, id = 1
+            testCovers[1]  // likeCount = 50, id = 2
+        )
+
+        whenever(coverRepository.findByCoverTitleContainingIgnoreCase(eq(searchTitle), any())).thenReturn(
+            PageImpl(sortedByPopularity, PageRequest.of(0, 20), 3)
+        )
+        whenever(coverTagRepository.findAllByCoverId(any())).thenReturn(emptyList())
+        mockUserClient()
+
+        // When - 인기순 검색
+        val resultPopular = coverService.searchCoversByTitle(searchTitle, 0, 20, SearchSort.POPULAR)
+
+        // Then - 인기순 검색 결과 확인
+        assertEquals(3, resultPopular.content.size)
+        assertEquals(200, resultPopular.content[0].likeCount)
+        assertEquals(100, resultPopular.content[1].likeCount)
+        assertEquals(50, resultPopular.content[2].likeCount)
+    }
+
+    @Test
+    @DisplayName("deleteCover - 좋아요 있는 커버 삭제 성공")
     fun testDeleteCoverWithLikes() {
         // Given
         val coverId = 1L

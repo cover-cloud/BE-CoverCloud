@@ -9,5 +9,6 @@ data class CoverResponse(
     val coverArtist: String?,
     val coverGenre: CoverGenre?,
     val tags : List<String>?,
-    val link: String?
+    val link: String?,
+    val originalCoverImageUrl: String?
 )

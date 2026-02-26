@@ -22,11 +22,14 @@ class MusicService(
                 id = existing.id!!,
                 title = existing.title,
                 artist = existing.artist,
+                originalCoverImageUrl = existing.originalCoverImageUrl
+
             )
         }
         val music = Music(
             title = request.title,
-            artist = request.artist
+            artist = request.artist,
+            originalCoverImageUrl = request.originalCoverImageUrl
         )
         val savedMusic = musicRepository.save(music)
 
@@ -34,6 +37,7 @@ class MusicService(
             id = savedMusic.id!!,
             title = savedMusic.title,
             artist = savedMusic.artist,
+            originalCoverImageUrl = savedMusic.originalCoverImageUrl
         )
 
     }
@@ -46,6 +50,7 @@ class MusicService(
             id = music.id!!,
             title = music.title,
             artist = music.artist,
+            originalCoverImageUrl = music.originalCoverImageUrl
         )
     }
 

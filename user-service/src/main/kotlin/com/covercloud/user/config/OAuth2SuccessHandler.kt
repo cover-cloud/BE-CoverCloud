@@ -1,9 +1,9 @@
 package com.covercloud.user.config
 
-import com.covercloud.user.application.AuthService
+import com.covercloud.user.service.AuthService
 import com.covercloud.user.domain.Provider
 import com.covercloud.user.domain.User
-import com.covercloud.user.infrastructure.UserRepository
+import com.covercloud.user.repository.UserRepository
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -19,7 +19,7 @@ class OAuth2SuccessHandler(
     private val userRepository: UserRepository,
     @Value("\${cookie.domain:}")
     private val cookieDomain: String,
-    @Value("\${frontend.redirect.base-url:https://covercloud-dev.netlify.app/main}")
+    @Value("\${frontend.redirect.base-url:https://covercloud.netlify.app/main}")
     private val frontendRedirectBase: String
 ) : AuthenticationSuccessHandler {
 

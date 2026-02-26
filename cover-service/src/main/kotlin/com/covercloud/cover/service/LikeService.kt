@@ -10,6 +10,10 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.IsoFields
 
 @Service
 class LikeService(
@@ -27,7 +31,24 @@ class LikeService(
         private const val LIKE_COUNT_PREFIX = "cover:likeCount:"
         private const val DIRTY_SET_KEY = "cover:dirty"
     }
-    
+    private fun updateTrendingScore(coverId: Long, delta: Double) {
+        val now = LocalDateTime.now()
+        val coverIdStr = coverId.toString()
+
+        val trendingConfigs = listOf(
+            "trending:daily:${now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))}" to Duration.ofDays(2),
+            "trending:weekly:${now.get(IsoFields.WEEK_BASED_YEAR)}-W${now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)}" to Duration.ofDays(14),
+            "trending:monthly:${now.format(DateTimeFormatter.ofPattern("yyyy-MM"))}" to Duration.ofDays(60)
+        )
+
+        trendingConfigs.forEach { (key, ttl) ->
+            // 스코어 업데이트
+            redisTemplate.opsForZSet().incrementScore(key, coverIdStr, delta)
+            // TTL 설정: 이미 설정되어 있어도 갱신해주거나,
+            // 랭킹 키가 처음 생성되었을 때를 위해 유지합니다.
+            redisTemplate.expire(key, ttl)
+        }
+    }
     private fun likeSetKey(coverId: Long) = "$LIKE_SET_PREFIX$coverId"
     private fun likeCountKey(coverId: Long) = "$LIKE_COUNT_PREFIX$coverId"
     
@@ -42,9 +63,11 @@ class LikeService(
             if (result != null && result > 0) {
                 // Mark as dirty for batch sync
                 redisTemplate.opsForSet().add(DIRTY_SET_KEY, coverId.toString())
+                updateTrendingScore(coverId, 1.0)
                 logger.info("User $userId liked cover $coverId. New count: $result")
                 return true
             }
+
             logger.info("User $userId already liked cover $coverId")
             return false
         } catch (e: Exception) {
@@ -64,6 +87,7 @@ class LikeService(
             if (result != null && result >= 0) {
                 // Mark as dirty for batch sync
                 redisTemplate.opsForSet().add(DIRTY_SET_KEY, coverId.toString())
+                updateTrendingScore(coverId, -1.0)
                 logger.info("User $userId unliked cover $coverId. New count: $result")
                 return true
             }
@@ -74,16 +98,21 @@ class LikeService(
             return false
         }
     }
-    
+
     fun getLikeCount(coverId: Long): Long {
-        return try {
-            val count = redisTemplate.opsForValue().get(likeCountKey(coverId))
-            count?.toLongOrNull() ?: 0L
-        } catch (e: Exception) {
-            logger.error("Failed to get like count for cover $coverId", e)
-            // Fallback to DB
-            coverRepository.findByIdOrNull(coverId)?.likeCount ?: 0L
-        }
+        val redisKey = likeCountKey(coverId)
+        val count = redisTemplate.opsForValue().get(redisKey)
+
+        // 1. Redis에 숫자가 있으면 바로 반환 (가장 빠름)
+        if (count != null) return count.toLongOrNull() ?: 0L
+
+        // 2. Redis에 없으면 DB에서 "진짜 행 개수"를 세어옴 (컬럼값 X)
+        val actualCount = coverLikeRepository.countByCoverId(coverId)
+
+        // 3. Redis에 이 값을 채워줌 (다음 조회를 위해)
+        redisTemplate.opsForValue().set(redisKey, actualCount.toString())
+
+        return actualCount
     }
     
     fun hasLiked(coverId: Long, userId: Long): Boolean {
@@ -112,81 +141,62 @@ class LikeService(
             return 0L
         }
     }
-    
-    @Scheduled(fixedDelayString = "10000") // Every 10 seconds for testing
+
+    @Scheduled(fixedDelayString = "10000")
     @Transactional
     fun syncLikesToDatabase() {
         try {
             val dirtyCoverIds = redisTemplate.opsForSet().members(DIRTY_SET_KEY) ?: return
-            
-            if (dirtyCoverIds.isEmpty()) {
-                logger.debug("No dirty covers to sync")
-                return
-            }
-            
-            logger.info("🔄 Syncing ${dirtyCoverIds.size} cover like counts to database: $dirtyCoverIds")
-            
+            if (dirtyCoverIds.isEmpty()) return
+
+            logger.info("🔄 Syncing ${dirtyCoverIds.size} covers: $dirtyCoverIds")
+
             for (coverIdStr in dirtyCoverIds) {
-                try {
-                    val coverId = coverIdStr.toLongOrNull() ?: continue
-                    
-                    // Get Redis data
-                    val redisLikedUsers = redisTemplate.opsForSet().members(likeSetKey(coverId)) ?: emptySet()
-                    val redisCount = getLikeCount(coverId)
-                    
-                    logger.info("📊 Processing cover $coverId: Redis count = $redisCount, users = $redisLikedUsers")
-                    
-                    val cover = coverRepository.findByIdOrNull(coverId)
-                    if (cover != null) {
-                        // 1. Update cover.like_count
-                        val oldCount = cover.likeCount
-                        cover.likeCount = redisCount
-                        coverRepository.save(cover)
-                        
-                        // 2. Sync cover_like table
-                        val dbLikes = coverLikeRepository.findAllByCoverId(coverId)
-                        val dbUserIds = dbLikes.map { it.userId.toString() }.toSet()
-                        
-                        // Add new likes
-                        val usersToAdd = redisLikedUsers - dbUserIds
-                        usersToAdd.forEach { userIdStr ->
-                            val userId = userIdStr.toLongOrNull()
-                            if (userId != null) {
-                                try {
-                                    coverLikeRepository.save(CoverLike(cover = cover, userId = userId))
-                                    logger.info("➕ Added like: cover $coverId, user $userId")
-                                } catch (e: Exception) {
-                                    logger.warn("Failed to add like for user $userId on cover $coverId: ${e.message}")
-                                }
-                            }
-                        }
-                        
-                        // Remove old likes
-                        val usersToRemove = dbUserIds - redisLikedUsers
-                        usersToRemove.forEach { userIdStr ->
-                            val userId = userIdStr.toLongOrNull()
-                            if (userId != null) {
-                                coverLikeRepository.deleteByCoverIdAndUserId(coverId, userId)
-                                logger.info("➖ Removed like: cover $coverId, user $userId")
-                            }
-                        }
-                        
-                        // Remove from dirty set after successful sync
-                        redisTemplate.opsForSet().remove(DIRTY_SET_KEY, coverIdStr)
-                        logger.info("✅ Synced cover $coverId: count $oldCount → $redisCount, likes table updated")
-                    } else {
-                        logger.warn("⚠️ Cover $coverId not found in database")
-                        // Remove invalid cover ID from dirty set
-                        redisTemplate.opsForSet().remove(DIRTY_SET_KEY, coverIdStr)
-                    }
-                } catch (e: Exception) {
-                    logger.error("❌ Failed to sync likes for cover $coverIdStr", e)
+                val coverId = coverIdStr.toLongOrNull() ?: continue
+
+                // 1. Redis에서 데이터 확보
+                val redisLikedUsers = redisTemplate.opsForSet().members(likeSetKey(coverId)) ?: emptySet()
+
+                // 🚨 [방어 로직] Redis 명단이 아예 비어있다면, 시스템 오류일 수 있으므로
+                // DB를 함부로 지우지 않고 건너뛰거나 로그를 남깁니다. (Redis가 Master이므로 신중해야 함)
+                if (redisLikedUsers.isEmpty()) {
+                    // 정말 좋아요가 0개가 된 건지, Redis 키가 증발한 건지 판단이 필요합니다.
+                    // 일단 여기서는 '개수'가 0인 경우에만 진행하도록 하거나 안전하게 로깅만 합니다.
+                    logger.warn("⚠️ Redis like set for $coverId is empty. Skipping delete for safety.")
+                    // count만 0으로 업데이트하고 continue 하거나 로직을 분기하세요.
                 }
+
+                // 2. DB 현황 파악
+                val dbLikes = coverLikeRepository.findAllByCoverId(coverId)
+                val dbUserIds = dbLikes.map { it.userId.toString() }.toSet()
+
+                // 3. 추가 로직 (Redis에만 있는 유저)
+                (redisLikedUsers - dbUserIds).forEach { userIdStr ->
+                    val userId = userIdStr.toLongOrNull() ?: return@forEach
+                    // 중복 insert 방지를 위해 한 번 더 체크 (Unique 제약조건 에러 방지)
+                    if (!coverLikeRepository.existsByCoverIdAndUserId(coverId, userId)) {
+                        coverLikeRepository.save(CoverLike(cover = coverRepository.getReferenceById(coverId), userId = userId))
+                        logger.info("➕ Added: Cover $coverId, User $userId")
+                    }
+                }
+
+                // 4. 삭제 로직 (DB에만 있는 유저)
+                (dbUserIds - redisLikedUsers).forEach { userIdStr ->
+                    val userId = userIdStr.toLongOrNull() ?: return@forEach
+                    coverLikeRepository.deleteByCoverIdAndUserId(coverId, userId)
+                    logger.info("➖ Removed: Cover $coverId, User $userId")
+                }
+
+                // 5. 최종 개수 업데이트 (Redis 숫자가 진실이므로 그대로 반영)
+                val finalCount = redisLikedUsers.size.toLong()
+                coverRepository.updateLikeCount(coverId, finalCount)
+
+                // 6. 성공 시 Dirty Set에서 제거
+                redisTemplate.opsForSet().remove(DIRTY_SET_KEY, coverIdStr)
             }
-            
-            logger.info("🎉 Like count sync completed")
+            logger.info("🎉 Sync completed successfully")
         } catch (e: Exception) {
-            logger.error("💥 Failed to sync likes to database", e)
+            logger.error("💥 Sync failed", e)
         }
     }
 }

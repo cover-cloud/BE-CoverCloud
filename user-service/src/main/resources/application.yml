@@ -3,11 +3,11 @@ server:
   forward-headers-strategy: framework
 
 cookie:
-  domain: ${COOKIE_DOMAIN:.covercloud.kr}
+  domain: ${COOKIE_DOMAIN:""}
 
 frontend:
   redirect:
-    base-url: https://covercloud-dev.netlify.app/main
+    base-url: https://cover-cloud.netlify.app/main
 
 spring:
   application:
@@ -61,3 +61,5 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
     com.covercloud: DEBUG
+gcs:
+  bucket: covercloud-bucket
