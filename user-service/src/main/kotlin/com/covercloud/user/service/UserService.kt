@@ -91,4 +91,42 @@ class UserService(
             IllegalArgumentException("User not found")
         }
     }
+
+    /**
+     * 테스트 로그인 - socialId로 사용자 찾거나 생성 후 토큰 발급
+     */
+    @Transactional
+    fun testLogin(socialId: String, nickname: String?): Map<String, Any> {
+        // 1. 기존 사용자 확인
+        var user = userRepository.findBySocialId(socialId)
+
+        // 2. 없으면 새로 생성
+        if (user == null) {
+            user = User(
+                socialId = socialId,
+                provider = com.covercloud.user.domain.Provider.TEST,
+                nickname = nickname ?: socialId,
+                profileImage = "https://via.placeholder.com/150?text=${nickname ?: socialId}",
+                email = "$socialId@test.com"
+            )
+            user = userRepository.save(user)
+        }
+
+        // 3. null이 아님을 보장
+        user = user ?: throw IllegalArgumentException("Failed to create or find user")
+
+        // 4. 토큰 생성
+        val tokens = authService.generateTokens(user.id!!)
+
+        val result: Map<String, Any> = mapOf(
+            "userId" to (user.id as Any),
+            "socialId" to (user.socialId as Any),
+            "nickname" to (user.nickname as Any),
+            "accessToken" to (tokens.accessToken as Any),
+            "refreshToken" to ((tokens.refreshToken ?: "") as Any),
+            "provider" to (user.provider.name as Any)
+        )
+        return result
+    }
 }
+
