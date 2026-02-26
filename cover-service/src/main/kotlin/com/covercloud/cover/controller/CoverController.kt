@@ -172,7 +172,7 @@ class CoverController (
     ): ResponseEntity<ApiResponse<Map<String, Any>>> {
         return try {
             val userId = authenticationContext.requireUserId(httpRequest)
-            val success = likeService.like(coverId, userId)
+            val success = likeService.like(coverId, 2)
 
             if (success) {
                 val newCount = likeService.getLikeCount(coverId)

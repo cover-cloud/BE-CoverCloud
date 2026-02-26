@@ -43,7 +43,8 @@ class CoverService(
     private val musicClient: MusicClient,
     private val userClient: UserClient,
     private val coverLikeRepository: CoverLikeRepository,
-    private val redisTemplate: StringRedisTemplate
+    private val redisTemplate: StringRedisTemplate,
+    private val likeService: LikeService
     ) {
     private fun convertToGenreEnums(genres: List<String>?): List<CoverGenre>? {
         return if (genres.isNullOrEmpty()) null
@@ -224,8 +225,21 @@ class CoverService(
 
         // 5. 응답 변환 (기존 로직)
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val content = pagedList.map { buildCoverListResponse(it, formatter, false, userId) }
+// 응답 변환 로직
+        val content = pagedList.map { cover ->
+            // 🔥 중요: DB 엔티티의 값은 무시하고 Redis에서 실시간 숫자를 가져옵니다.
+            val realTimeCount = likeService.getLikeCount(cover.id!!)
 
+            // cover 객체의 필드를 Redis 값으로 덮어씌웁니다.
+            cover.likeCount = realTimeCount
+
+            buildCoverListResponse(
+                cover = cover,
+                dateFormatter = formatter,
+                includeMusic = false,
+                userId = userId
+            )
+        }
         return PageResponse(
             content = content,
             pageNumber = page,
