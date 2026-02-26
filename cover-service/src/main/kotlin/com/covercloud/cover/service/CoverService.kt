@@ -16,6 +16,7 @@ import com.covercloud.cover.infrastructure.dto.CreateMusicRequest
 import com.covercloud.cover.infrastructure.dto.UserProfileDto
 import com.covercloud.cover.infrastructure.feign.MusicClient
 import com.covercloud.cover.infrastructure.feign.UserClient
+import com.covercloud.cover.repository.CommentRepository
 import com.covercloud.cover.repository.CoverRepository
 import com.covercloud.cover.repository.CoverTagRepository
 import com.covercloud.cover.repository.TagRepository
@@ -40,6 +41,7 @@ class CoverService(
     private val coverRepository: CoverRepository,
     private val tagRepository: TagRepository,
     private val coverTagRepository: CoverTagRepository,
+    private val commentRepository: CommentRepository,
     private val musicClient: MusicClient,
     private val userClient: UserClient,
     private val coverLikeRepository: CoverLikeRepository,
@@ -499,6 +501,9 @@ class CoverService(
     }
 
     // ✅ 사용자가 댓글을 단 커버들 조회
+    /**
+     * 사용자가 댓글을 단 커버들 조회 (댓글 작성 최신순)
+     */
     fun getCoversByUserComments(
         userId: Long,
         page: Int = 0,
@@ -506,47 +511,10 @@ class CoverService(
         sortBy: String = "createdAt",
         sortDirection: String = "DESC"
     ): PageResponse<CoverListResponse> {
-        val sort = if (sortDirection.uppercase() == "ASC") {
-            Sort.by(sortBy).ascending()
-        } else {
-            Sort.by(sortBy).descending()
-        }
+        // 1. 사용자가 작성한 댓글을 최신순으로 조회
+        val allUserComments = commentRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
 
-        val pageable: Pageable = PageRequest.of(page, size, sort)
-        val coverPage = coverRepository.findCoversByUserComments(userId, pageable)
-
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-        val content = coverPage.content.map { cover ->
-            buildCoverListResponse(cover, dateFormatter, includeMusic = false, userId = userId)
-        }
-
-        return PageResponse(
-            content = content,
-            pageNumber = coverPage.number,
-            pageSize = coverPage.size,
-            totalElements = coverPage.totalElements,
-            totalPages = coverPage.totalPages,
-            isFirst = coverPage.isFirst,
-            isLast = coverPage.isLast
-        )
-    }
-
-    /**
-     * 사용자가 좋아요한 커버곡 조회
-     */
-    fun getLikedCovers(
-        userId: Long,
-        page: Int = 0,
-        size: Int = 20
-    ): PageResponse<CoverListResponse> {
-        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
-
-        // 1. 사용자가 좋아요한 커버 ID 조회
-        val likedCoverIds = coverLikeRepository.findAllByUserId(userId)
-            .mapNotNull { it.cover?.id }
-
-        if (likedCoverIds.isEmpty()) {
+        if (allUserComments.isEmpty()) {
             return PageResponse(
                 content = emptyList(),
                 pageNumber = page,
@@ -558,28 +526,93 @@ class CoverService(
             )
         }
 
-        // 2. 커버 정보 조회
-        val covers = coverRepository.findAllById(likedCoverIds)
-            .sortedByDescending { it.createdAt }
-            .let { allCovers ->
-                val startIdx = page * size
-                val endIdx = minOf(startIdx + size, allCovers.size)
-                if (startIdx >= allCovers.size) emptyList()
-                else allCovers.subList(startIdx, endIdx)
-            }
+        // 2. 댓글에서 cover를 추출하되, 중복 제거
+        val coverSet = mutableSetOf<Long>()
+        val orderedCovers = mutableListOf<Cover>()
 
-        // 3. DTO 매핑
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val content = covers.map { cover ->
-            buildCoverListResponse(
-                cover = cover,
-                dateFormatter = formatter,
-                includeMusic = false,
-                userId = userId
+        for (comment in allUserComments) {
+            val coverId = comment.cover?.id
+            if (coverId != null && !coverSet.contains(coverId)) {
+                coverSet.add(coverId)
+                comment.cover?.let { orderedCovers.add(it) }
+            }
+        }
+
+        // 3. 페이지네이션 적용
+        val startIdx = page * size
+        val endIdx = minOf(startIdx + size, orderedCovers.size)
+        val pagedCovers = if (startIdx >= orderedCovers.size) {
+            emptyList()
+        } else {
+            orderedCovers.subList(startIdx, endIdx)
+        }
+
+        // 4. DTO 매핑
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val content = pagedCovers.map { cover ->
+            buildCoverListResponse(cover, dateFormatter, includeMusic = false, userId = userId)
+        }
+
+        val totalElements = orderedCovers.size.toLong()
+        val totalPages = (totalElements + size - 1) / size
+
+        return PageResponse(
+            content = content,
+            pageNumber = page,
+            pageSize = size,
+            totalElements = totalElements,
+            totalPages = totalPages.toInt(),
+            isFirst = page == 0,
+            isLast = (page + 1) * size >= totalElements
+        )
+    }
+
+    /**
+     * 사용자가 좋아요한 커버곡 조회 (최신순)
+     */
+    fun getLikedCovers(
+        userId: Long,
+        page: Int = 0,
+        size: Int = 20
+    ): PageResponse<CoverListResponse> {
+        // 1. 사용자가 좋아요한 CoverLike를 createdAt 최신순으로 조회
+        val allLikedCovers = coverLikeRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
+
+        if (allLikedCovers.isEmpty()) {
+            return PageResponse(
+                content = emptyList(),
+                pageNumber = page,
+                pageSize = size,
+                totalElements = 0L,
+                totalPages = 0,
+                isFirst = true,
+                isLast = true
             )
         }
 
-        val totalElements = likedCoverIds.size.toLong()
+        // 2. 페이지네이션 적용
+        val startIdx = page * size
+        val endIdx = minOf(startIdx + size, allLikedCovers.size)
+        val pagedLikedCovers = if (startIdx >= allLikedCovers.size) {
+            emptyList()
+        } else {
+            allLikedCovers.subList(startIdx, endIdx)
+        }
+
+        // 3. DTO 매핑
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val content = pagedLikedCovers.mapNotNull { coverLike ->
+            coverLike.cover?.let { cover ->
+                buildCoverListResponse(
+                    cover = cover,
+                    dateFormatter = formatter,
+                    includeMusic = false,
+                    userId = userId
+                )
+            }
+        }
+
+        val totalElements = allLikedCovers.size.toLong()
         val totalPages = (totalElements + size - 1) / size
 
         return PageResponse(
