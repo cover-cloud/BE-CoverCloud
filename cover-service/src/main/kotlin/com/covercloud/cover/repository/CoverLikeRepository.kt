@@ -19,6 +19,8 @@ interface CoverLikeRepository : JpaRepository<CoverLike, Long> {
     fun findAllByCoverId(coverId: Long): List<CoverLike>
     fun existsByCoverIdAndUserId(coverId: Long, userId: Long): Boolean
     fun findAllByUserId(userId: Long): List<CoverLike>
+    @Query("SELECT cl FROM CoverLike cl WHERE cl.userId = :userId ORDER BY cl.createdAt DESC")
+    fun findAllByUserIdOrderByCreatedAtDesc(userId: Long): List<CoverLike>
     fun countByCoverId(coverId: Long): Long
 
     @Query("""
