@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository
 interface CommentRepository : JpaRepository<Comment, Long> {
     fun findAllByCoverId(coverId: Long): List<Comment>
     fun findAllByUserId(userId: Long): List<Comment>
+    fun findAllByUserIdOrderByCreatedAtDesc(userId: Long): List<Comment>
 }

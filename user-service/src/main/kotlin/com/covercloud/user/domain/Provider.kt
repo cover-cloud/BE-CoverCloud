@@ -1,5 +1,5 @@
 package com.covercloud.user.domain
 
 enum class Provider {
-    KAKAO, NAVER
+    KAKAO, NAVER, TEST
 }

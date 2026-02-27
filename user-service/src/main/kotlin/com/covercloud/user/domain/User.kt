@@ -1,6 +1,7 @@
 package com.covercloud.user.domain
 
 import com.covercloud.shared.BaseEntity
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -15,6 +16,7 @@ import java.time.LocalDateTime
 class User(
     val socialId: String,
     @Enumerated(EnumType.STRING)
+    @Column(name = "provider", length = 10)
     val provider: Provider,
     var nickname: String,
     var profileImage: String? = null,

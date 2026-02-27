@@ -3,18 +3,18 @@ server:
   forward-headers-strategy: framework
 
 cookie:
-  domain: ${COOKIE_DOMAIN:.covercloud.kr}
+  domain: ${COOKIE_DOMAIN:""}
 
 frontend:
   redirect:
-    base-url: https://covercloud-dev.netlify.app/main
+    base-url: https://cover-cloud.netlify.app/main
 
 spring:
   application:
     name: user-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/covercloud_user?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://34.50.47.209:3306/covercloud_user?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: NewPassword123!
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -16,20 +16,24 @@ import com.covercloud.cover.infrastructure.dto.CreateMusicRequest
 import com.covercloud.cover.infrastructure.dto.UserProfileDto
 import com.covercloud.cover.infrastructure.feign.MusicClient
 import com.covercloud.cover.infrastructure.feign.UserClient
+import com.covercloud.cover.repository.CommentRepository
 import com.covercloud.cover.repository.CoverRepository
 import com.covercloud.cover.repository.CoverTagRepository
 import com.covercloud.cover.repository.TagRepository
 import com.covercloud.cover.repository.CoverLikeRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.format.DateTimeFormatter
 import java.time.LocalDateTime
 import java.time.DayOfWeek
+import java.time.temporal.IsoFields
 import java.time.temporal.TemporalAdjusters
 
 @Service
@@ -37,23 +41,36 @@ class CoverService(
     private val coverRepository: CoverRepository,
     private val tagRepository: TagRepository,
     private val coverTagRepository: CoverTagRepository,
+    private val commentRepository: CommentRepository,
     private val musicClient: MusicClient,
     private val userClient: UserClient,
     private val coverLikeRepository: CoverLikeRepository,
-) {
+    private val redisTemplate: StringRedisTemplate,
+    private val likeService: LikeService
+    ) {
+    private fun convertToGenreEnums(genres: List<String>?): List<CoverGenre>? {
+        return if (genres.isNullOrEmpty()) null
+        else genres.mapNotNull { g ->
+            runCatching {
+                CoverGenre.valueOf(g.uppercase().replace("-", "_"))
+            }.getOrNull()
+        }.distinct().ifEmpty { null }
+    }
+
     @Transactional
     fun uploadCover(request: CreateServiceCoverRequest, userId: Long): CoverResponse {
         val musicResult = musicClient.saveMusic(
             CreateMusicRequest(
                 title = request.originalTitle,
-                artist = request.originalArtist
+                artist = request.originalArtist,
+                originalCoverImageUrl = request.originalCoverImageUrl?: ""
             )
         )
         val cover = Cover(
             musicId = musicResult.id,
             userId = userId,
             link = request.videoUrl,
-            coverArtist = request.originalArtist,
+            coverArtist = request.coverArtist,
             coverGenre = request.genre,
             coverTitle = request.title
         )
@@ -74,7 +91,8 @@ class CoverService(
             coverArtist = savedCover.coverArtist,
             coverGenre = savedCover.coverGenre,
             tags = request.tags,
-            link = savedCover.link
+            link = savedCover.link,
+            originalCoverImageUrl = request.originalCoverImageUrl
         )
     }
 
@@ -90,7 +108,8 @@ class CoverService(
             val musicResult = musicClient.saveMusic(
                 CreateMusicRequest(
                     title = request.originalTitle,
-                    artist = request.originalArtist
+                    artist = request.originalArtist,
+                    originalCoverImageUrl = request.originalCoverImageUrl ?: ""
                 )
             )
             cover.musicId = musicResult.id
@@ -133,7 +152,8 @@ class CoverService(
             coverArtist = cover.coverArtist,
             coverGenre = cover.coverGenre,
             tags = responseTags,
-            link = cover.link
+            link = cover.link,
+            originalCoverImageUrl = request.originalCoverImageUrl
         )
     }
 
@@ -146,54 +166,75 @@ class CoverService(
     }
 
     fun getCovers(
-                period: TrendingPeriod?,          // null이면 전체 기간
-                page: Int = 0,
-                size: Int = 20,
-                genres: List<String>? = null,     // null/empty면 전체 장르
-                userId: Long? = null
-            ): PageResponse<CoverListResponse> {
+        period: TrendingPeriod?,
+        page: Int = 0,
+        size: Int = 20,
+        genres: List<String>? = null,
+        userId: Long? = null
+    ): PageResponse<CoverListResponse> {
+        val genreEnums = convertToGenreEnums(genres)
+        val now = LocalDateTime.now()
 
-                // 1️⃣ period → startDate (없으면 null)
-                val startDate: LocalDateTime? = when (period) {
-                    TrendingPeriod.DAILY ->
-                        LocalDateTime.now().toLocalDate().atStartOfDay()
+        // 1. Redis에서 인기 ID 리스트 가져오기 (없으면 빈 리스트)
+        val trendingIds = if (period != null) {
+            val redisKey = generateTrendingKey(period)
+            val topIds = redisTemplate.opsForZSet().reverseRange(redisKey, 0, 999) ?: emptySet()
+            topIds.mapNotNull { it.toLongOrNull() }
+        } else {
+            emptyList()
+        }
 
-                    TrendingPeriod.WEEKLY ->
-                        LocalDateTime.now()
-                            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                            .toLocalDate().atStartOfDay()
+        // 2. 해당 기간에 생성된 "모든" 데이터 조회 (최신순 기본)
+        // period가 MONTHLY라면 한 달 전부터 생성된 데이터를 가져옵니다.
+        val startDate = when (period) {
+            TrendingPeriod.DAILY -> now.minusDays(1)
+            TrendingPeriod.WEEKLY -> now.minusWeeks(1)
+            TrendingPeriod.MONTHLY -> now.minusMonths(1)
+            else -> null // 전체 기간
+        }
 
-                    TrendingPeriod.MONTHLY ->
-                        LocalDateTime.now()
-                            .withDayOfMonth(1)
-                            .toLocalDate().atStartOfDay()
+        // DB에서 조건에 맞는 모든 데이터를 일단 최신순으로 가져옵니다.
+        val allCovers = coverRepository.findAllByFilters(startDate, genreEnums)
 
-                    null -> null
-                }
+        // 3. 커스텀 정렬 적용
+        // 1순위: trendingIds에 포함된 순서대로
+        // 2순위: 그 외 데이터는 최신순(createdAt DESC)
+        val sortedContent = allCovers.sortedWith(compareByDescending<Cover> { cover ->
+            val index = trendingIds.indexOf(cover.id)
+            if (index != -1) trendingIds.size - index else -1
+            // 랭킹에 있으면 높은 점수, 없으면 -1
+        }.thenByDescending { it.createdAt })
 
-                // 2️⃣ genres String → enum (없으면 null)
-                val genreEnums: List<CoverGenre>? =
-                    if (genres.isNullOrEmpty()) null
-                    else genres?.mapNotNull { g ->
-                        runCatching {
-                            CoverGenre.valueOf(g.uppercase().replace("-", "_"))
-                        }.getOrNull()
-                    }?.distinct()?.ifEmpty { null }
+        // 4. 페이징 처리
+        val totalElements = sortedContent.size
+        val start = page * size
+        val end = (start + size).coerceAtMost(totalElements)
 
-        // 3️⃣ 페이징 (정렬은 Repository에서 최신순 DESC 고정)
-        val pageable = PageRequest.of(page, size)
+        if (start >= totalElements) {
+            // PageResponse.empty() 대신 직접 생성
+            return PageResponse(
+                content = emptyList(),
+                pageNumber = page,
+                pageSize = size,
+                totalElements = totalElements.toLong(),
+                totalPages = (totalElements + size - 1) / size,
+                isFirst = page == 0,
+                isLast = true
+            )
+        }
 
-        // 4️⃣ 조회
-        val coverPage = coverRepository.findCovers(
-            startDate = startDate,
-            genres = genreEnums,
-            pageable = pageable
-        )
+        val pagedList = sortedContent.subList(start, end)
 
-        // 5️⃣ DTO 매핑
+        // 5. 응답 변환 (기존 로직)
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+// 응답 변환 로직
+        val content = pagedList.map { cover ->
+            // 🔥 중요: DB 엔티티의 값은 무시하고 Redis에서 실시간 숫자를 가져옵니다.
+            val realTimeCount = likeService.getLikeCount(cover.id!!)
 
-        val content = coverPage.content.map { cover ->
+            // cover 객체의 필드를 Redis 값으로 덮어씌웁니다.
+            cover.likeCount = realTimeCount
+
             buildCoverListResponse(
                 cover = cover,
                 dateFormatter = formatter,
@@ -201,7 +242,33 @@ class CoverService(
                 userId = userId
             )
         }
+        return PageResponse(
+            content = content,
+            pageNumber = page,
+            pageSize = size,
+            totalElements = totalElements.toLong(),
+            totalPages = (totalElements + size - 1) / size,
+            isFirst = page == 0,
+            isLast = end == totalElements
+        )
+    }
 
+    // 헬퍼: Redis 키 생성
+    private fun generateTrendingKey(period: TrendingPeriod): String {
+        val now = LocalDateTime.now()
+        return when (period) {
+            TrendingPeriod.DAILY -> "trending:daily:${now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))}"
+            TrendingPeriod.WEEKLY -> "trending:weekly:${now.get(IsoFields.WEEK_BASED_YEAR)}-W${now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)}"
+            TrendingPeriod.MONTHLY -> "trending:monthly:${now.format(DateTimeFormatter.ofPattern("yyyy-MM"))}"
+        }
+    }
+
+    // 헬퍼: 공통 응답 변환
+    private fun toPageResponse(coverPage: Page<Cover>, userId: Long?): PageResponse<CoverListResponse> {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val content = coverPage.content.map { cover ->
+            buildCoverListResponse(cover, formatter, false, userId)
+        }
         return PageResponse(
             content = content,
             pageNumber = coverPage.number,
@@ -434,6 +501,9 @@ class CoverService(
     }
 
     // ✅ 사용자가 댓글을 단 커버들 조회
+    /**
+     * 사용자가 댓글을 단 커버들 조회 (댓글 작성 최신순)
+     */
     fun getCoversByUserComments(
         userId: Long,
         page: Int = 0,
@@ -441,47 +511,10 @@ class CoverService(
         sortBy: String = "createdAt",
         sortDirection: String = "DESC"
     ): PageResponse<CoverListResponse> {
-        val sort = if (sortDirection.uppercase() == "ASC") {
-            Sort.by(sortBy).ascending()
-        } else {
-            Sort.by(sortBy).descending()
-        }
+        // 1. 사용자가 작성한 댓글을 최신순으로 조회
+        val allUserComments = commentRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
 
-        val pageable: Pageable = PageRequest.of(page, size, sort)
-        val coverPage = coverRepository.findCoversByUserComments(userId, pageable)
-
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-        val content = coverPage.content.map { cover ->
-            buildCoverListResponse(cover, dateFormatter, includeMusic = false, userId = userId)
-        }
-
-        return PageResponse(
-            content = content,
-            pageNumber = coverPage.number,
-            pageSize = coverPage.size,
-            totalElements = coverPage.totalElements,
-            totalPages = coverPage.totalPages,
-            isFirst = coverPage.isFirst,
-            isLast = coverPage.isLast
-        )
-    }
-
-    /**
-     * 사용자가 좋아요한 커버곡 조회
-     */
-    fun getLikedCovers(
-        userId: Long,
-        page: Int = 0,
-        size: Int = 20
-    ): PageResponse<CoverListResponse> {
-        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
-
-        // 1. 사용자가 좋아요한 커버 ID 조회
-        val likedCoverIds = coverLikeRepository.findAllByUserId(userId)
-            .mapNotNull { it.cover?.id }
-
-        if (likedCoverIds.isEmpty()) {
+        if (allUserComments.isEmpty()) {
             return PageResponse(
                 content = emptyList(),
                 pageNumber = page,
@@ -493,28 +526,93 @@ class CoverService(
             )
         }
 
-        // 2. 커버 정보 조회
-        val covers = coverRepository.findAllById(likedCoverIds)
-            .sortedByDescending { it.createdAt }
-            .let { allCovers ->
-                val startIdx = page * size
-                val endIdx = minOf(startIdx + size, allCovers.size)
-                if (startIdx >= allCovers.size) emptyList()
-                else allCovers.subList(startIdx, endIdx)
-            }
+        // 2. 댓글에서 cover를 추출하되, 중복 제거
+        val coverSet = mutableSetOf<Long>()
+        val orderedCovers = mutableListOf<Cover>()
 
-        // 3. DTO 매핑
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val content = covers.map { cover ->
-            buildCoverListResponse(
-                cover = cover,
-                dateFormatter = formatter,
-                includeMusic = false,
-                userId = userId
+        for (comment in allUserComments) {
+            val coverId = comment.cover?.id
+            if (coverId != null && !coverSet.contains(coverId)) {
+                coverSet.add(coverId)
+                comment.cover?.let { orderedCovers.add(it) }
+            }
+        }
+
+        // 3. 페이지네이션 적용
+        val startIdx = page * size
+        val endIdx = minOf(startIdx + size, orderedCovers.size)
+        val pagedCovers = if (startIdx >= orderedCovers.size) {
+            emptyList()
+        } else {
+            orderedCovers.subList(startIdx, endIdx)
+        }
+
+        // 4. DTO 매핑
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val content = pagedCovers.map { cover ->
+            buildCoverListResponse(cover, dateFormatter, includeMusic = false, userId = userId)
+        }
+
+        val totalElements = orderedCovers.size.toLong()
+        val totalPages = (totalElements + size - 1) / size
+
+        return PageResponse(
+            content = content,
+            pageNumber = page,
+            pageSize = size,
+            totalElements = totalElements,
+            totalPages = totalPages.toInt(),
+            isFirst = page == 0,
+            isLast = (page + 1) * size >= totalElements
+        )
+    }
+
+    /**
+     * 사용자가 좋아요한 커버곡 조회 (최신순)
+     */
+    fun getLikedCovers(
+        userId: Long,
+        page: Int = 0,
+        size: Int = 20
+    ): PageResponse<CoverListResponse> {
+        // 1. 사용자가 좋아요한 CoverLike를 createdAt 최신순으로 조회
+        val allLikedCovers = coverLikeRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
+
+        if (allLikedCovers.isEmpty()) {
+            return PageResponse(
+                content = emptyList(),
+                pageNumber = page,
+                pageSize = size,
+                totalElements = 0L,
+                totalPages = 0,
+                isFirst = true,
+                isLast = true
             )
         }
 
-        val totalElements = likedCoverIds.size.toLong()
+        // 2. 페이지네이션 적용
+        val startIdx = page * size
+        val endIdx = minOf(startIdx + size, allLikedCovers.size)
+        val pagedLikedCovers = if (startIdx >= allLikedCovers.size) {
+            emptyList()
+        } else {
+            allLikedCovers.subList(startIdx, endIdx)
+        }
+
+        // 3. DTO 매핑
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val content = pagedLikedCovers.mapNotNull { coverLike ->
+            coverLike.cover?.let { cover ->
+                buildCoverListResponse(
+                    cover = cover,
+                    dateFormatter = formatter,
+                    includeMusic = false,
+                    userId = userId
+                )
+            }
+        }
+
+        val totalElements = allLikedCovers.size.toLong()
         val totalPages = (totalElements + size - 1) / size
 
         return PageResponse(
@@ -539,12 +637,14 @@ class CoverService(
 
         var originalTitle: String? = null
         var originalArtist: String? = null
+        var originalCoverImageUrl: String? = null
 
         if (includeMusic) {
             try {
                 val music = musicClient.getMusic(cover.musicId)
                 originalTitle = music.title
                 originalArtist = music.artist
+                originalCoverImageUrl = music.originalCoverImageUrl
             } catch (_: Exception) {
                 // Music 정보 조회 실패 시 무시
             }
@@ -586,6 +686,7 @@ class CoverService(
             coverTitle = cover.coverTitle,
             originalArtist = originalArtist,
             originalTitle = originalTitle,
+            originalCoverImageUrl = originalCoverImageUrl,
             coverGenre = cover.coverGenre,
             link = cover.link,
             viewCount = cover.viewCount,

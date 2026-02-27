@@ -2,9 +2,11 @@ package com.covercloud.cover.repository
 
 import com.covercloud.cover.domain.Cover
 import com.covercloud.cover.domain.CoverGenre
+import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
@@ -13,7 +15,12 @@ import java.time.LocalDateTime
 @Repository
 interface CoverRepository : JpaRepository<Cover, Long> {
 	fun findAllByUserId(userId: Long, pageable: Pageable): Page<Cover>
-	fun findAllByCoverGenre(genre: CoverGenre, pageable: Pageable): Page<Cover>
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE Cover c SET c.likeCount = :likeCount WHERE c.id = :coverId")
+	fun updateLikeCount(coverId: Long, likeCount: Long)
+
 	@Query("""
         SELECT c FROM Cover c 
         WHERE (:startDate IS NULL OR c.createdAt >= :startDate) 
@@ -25,6 +32,28 @@ interface CoverRepository : JpaRepository<Cover, Long> {
 		genres: List<CoverGenre>?,
 		pageable: Pageable
 	): Page<Cover>
+
+
+	@Query("""
+    SELECT c FROM Cover c 
+    WHERE c.id IN :ids 
+    AND (:genres IS NULL OR c.coverGenre IN :genres)
+""")
+	fun findTrendingCovers(
+		@Param("ids") ids: List<Long>,
+		@Param("genres") genres: List<CoverGenre>?
+	): List<Cover>
+
+	@Query("""
+        SELECT c FROM Cover c 
+        WHERE (:startDate IS NULL OR c.createdAt >= :startDate)
+        AND (:genres IS NULL OR c.coverGenre IN :genres)
+        ORDER BY c.createdAt DESC
+    """)
+	fun findAllByFilters(
+		@Param("startDate") startDate: LocalDateTime?,
+		@Param("genres") genres: List<CoverGenre>?
+	): List<Cover>
 
 
 	@Query("SELECT c FROM Cover c WHERE LOWER(c.coverTitle) LIKE LOWER(CONCAT('%', :title, '%'))")

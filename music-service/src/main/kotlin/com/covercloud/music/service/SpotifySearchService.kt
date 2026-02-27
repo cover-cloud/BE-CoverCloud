@@ -29,6 +29,7 @@ class SpotifySearchService(
                     .build()
             }
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${spotifyTokenService.getToken()}")
+            .header(HttpHeaders.ACCEPT_LANGUAGE, "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
             .retrieve()
             .bodyToMono(String::class.java)
             .block() ?: "{}"
