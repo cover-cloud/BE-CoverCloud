@@ -1,4 +1,4 @@
-package com.covercloud.user.infrastructure
+package com.covercloud.user.repository
 
 import com.covercloud.user.domain.RefreshToken
 import org.springframework.data.jpa.repository.JpaRepository

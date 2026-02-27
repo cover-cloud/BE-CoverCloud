@@ -2,7 +2,7 @@ package com.covercloud.user.config
 
 import com.covercloud.user.domain.Provider
 import com.covercloud.user.domain.User
-import com.covercloud.user.infrastructure.UserRepository
+import com.covercloud.user.repository.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest

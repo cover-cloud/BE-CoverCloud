@@ -13,6 +13,7 @@ import com.covercloud.cover.domain.TrendingPeriod
 import com.covercloud.cover.domain.CoverGenre
 //import com.covercloud.cover.global.security.SecurityUtil
 import com.covercloud.cover.infrastructure.dto.CreateMusicRequest
+import com.covercloud.cover.infrastructure.dto.UserProfileDto
 import com.covercloud.cover.infrastructure.feign.MusicClient
 import com.covercloud.cover.infrastructure.feign.UserClient
 import com.covercloud.cover.repository.CoverRepository
@@ -379,7 +380,7 @@ class CoverService(
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
         }
 
-        val coverPage = coverRepository.searchByTitle(title, pageable)
+        val coverPage = coverRepository.findByCoverTitleContainingIgnoreCase(title, pageable)
 
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
@@ -466,6 +467,67 @@ class CoverService(
         )
     }
 
+    /**
+     * 사용자가 좋아요한 커버곡 조회
+     */
+    fun getLikedCovers(
+        userId: Long,
+        page: Int = 0,
+        size: Int = 20
+    ): PageResponse<CoverListResponse> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+
+        // 1. 사용자가 좋아요한 커버 ID 조회
+        val likedCoverIds = coverLikeRepository.findAllByUserId(userId)
+            .mapNotNull { it.cover?.id }
+
+        if (likedCoverIds.isEmpty()) {
+            return PageResponse(
+                content = emptyList(),
+                pageNumber = page,
+                pageSize = size,
+                totalElements = 0L,
+                totalPages = 0,
+                isFirst = true,
+                isLast = true
+            )
+        }
+
+        // 2. 커버 정보 조회
+        val covers = coverRepository.findAllById(likedCoverIds)
+            .sortedByDescending { it.createdAt }
+            .let { allCovers ->
+                val startIdx = page * size
+                val endIdx = minOf(startIdx + size, allCovers.size)
+                if (startIdx >= allCovers.size) emptyList()
+                else allCovers.subList(startIdx, endIdx)
+            }
+
+        // 3. DTO 매핑
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val content = covers.map { cover ->
+            buildCoverListResponse(
+                cover = cover,
+                dateFormatter = formatter,
+                includeMusic = false,
+                userId = userId
+            )
+        }
+
+        val totalElements = likedCoverIds.size.toLong()
+        val totalPages = (totalElements + size - 1) / size
+
+        return PageResponse(
+            content = content,
+            pageNumber = page,
+            pageSize = size,
+            totalElements = totalElements,
+            totalPages = totalPages.toInt(),
+            isFirst = page == 0,
+            isLast = (page + 1) * size >= totalElements
+        )
+    }
+
     private fun buildCoverListResponse(
         cover: Cover,
         dateFormatter: java.time.format.DateTimeFormatter,
@@ -500,7 +562,8 @@ class CoverService(
         var isAuthorDeleted = false
 
         try {
-            val userProfile = userClient.getUserProfile(cover.userId).data
+            val userProfiles = userClient.getUsersByIds(listOf(cover.userId))
+            val userProfile = userProfiles.data?.firstOrNull()
             if (userProfile?.isDeleted == true) {
                 nickname = "익명 사용자"
                 profileImage = null

@@ -1,5 +1,6 @@
 package com.covercloud.cover.service
 
+import com.covercloud.cover.controller.dto.UserDto
 import com.covercloud.cover.domain.Comment
 import com.covercloud.cover.infrastructure.feign.UserClient
 import com.covercloud.cover.repository.CommentLikeRepository
@@ -30,10 +31,11 @@ class CommentResponseBuilder(
         var profileImageUrl: String? = null
 
         try {
-            val userProfile = userClient.getUserProfile(comment.userId)
-            if (userProfile.success && userProfile.data != null) {
-                nickname = userProfile.data!!.nickname
-                profileImageUrl = userProfile.data!!.profileImageUrl
+            val userProfiles = userClient.getUsersByIds(listOf(comment.userId))
+            if (userProfiles.success && userProfiles.data != null && userProfiles.data!!.isNotEmpty()) {
+                val userProfile = userProfiles.data!!.first()
+                nickname = userProfile.nickname
+                profileImageUrl = userProfile.profileImageUrl
             }
         } catch (e: Exception) {
             // User 정보 조회 실패 시 무시
@@ -52,5 +54,8 @@ class CommentResponseBuilder(
             profileImageUrl = profileImageUrl
         )
     }
+
+
+
 }
 

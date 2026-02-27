@@ -1,22 +1,5 @@
 package com.covercloud.user.config
 
-import com.covercloud.user.application.AuthService
-import com.covercloud.user.application.dto.TokenResponse
-import com.covercloud.user.domain.User
-import com.covercloud.user.infrastructure.UserRepository
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.mock.web.MockHttpServletResponse
-import org.springframework.security.core.Authentication
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User
-import org.springframework.security.oauth2.core.user.OAuth2UserAuthority
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
-import org.mockito.kotlin.any
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-
 class OAuth2SuccessHandlerTest {
 //    @Test
 //    fun kakaoSocialLoginRedirectAndCookie() {
