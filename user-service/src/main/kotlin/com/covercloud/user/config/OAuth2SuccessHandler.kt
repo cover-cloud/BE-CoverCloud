@@ -84,21 +84,41 @@ class OAuth2SuccessHandler(
 
         val tokens = authService.generateTokens(user.id!!)
 
-        // 브라우저가 SameSite=None 인 경우 Secure=true를 요구하므로 SameSite=None, Secure, HttpOnly 로 설정
-        // Servlet Cookie는 SameSite를 직접 설정할 수 없으므로 ResponseCookie를 사용해 Set-Cookie 헤더로 추가합니다.
-        val cookieBuilder = org.springframework.http.ResponseCookie.from("refreshToken", tokens.refreshToken)
+        // 개발 환경(HTTP)인지 프로덕션(HTTPS)인지 판단하여 Secure/SameSite 설정을 적절히 조정
+        val isSecureRequest = request.isSecure || (request.serverName == "localhost" && request.scheme == "https")
+        // request.isSecure는 HTTPS 환경에서 true입니다. 로컬에서 http로 동작할 경우 이를 false로 둡니다.
+
+        val sameSiteValue = if (isSecureRequest) "None" else "Lax"
+        val secureFlag = isSecureRequest
+
+        logger.info("[OAuth2SuccessHandler] cookie settings -> secure=$secureFlag, sameSite=$sameSiteValue, domain='$cookieDomain'")
+
+        // accessToken 쿠키 (Gateway가 읽어서 Authorization 헤더로 변환)
+        val accessCookie = org.springframework.http.ResponseCookie.from("accessToken", tokens.accessToken)
             .path("/")
             .httpOnly(true)
-            .secure(true)
-            .sameSite("None") 
-            .maxAge(60L * 60L * 24L * 7L) // 7일
+            .secure(secureFlag)
+            .sameSite(sameSiteValue)
+            .maxAge(60L * 60L) // 1시간
+            .build()
+        response.addHeader("Set-Cookie", accessCookie.toString())
 
-        if (cookieDomain.isNotBlank()) {
-            cookieBuilder.domain(cookieDomain)
+        // refreshToken은 nullable일 수 있으므로 존재할 때만 쿠키 설정
+        tokens.refreshToken?.let { rt ->
+            val refreshCookieBuilder = org.springframework.http.ResponseCookie.from("refreshToken", rt)
+                .path("/")
+                .httpOnly(true)
+                .secure(secureFlag)
+                .sameSite(sameSiteValue)
+                .maxAge(60L * 60L * 24L * 7L) // 7일
+
+            if (cookieDomain.isNotBlank()) {
+                refreshCookieBuilder.domain(cookieDomain)
+            }
+
+            val refreshCookie = refreshCookieBuilder.build()
+            response.addHeader("Set-Cookie", refreshCookie.toString())
         }
-
-        val responseCookie = cookieBuilder.build()
-        response.addHeader("Set-Cookie", responseCookie.toString())
 
         // 인증 성공 후: 보안상 accessToken을 URL에 담지 않습니다.
         // 대신 refreshToken은 HttpOnly 쿠키로 설정되어 있으므로
@@ -130,4 +150,3 @@ class OAuth2SuccessHandler(
         val fifth: E
     )
 }
-
