@@ -1,7 +1,7 @@
 # BE-CoverCloud
 
 [<img src="https://img.shields.io/badge/-readme.md-important?style=flat&logo=google-chrome&logoColor=white" />]() [<img src="https://img.shields.io/badge/-tech blog-blue?style=flat&logo=google-chrome&logoColor=white" />]() [<img src="https://img.shields.io/badge/release-v0.0.0-yellow?style=flat&logo=google-chrome&logoColor=white" />]()
-<br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2022.12.10~2022.12.19-green?style=flat&logo=&logoColor=white" />]()
+<br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2025.11.13~2026.03.31-green?style=flat&logo=&logoColor=white" />]()
 
 
 ## 📝 소개
@@ -19,15 +19,13 @@ BE-CoverCloud는 MSA(Microservices Architecture) 기반의 백엔드 시스템�
 
 <br />
 
-> 화면 구성과 프로토 타입 중 원하는 것을 사용해주세요.
-
-### 화면 구성
-|Screen #1|Screen #2|
-|:---:|:---:|
+// ### 화면 구성
+// |Screen #1|Screen #2|
+// |:---:|:---:|
 
 [//]: # (|<img src="https://user-images.githubusercontent.com/80824750/208456048-acbf44a8-cd71-4132-b35a-500047adbe1c.gif" width="400"/>|<img src="https://user-images.githubusercontent.com/80824750/208456234-fb5fe434-aa65-4d7a-b955-89098d5bbe0b.gif" width="400"/>|)
 
-### 프로토타입
+// ### 프로토타입
 
 [//]: # (<img src="https://user-images.githubusercontent.com/80824750/208454673-0449e49c-57c6-4a6b-86cf-66c5b1e623dc.png">)
 
