@@ -27,7 +27,8 @@ class GcsSignedUrlService(
             else -> throw IllegalArgumentException("Unsupported content type: $contentType")
         }
 
-        val objectPath = "users/$userId/profile.$ext"
+        val uuid = java.util.UUID.randomUUID().toString().substring(0, 8)
+        val objectPath = "users/$userId/profile_$uuid.$ext"
         val serviceAccountEmail = "covercloudofficial@gmail.com"
         val blobInfo = BlobInfo.newBuilder(bucket, objectPath)
             .setContentType(contentType)
