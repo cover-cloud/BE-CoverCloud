@@ -29,60 +29,28 @@ BE-CoverCloud는 MSA(Microservices Architecture) 기반의 백엔드 시스템�
 
 
 ### Back-end (상세)
+
 <div>
-
-
-<svg xmlns="http://www.w3.org/2000/svg" width="80" height="101" viewBox="0 0 90 105">
-  <rect x="5" y="5" width="80" height="101" rx="7" fill="#ffffff" stroke="#e5e5e5"/>
-  <image href="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1635384696/noticon/t2v5vtq6gp7d0bgspmyh.png" x="24"
-y="22"
-width="45"
-height="45"/>
-<text
-x="45"
-y="90"
-font-size="11"
-font-weight="500"
-font-family="Montserrat, sans-serif"
-text-anchor="middle"
-fill="#333">
-Kotlin</text>
-</svg>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringBoot.png?raw=true" alt="Spring Boot" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringSecurity.png?raw=true" alt="Spring Security" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringDataJPA.png?raw=true" alt="Spring Data JPA" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Mysql.png?raw=true" alt="MySQL" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/JWT.png?raw=true" alt="JWT" width="80">
+<img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring%20Boot%203.3-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=spring&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white" />
 
 </div>
 
+### Database
+
+<img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" />
 
 ### Infra
 <div>
-<svg xmlns="http://www.w3.org/2000/svg" width="80" height="101" viewBox="0 0 90 105">
-  <rect x="5" y="5" width="80" height="101" rx="8" fill="#ffffff" stroke="#e5e5e5"/>
-  <image href="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1593062577/noticon/uts4vbntu8ejsaxdtj1l.png
-" x="20"
-y="22"
-width="50"
-height="50"/>
-<text
-x="45"
-y="90"
-font-size="10.8"
-font-family="Arial, sans-serif"
-text-anchor="middle"
-fill="#333">
-GCP</text>
-</svg>
-
-[//]: # (<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/AWSEC2.png?raw=true" alt="AWS EC2" width="80">)
+<img src="https://img.shields.io/badge/Google%20Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white" />
 </div>
 
 ### Tools
 <div>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Github.png?raw=true" alt="GitHub" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Notion.png?raw=true" alt="Notion" width="80">
+<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" />
+<img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white" />
 </div>
 
 
