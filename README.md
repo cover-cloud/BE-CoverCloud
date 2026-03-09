@@ -1,89 +1,144 @@
-
 # BE-CoverCloud
 
-## 프로젝트 소개
+[<img src="https://img.shields.io/badge/-readme.md-important?style=flat&logo=google-chrome&logoColor=white" />]() [<img src="https://img.shields.io/badge/-tech blog-blue?style=flat&logo=google-chrome&logoColor=white" />]() [<img src="https://img.shields.io/badge/release-v0.0.0-yellow?style=flat&logo=google-chrome&logoColor=white" />]()
+<br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2022.12.10~2022.12.19-green?style=flat&logo=&logoColor=white" />]()
+
+
+## 📝 소개
 BE-CoverCloud는 MSA(Microservices Architecture) 기반의 백엔드 시스템입니다. 각 서비스는 독립적으로 배포 및 확장 가능하며, 공통 라이브러리를 통해 코드 재사용성을 높였습니다.
 
-## 주요 기능
+다음과 같은 내용을 작성할 수 있습니다.
+- 프로젝트 소개
+- 프로젝트 화면 구성 또는 프로토 타입
+- 프로젝트 API 설계
+- 사용한 기술 스택
+- 프로젝트 아키텍쳐
+- 기술적 이슈와 해결 과정
 
-- **api-gateway**
-	- 외부 요청을 각 마이크로서비스로 라우팅
-	- 인증/인가 처리
-	- 공통 로깅 및 에러 핸들링
+필요한 기술 스택에 대한 logo는 [skills 폴더](/skills/)에서 다운로드 받을 수 있습니다.
 
-- **user-service**
-	- 회원가입, 로그인, 사용자 정보 관리
-	- 세션 및 인증 토큰 관리 (Redis 활용)
-	- 사용자 정보 수정/조회/삭제
+<br />
 
-- **cover-service**
-	- 커버 이미지 등록, 수정, 삭제, 조회
-	- 커버 관련 데이터 캐싱 (Redis 활용)
+> 화면 구성과 프로토 타입 중 원하는 것을 사용해주세요.
 
-- **music-service**
-	- 음악 데이터 등록, 수정, 삭제, 조회
-	- 인기 음악, 최근 재생 기록 캐싱 (Redis 활용)
+### 화면 구성
+|Screen #1|Screen #2|
+|:---:|:---:|
 
-- **shared-library**
-	- 공통 응답 포맷, 예외 처리, DTO, 유틸리티 함수 제공
+[//]: # (|<img src="https://user-images.githubusercontent.com/80824750/208456048-acbf44a8-cd71-4132-b35a-500047adbe1c.gif" width="400"/>|<img src="https://user-images.githubusercontent.com/80824750/208456234-fb5fe434-aa65-4d7a-b955-89098d5bbe0b.gif" width="400"/>|)
 
-## 서비스 구조 (MSA)
-- **api-gateway**: 외부 요청을 각 마이크로서비스로 라우팅하고, 인증/인가, 로깅 등 공통 처리를 담당합니다.
-- **user-service**: 사용자 정보 관리, 회원가입/로그인 등 사용자 관련 비즈니스 로직을 처리합니다.
-- **cover-service**: 커버 이미지 및 관련 데이터 관리, 커버 생성/수정/조회 기능을 제공합니다.
-- **music-service**: 음악 데이터 관리, 음악 등록/조회 등 음악 관련 기능을 담당합니다.
-- **shared-library**: 각 서비스에서 공통으로 사용하는 유틸리티, 예외 처리, DTO, 공통 설정 등을 제공합니다.
+### 프로토타입
 
-## 사용 기술 및 적용 위치
+[//]: # (<img src="https://user-images.githubusercontent.com/80824750/208454673-0449e49c-57c6-4a6b-86cf-66c5b1e623dc.png">)
 
-- **Kotlin, Spring Boot**  
-	모든 마이크로서비스의 주요 개발 언어 및 프레임워크로 사용. REST API, DI, Spring Data 등 핵심 기능 구현에 활용.
+<br />
 
-- **Gradle (Kotlin DSL)**  
-	전체 프로젝트 및 각 모듈의 빌드, 의존성 관리에 사용.
+## 🗂️ APIs
+작성한 API는 아래에서 확인할 수 있습니다.
 
-- **Redis**  
-	- **user-service**: 세션 관리, 인증 토큰 저장, 임시 데이터 캐싱 등에 사용.
-	- **cover-service**: 커버 이미지 메타데이터 캐싱, 자주 조회되는 데이터의 성능 향상에 사용.
-	- **music-service**: 인기 음악 목록, 최근 재생 기록 등 캐시 데이터 저장에 사용.
+👉🏻 [API 바로보기](https://fanatical-maple-fe1.notion.site/API-Docs-2b79f9489f1580268353cc78b1873732?pvs=73)
 
-- **공통 라이브러리(shared-library)**  
-	각 서비스에서 중복되는 코드(예: 공통 응답 포맷, 예외 처리, 유틸리티 함수 등)를 관리하여 코드 일관성과 재사용성 향상.
 
-- **Git**  
-	소스 버전 관리 및 협업에 사용.
+<br />
 
-- **(선택) Docker**  
-	서비스 컨테이너화 및 배포 자동화에 사용 가능(필요시).
+## ⚙ 기술 스택
 
-## 설치 및 실행 방법
 
-### 1. 환경 준비
-- JDK 17 이상
-- Gradle 7.x 이상 (Wrapper 포함)
-- Redis 서버 (localhost:6379 등 기본 포트 사용)
+### Back-end (상세)
+<div>
 
-### 2. 빌드 및 실행
-```bash
-# 전체 서비스 빌드
-./gradlew build
 
-# 각 서비스 실행 예시
-cd api-gateway && ./gradlew bootRun
-cd user-service && ./gradlew bootRun
-cd cover-service && ./gradlew bootRun
-cd music-service && ./gradlew bootRun
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="101" viewBox="0 0 90 105">
+  <rect x="5" y="5" width="80" height="101" rx="7" fill="#ffffff" stroke="#e5e5e5"/>
+  <image href="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1635384696/noticon/t2v5vtq6gp7d0bgspmyh.png" x="24"
+y="22"
+width="45"
+height="45"/>
+<text
+x="45"
+y="90"
+font-size="11"
+font-weight="500"
+font-family="Montserrat, sans-serif"
+text-anchor="middle"
+fill="#333">
+Kotlin</text>
+</svg>
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringBoot.png?raw=true" alt="Spring Boot" width="80">
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringSecurity.png?raw=true" alt="Spring Security" width="80">
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringDataJPA.png?raw=true" alt="Spring Data JPA" width="80">
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Mysql.png?raw=true" alt="MySQL" width="80">
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/JWT.png?raw=true" alt="JWT" width="80">
 
-# 모든 서비스 일괄 실행
-./start-all.sh
-```
+</div>
 
-## 환경설정
-- 각 서비스별 `src/main/resources/application.yml`에서 포트, DB, Redis 등 환경 변수 설정
-- Redis 연결 정보는 각 서비스의 `application.yml`에서 `spring.redis.host`, `spring.redis.port` 등으로 지정
-- 공통 설정은 `shared-library` 또는 각 서비스의 `application.yml` 참고
 
-## 기타 안내
-- 모든 서비스는 독립적으로 실행 및 배포 가능
-- 로그는 logs/ 디렉터리에 저장
-- 서비스 간 통신은 REST API 기반
+### Infra
+<div>
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="101" viewBox="0 0 90 105">
+  <rect x="5" y="5" width="80" height="101" rx="8" fill="#ffffff" stroke="#e5e5e5"/>
+  <image href="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1593062577/noticon/uts4vbntu8ejsaxdtj1l.png
+" x="20"
+y="22"
+width="50"
+height="50"/>
+<text
+x="45"
+y="90"
+font-size="10.8"
+font-family="Arial, sans-serif"
+text-anchor="middle"
+fill="#333">
+GCP</text>
+</svg>
+
+[//]: # (<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/AWSEC2.png?raw=true" alt="AWS EC2" width="80">)
+</div>
+
+### Tools
+<div>
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Github.png?raw=true" alt="GitHub" width="80">
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Notion.png?raw=true" alt="Notion" width="80">
+</div>
+
+
+<br />
+
+## 🛠️ 프로젝트 아키텍쳐
+![no-image](https://user-images.githubusercontent.com/80824750/208294567-738dd273-e137-4bbf-8307-aff64258fe03.png)
+
+
+
+<br />
+
+## 🤔 기술적 이슈와 해결 과정
+아래는 프로젝트에서 실제로 마주한 주요 문제들과 간단한 해결 요약입니다. 핵심 포인트만 빠르게 확인할 수 있도록 정리했습니다.
+
+- Redis 도입
+  - 사용 이유: 읽기 요청이 많은 데이터(예: 인기 커버 목록, 좋아요 카운트)의 응답 속도를 개선하고, 실시간 상태 관리(좋아요 집계, 즉시 로그아웃 처리 등)를 위해 메모리 기반인 Redis를 도입했습니다.
+  - 기대 효과: 응답속도 개선, DB 트래픽 감소, 실시간성 향상으로 서비스 확장성 및 사용자 경험 개선
+
+- 카카오/네이버 소셜 로그인
+  - 문제: 소셜에서 내려오는 정보가 불완전하거나 provider 필드 때문에 DB 저장 오류가 날 수 있었습니다.
+  - 해결: 프로바이더별 필드 추출을 안정화하고, Provider는 문자열(enum->STRING)로 저장하도록 수정했습니다.
+  - 효과: 소셜 로그인 안정화 및 사용자 생성 오류 제거.
+
+- 파일 업로드 및 CDN
+	- 문제: 서버가 직접 파일을 처리하면 트래픽과 비용이 증가하고 확장성에 제약이 생깁니다.
+	- 해결(Presigned URL): 서버는 S3 업로드용 임시 URL(프리사인드 URL)만 발급하고, 클라이언트가 해당 URL로 직접 업로드합니다. 업로드 완료 후 서버는 메타데이터(경로, 소유자 등)만 저장합니다.
+	- 효과: 서버 트래픽·비용 절감, 대용량 업로드 확장성 확보, 만료되는 URL로 보안 유지.
+	- 간단 팁: presign 만료 5~15분 권장, 업로드 전 파일타입/권한 검증, 브라우저 CORS 설정 확인.
+
+
+- MSA(게이트웨이·공통 라이브러리)
+  - 문제: 서비스가 여러 개라 라우팅과 공통 코드 관리가 번거로웠습니다.
+  - 해결: API Gateway로 진입점을 통합하고 공통 코드를 `shared-library`로 분리했습니다.
+  - 효과: 개발/배포가 쉬워지고 인증 흐름이 단순해졌습니다.
+
+- JWT 발급 및 토큰 관리
+  - 문제: 토큰 만료/무효화(로그아웃) 관리가 필요했습니다.
+  - 해결: 액세스/리프레시 토큰 정책을 도입하고 Redis로 블랙리스트/리프레시 상태를 관리했습니다.
+  - 효과: 보안성 향상 및 즉시 로그아웃 처리 가능.
+
+---
+
