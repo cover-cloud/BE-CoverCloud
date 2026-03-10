@@ -1,7 +1,7 @@
 package com.covercloud.music.service.dto
 
-data class SpotifyTrackSummary(
-    val spotifyTrackId: String,
+data class ItunesTrackSummary(
+    val itunesTrackId: String,
     val title: String,
     val artist: String,
     val album: String?,
