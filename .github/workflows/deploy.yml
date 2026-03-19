@@ -27,7 +27,9 @@ jobs:
       - name: Create GCS Key File
         run: |
           mkdir -p user-service/src/main/resources
-          echo "${{ secrets.GCP_SA_KEY }}" > user-service/src/main/resources/key.json
+          cat <<'EOF' > user-service/src/main/resources/key.json
+          ${{ secrets.GCP_SA_KEY }}
+          EOF
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -71,12 +73,12 @@ jobs:
             set -euo pipefail
             mkdir -p /home/covercloudofficial/deploy
             
-            cat > /home/covercloudofficial/deploy/gcs-key.json <<EOF
+            cat <<'EOF' > /home/covercloudofficial/deploy/gcs-key.json
             ${{ secrets.GCP_SA_KEY }}
             EOF
             chmod 600 /home/covercloudofficial/deploy/gcs-key.json
             
-            cat > /home/covercloudofficial/deploy/.env <<EOF
+            cat <<'EOF' > /home/covercloudofficial/deploy/.env
             KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
             KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
             NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
