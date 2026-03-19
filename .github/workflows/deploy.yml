@@ -23,6 +23,11 @@ jobs:
           distribution: "temurin"
           java-version: "21"
           cache: "gradle"
+          
+      - name: Create GCS Key File
+        run: |
+          mkdir -p user-service/src/main/resources
+          echo "${{ secrets.GCP_SA_KEY }}" > user-service/src/main/resources/key.json
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -65,6 +70,12 @@ jobs:
           script: |
             set -euo pipefail
             mkdir -p /home/covercloudofficial/deploy
+            
+            cat > /home/covercloudofficial/deploy/gcs-key.json <<EOF
+            ${{ secrets.GCP_SA_KEY }}
+            EOF
+            chmod 600 /home/covercloudofficial/deploy/gcs-key.json
+            
             cat > /home/covercloudofficial/deploy/.env <<EOF
             KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
             KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
@@ -73,6 +84,7 @@ jobs:
             SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
             SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
             COOKIE_DOMAIN=${{ secrets.COOKIE_DOMAIN }}
+            GCP_STORAGE_KEY_PATH=/home/covercloudofficial/deploy/gcs-key.json
             EOF
             chmod 600 /home/covercloudofficial/deploy/.env
             echo "wrote /home/covercloudofficial/deploy/.env"
