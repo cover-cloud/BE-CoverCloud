@@ -21,7 +21,7 @@ class GcsSignedUrlService(
 
     fun createProfileUploadUrl(userId: Long, contentType: String): UploadUrlResponse {
         val ext = when (contentType.lowercase()) {
-            "image/jpeg" -> "jpg"
+            "image/jpeg", "image/jpg" -> "jpg"
             "image/png" -> "png"
             "image/gif" -> "gif"
             else -> throw IllegalArgumentException("Unsupported content type: $contentType")
@@ -38,8 +38,7 @@ class GcsSignedUrlService(
             blobInfo,
             10, TimeUnit.MINUTES,
             Storage.SignUrlOption.httpMethod(HttpMethod.PUT),
-            Storage.SignUrlOption.withContentType(),
-            // V4 서명을 사용하면 로컬에서도 GCS가 신원을 확실히 인증합니다.
+            Storage.SignUrlOption.withExtHeaders(mapOf("Content-Type" to contentType)),
             Storage.SignUrlOption.withV4Signature()
         )
         println("생성된 업로드 URL: $signedUrl")
