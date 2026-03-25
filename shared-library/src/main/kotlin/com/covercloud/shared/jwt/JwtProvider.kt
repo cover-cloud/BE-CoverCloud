@@ -96,6 +96,13 @@ class JwtProvider {
     }
 
     /**
+     * Access Token 만료 시간 (ms)
+     */
+    fun getAccessTokenValidityMs(): Long {
+        return accessTokenValidityMs
+    }
+
+    /**
      * Refresh Token 만료 시간 (ms)
      */
     fun getRefreshTokenValidityMs(): Long {

@@ -2,17 +2,16 @@ package com.covercloud.user.controller
 
 import com.covercloud.shared.jwt.JwtProvider
 import com.covercloud.shared.response.ApiResponse
+import com.covercloud.user.service.AuthService
 import com.covercloud.user.service.dto.TokenResponse
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/test")
 class TestController(
-    private val jwtProvider: JwtProvider
+    private val jwtProvider: JwtProvider,
+    private val authService: AuthService
 ) {
 
     /**
@@ -35,6 +34,49 @@ class TestController(
                 message = "Test tokens generated for userId: $userId"
             )
         )
+    }
+
+    /**
+     * 테스트용 로그인 (토큰 생성 및 Redis에 저장)
+     */
+    @PostMapping("/login")
+    fun testLogin(
+        @RequestParam(defaultValue = "1") userId: Long
+    ): ResponseEntity<ApiResponse<TokenResponse>> {
+        val tokens = authService.generateTokens(userId)
+        return ResponseEntity.ok(
+            ApiResponse(
+                success = true,
+                data = tokens,
+                message = "Test login successful for userId: $userId"
+            )
+        )
+    }
+
+    /**
+     * 테스트용 로그아웃 (Refresh Token 삭제, Access Token blacklist 추가)
+     */
+    @PostMapping("/logout")
+    fun testLogout(
+        @RequestParam userId: Long,
+        @RequestParam accessToken: String
+    ): ResponseEntity<ApiResponse<String>> {
+        return try {
+            authService.logout(userId, accessToken)
+            ResponseEntity.ok(
+                ApiResponse(
+                    success = true,
+                    message = "Test logout successful for userId: $userId"
+                )
+            )
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body(
+                ApiResponse(
+                    success = false,
+                    message = "Logout failed: ${e.message}"
+                )
+            )
+        }
     }
 
     /**
@@ -64,5 +106,31 @@ class TestController(
                 data = result
             )
         )
+    }
+
+    /**
+     * Refresh Token으로 새로운 Access Token 발급 테스트
+     */
+    @PostMapping("/refresh")
+    fun testRefreshToken(
+        @RequestParam refreshToken: String
+    ): ResponseEntity<ApiResponse<TokenResponse>> {
+        return try {
+            val newTokens = authService.refreshAccessToken(refreshToken)
+            ResponseEntity.ok(
+                ApiResponse(
+                    success = true,
+                    data = newTokens,
+                    message = "Token refresh successful"
+                )
+            )
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(401).body(
+                ApiResponse(
+                    success = false,
+                    message = "Token refresh failed: ${e.message}"
+                )
+            )
+        }
     }
 }

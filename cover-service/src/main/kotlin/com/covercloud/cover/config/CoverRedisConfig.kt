@@ -2,32 +2,15 @@ package com.covercloud.cover.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
-import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.core.script.RedisScript
-import org.springframework.data.redis.serializer.StringRedisSerializer
 
+/**
+ * Cover Service Redis 설정
+ * 기본 RedisTemplate은 shared-library의 RedisConfig에서 제공
+ * 여기서는 Like/Unlike 스크립트만 정의
+ */
 @Configuration
-class RedisConfig {
-
-    @Bean
-    fun stringRedisTemplate(connectionFactory: LettuceConnectionFactory): StringRedisTemplate {
-        val template = StringRedisTemplate()
-        template.connectionFactory = connectionFactory
-        return template
-    }
-
-    @Bean
-    fun redisTemplate(connectionFactory: LettuceConnectionFactory): RedisTemplate<String, String> {
-        val template = RedisTemplate<String, String>()
-        template.connectionFactory = connectionFactory
-        template.keySerializer = StringRedisSerializer()
-        template.valueSerializer = StringRedisSerializer()
-        template.hashKeySerializer = StringRedisSerializer()
-        template.hashValueSerializer = StringRedisSerializer()
-        return template
-    }
+class CoverRedisConfig {
 
     @Bean
     fun likeScript(): RedisScript<Long> {

@@ -10,7 +10,8 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class JwtAuthenticationFilter(
-    private val jwtProvider: JwtProvider
+    private val jwtProvider: JwtProvider,
+    private val tokenBlacklistProvider: TokenBlacklistProvider
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -32,6 +33,14 @@ class JwtAuthenticationFilter(
                 if (token != null) {
                     logger.info("JWT Token found (direct request): ${token.substring(0, 20)}...")
                     
+                    // Blacklist 확인
+                    if (tokenBlacklistProvider.isBlacklisted(token)) {
+                        logger.warn("JWT Token is blacklisted (logged out)")
+                        response.status = HttpServletResponse.SC_UNAUTHORIZED
+                        response.writer.write("Token has been blacklisted")
+                        return
+                    }
+
                     if (jwtProvider.validateToken(token)) {
                         val userId = jwtProvider.extractUserId(token)
                         logger.info("JWT Token validated successfully. UserId: $userId")

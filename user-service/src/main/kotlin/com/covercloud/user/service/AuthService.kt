@@ -3,44 +3,27 @@ package com.covercloud.user.service
 import com.covercloud.shared.jwt.JwtProvider
 import com.covercloud.user.service.dto.TokenResponse
 import com.covercloud.user.service.dto.UserInfoResponse
-import com.covercloud.user.domain.RefreshToken
-import com.covercloud.user.repository.RefreshTokenRepository
 import com.covercloud.user.repository.UserRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 
 @Service
 class AuthService(
     private val jwtProvider: JwtProvider,
-    private val refreshTokenRepository: RefreshTokenRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val redisRefreshTokenService: RedisRefreshTokenService,
+    private val tokenBlacklistService: TokenBlacklistService
 ) {
 
     /**
      * Access Token과 Refresh Token 생성
      */
-    @Transactional
     fun generateTokens(userId: Long): TokenResponse {
         val accessToken = jwtProvider.generateAccessToken(userId)
         val refreshToken = jwtProvider.generateRefreshToken(userId)
 
-        // 기존 Refresh Token 삭제
-        refreshTokenRepository.findByUserId(userId)?.let {
-            refreshTokenRepository.delete(it)
-        }
-
-        // 새 Refresh Token 저장
-        val expiryDate = LocalDateTime.now()
-            .plusSeconds(jwtProvider.getRefreshTokenValidityMs() / 1000)
-
-        refreshTokenRepository.save(
-            RefreshToken(
-                userId = userId,
-                token = refreshToken,
-                expiryDate = expiryDate
-            )
-        )
+        // Redis에 Refresh Token 저장
+        val refreshTokenValiditySeconds = jwtProvider.getRefreshTokenValidityMs() / 1000
+        redisRefreshTokenService.saveRefreshToken(userId, refreshToken, refreshTokenValiditySeconds)
 
         return TokenResponse(
             accessToken = accessToken,
@@ -51,7 +34,6 @@ class AuthService(
     /**
      * Refresh Token으로 새로운 Access Token 발급 (Refresh Token은 유지)
      */
-    @Transactional
     fun refreshAccessToken(refreshToken: String): TokenResponse {
         // Refresh Token 유효성 검증
         if (!jwtProvider.validateToken(refreshToken)) {
@@ -63,19 +45,14 @@ class AuthService(
             throw IllegalArgumentException("Not a refresh token")
         }
 
-        // DB에서 Refresh Token 확인
-        val savedToken = refreshTokenRepository.findByToken(refreshToken)
-            ?: throw IllegalArgumentException("Refresh token not found")
+        val userId = jwtProvider.getUserIdFromToken(refreshToken)
 
-        // 만료 시간 확인
-        if (savedToken.expiryDate.isBefore(LocalDateTime.now())) {
-            refreshTokenRepository.delete(savedToken)
-            throw IllegalArgumentException("Refresh token expired")
+        // Redis에서 Refresh Token 검증
+        if (!redisRefreshTokenService.isValidRefreshToken(userId, refreshToken)) {
+            throw IllegalArgumentException("Refresh token not found or invalid")
         }
 
-        val userId = savedToken.userId
-
-        // 새로운 Access Token만 생성 (Refresh Token은 유지)
+        // 새로운 Access Token만 생성
         val newAccessToken = jwtProvider.generateAccessToken(userId)
 
         return TokenResponse(
@@ -112,10 +89,12 @@ class AuthService(
     }
 
     /**
-     * 로그아웃 (Refresh Token 삭제)
+     * 로그아웃 (Refresh Token 삭제 및 Access Token blacklist 처리)
      */
-    @Transactional
-    fun logout(userId: Long) {
-        refreshTokenRepository.deleteByUserId(userId)
+    fun logout(userId: Long, accessToken: String) {
+        redisRefreshTokenService.deleteRefreshToken(userId)
+
+        val accessTokenValiditySeconds = jwtProvider.getAccessTokenValidityMs() / 1000
+        tokenBlacklistService.addToBlacklist(accessToken, accessTokenValiditySeconds)
     }
 }
