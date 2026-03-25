@@ -5,7 +5,6 @@ import com.covercloud.user.domain.User
 import com.covercloud.user.service.dto.UpdateProfileRequest
 import com.covercloud.user.service.dto.UserInfoResponse
 import com.covercloud.user.repository.UserRepository
-import com.covercloud.user.repository.RefreshTokenRepository
 import com.covercloud.user.service.dto.UploadUrlResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val refreshTokenRepository: RefreshTokenRepository,
+    private val refreshTokenService: RedisRefreshTokenService,
     private val gcsSignedUrlService: GcsSignedUrlService,
     private val authService: AuthService
 ) {
@@ -60,7 +59,7 @@ class UserService(
         val user = userRepository.findById(userId).orElseThrow { IllegalArgumentException("User not found") }
 
         // Refresh Token 삭제 (모든 세션 로그아웃)
-        refreshTokenRepository.deleteByUserId(userId)
+        refreshTokenService.deleteRefreshToken(userId)
 
         // 소프트 삭제 - 사용자 상태를 deleted로 변경
         user.delete()

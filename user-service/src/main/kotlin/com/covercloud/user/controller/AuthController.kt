@@ -206,7 +206,7 @@ class AuthController(
         return try {
             val token = authHeader.removePrefix("Bearer ")
             val userId = authService.getUserInfo(token).userId
-            authService.logout(userId)
+            authService.logout(userId, token)
             ResponseEntity.ok(
                 ApiResponse(
                     success = true,
