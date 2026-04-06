@@ -42,27 +42,25 @@ jobs:
         run: |
           set -e
           mkdir -p dist
-
+          # 빌드된 jar 파일들을 dist로 복사
           cp -v user-service/build/libs/*.jar dist/
           cp -v music-service/build/libs/*.jar dist/
           cp -v cover-service/build/libs/*.jar dist/
           cp -v api-gateway/build/libs/*.jar dist/
+          # 루트에 있는 deploy.sh도 dist로 복사해서 같이 넘길 준비!
+          cp -v deploy.sh dist/
 
-          echo "==== dist ===="
-          ls -al dist
-
-      - name: Upload jars to GCE (scp)
+      - name: Upload to Oracle Cloud (scp)
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          username: ${{ secrets.USERNAME }} # ubuntu
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: "dist/*.jar"
-          target: "/home/covercloudofficial/upload/"
+          source: "dist/*" # dist 폴더 안의 모든 것(jar + deploy.sh)
+          target: "/home/${{ secrets.USERNAME }}/deploy/"
           strip_components: 1
-          
-      - name: Write .env on GCE
+      - name: Write Config Files on Oracle Cloud
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.HOST }}
@@ -70,15 +68,15 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            set -euo pipefail
-            mkdir -p /home/covercloudofficial/deploy
+            mkdir -p /home/${{ secrets.USERNAME }}/deploy
             
-            cat <<'EOF' > /home/covercloudofficial/deploy/gcs-key.json
+            # GCS 키 파일 생성
+            cat <<'EOF' > /home/${{ secrets.USERNAME }}/deploy/gcs-key.json
             ${{ secrets.GCP_SA_KEY }}
             EOF
-            chmod 600 /home/covercloudofficial/deploy/gcs-key.json
             
-            cat <<'EOF' > /home/covercloudofficial/deploy/.env
+            # 환경 변수 .env 파일 생성
+            cat <<'EOF' > /home/${{ secrets.USERNAME }}/deploy/.env
             KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
             KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
             NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
@@ -86,12 +84,11 @@ jobs:
             SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
             SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
             COOKIE_DOMAIN=${{ secrets.COOKIE_DOMAIN }}
-            GCP_STORAGE_KEY_PATH=/home/covercloudofficial/deploy/gcs-key.json
+            GCP_STORAGE_KEY_PATH=/home/${{ secrets.USERNAME }}/deploy/gcs-key.json
             EOF
-            chmod 600 /home/covercloudofficial/deploy/.env
-            echo "wrote /home/covercloudofficial/deploy/.env"
+            chmod 600 /home/${{ secrets.USERNAME }}/deploy/.env /home/${{ secrets.USERNAME }}/deploy/gcs-key.json
 
-      - name: Deploy on GCE (ssh)
+      - name: Execute Deploy Script (ssh)
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.HOST }}
@@ -99,11 +96,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            set -euo pipefail
-            echo "=== whoami / host ==="
-            whoami
-            hostname
-            echo "=== uploaded jars ==="
-            ls -al /home/covercloudofficial/upload || true
-            echo "=== run deploy.sh ==="
-            bash /home/covercloudofficial/deploy/deploy.sh
+            chmod +x /home/${{ secrets.USERNAME }}/deploy/deploy.sh
+            bash /home/${{ secrets.USERNAME }}/deploy/deploy.sh
