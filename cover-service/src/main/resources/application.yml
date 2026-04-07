@@ -7,14 +7,14 @@ spring:
 
   datasource:
     # (기존 설정 유지)
-    url: jdbc:mysql://34.50.47.209:3306/covercloud_cover?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/covercloud_cover?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: NewPassword123!
 
   # 여기를 data.redis로 감싸야 합니다!
   data:
     redis:
-      host: 34.50.47.209
+      host: localhost
       port: 6379
       timeout: 2000ms
       lettuce:
