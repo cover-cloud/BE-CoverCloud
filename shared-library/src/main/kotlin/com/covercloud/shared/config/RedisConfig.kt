@@ -13,7 +13,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
 class RedisConfig(
-    @Value("\${spring.redis.host:34.50.47.209}")
+    @Value("\${spring.redis.host:localhost}")
     private val redisHost: String,
 
     @Value("\${spring.redis.port:6379}")
