@@ -24,7 +24,7 @@ spring:
         - id: cover-service
           uri: http://localhost:8082
           predicates:
-            - Path=/api/cover/**
+            - Path=/api/cover/**, /api/playlist/**
           filters:
             - RewritePath=/(?<segment>.*), /${segment}
 
