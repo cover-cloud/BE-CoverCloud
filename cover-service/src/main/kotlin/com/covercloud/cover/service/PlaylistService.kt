@@ -104,6 +104,22 @@ class PlaylistService(
     }
 
     @Transactional
+    fun removeItem(playlistId: Long, userId: Long, itemId: Long) {
+        playlistRepository.findByIdAndUserId(playlistId, userId)
+            ?: throw NoSuchElementException("Playlist not found or access denied")
+
+        if (!playlistItemRepository.existsByIdAndPlaylistId(itemId, playlistId)) {
+            throw NoSuchElementException("Item not found in playlist")
+        }
+
+        playlistItemRepository.deleteById(itemId)
+
+        // 삭제 후 position 재정렬
+        val remaining = playlistItemRepository.findAllByPlaylistIdOrderByPosition(playlistId)
+        remaining.forEachIndexed { index, it -> it.position = index }
+    }
+
+    @Transactional
     fun reorderItems(playlistId: Long, userId: Long, orderedItemIds: List<Long>) {
         playlistRepository.findByIdAndUserId(playlistId, userId)
             ?: throw NoSuchElementException("Playlist not found or access denied")

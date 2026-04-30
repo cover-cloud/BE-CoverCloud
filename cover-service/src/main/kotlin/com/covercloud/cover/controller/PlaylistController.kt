@@ -112,6 +112,24 @@ class PlaylistController(
         }
     }
 
+    // DELETE /playlists/{playlistId}/items/{itemId}
+    @DeleteMapping("/{playlistId}/items/{itemId}")
+    fun removeItem(
+        @PathVariable playlistId: Long,
+        @PathVariable itemId: Long,
+        httpRequest: HttpServletRequest,
+    ): ResponseEntity<ApiResponse<Any>> {
+        return try {
+            val userId = authenticationContext.requireUserId(httpRequest)
+            playlistService.removeItem(playlistId, userId, itemId)
+            ResponseEntity.ok(ApiResponse(success = true, message = "Item removed from playlist"))
+        } catch (e: IllegalStateException) {
+            ResponseEntity.status(401).body(ApiResponse(success = false, message = "Invalid or expired access token"))
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(ApiResponse(success = false, message = e.message))
+        }
+    }
+
     // POST /playlists/{playlistId}/items/reorder
     @PostMapping("/{playlistId}/items/reorder")
     fun reorderItems(
