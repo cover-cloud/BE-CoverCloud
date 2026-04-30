@@ -1,0 +1,53 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      forwarded:
+        enabled: true
+
+      default-filters:
+        - PreserveHostHeader
+
+      routes:
+        - id: user-service
+          uri: http://localhost:9091
+          predicates:
+            - Path=/api/auth/**, /api/user/**, /api/test/**, /oauth2/**, /login/oauth2/**
+          filters:
+            - RewritePath=/(?<segment>.*), /${segment}
+
+        - id: cover-service
+          uri: http://localhost:9092
+          predicates:
+            - Path=/api/cover/**, /api/playlist/**
+          filters:
+            - RewritePath=/(?<segment>.*), /${segment}
+
+        - id: music-service
+          uri: http://localhost:9093
+          predicates:
+            - Path=/api/music/**
+          filters:
+            - RewritePath=/(?<segment>.*), /${segment}
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://localhost:3001"
+              - "https://www.covercloud.kr"  # <--- 실제 서비스 도메인 추가!
+              - "http://www.covercloud.kr"
+            allowedMethods: [GET, POST, PUT, DELETE, OPTIONS]
+            allowedHeaders: "*"
+            allowCredentials: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: INFO
