@@ -26,9 +26,9 @@ cd "$DEPLOY_DIR"
 
 # 3. 서비스 실행 (로그는 .log 파일로 남김)
 echo ">>> Starting services..."
-nohup java -jar -Dspring.profiles.active=prod api-gateway.jar > gateway.log 2>&1 &
-nohup java -jar -Dspring.profiles.active=prod user-service.jar > user.log 2>&1 &
-nohup java -jar -Dspring.profiles.active=prod music-service.jar > music.log 2>&1 &
-nohup java -jar -Dspring.profiles.active=prod cover-service.jar > cover.log 2>&1 &
+nohup java -jar -Dspring.profiles.active=prod api-gateway-0.0.1.jar > gateway.log 2>&1 &
+nohup java -jar -Dspring.profiles.active=prod user-service-0.0.1.jar > user.log 2>&1 &
+nohup java -jar -Dspring.profiles.active=prod music-service-0.0.1.jar > music.log 2>&1 &
+nohup java -jar -Dspring.profiles.active=prod cover-service-0.0.1.jar > cover.log 2>&1 &
 
 echo ">>> Deployment script finished!"
