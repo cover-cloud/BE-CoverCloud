@@ -4,6 +4,7 @@ import com.covercloud.cover.domain.Playlist
 import com.covercloud.cover.domain.PlaylistItem
 import com.covercloud.cover.infrastructure.feign.MusicClient
 import com.covercloud.cover.repository.CoverRepository
+import com.covercloud.cover.repository.CoverTagRepository
 import com.covercloud.cover.repository.PlaylistItemRepository
 import com.covercloud.cover.repository.PlaylistRepository
 import com.covercloud.cover.service.dto.PlaylistDetailResponse
@@ -19,6 +20,7 @@ class PlaylistService(
     private val playlistRepository: PlaylistRepository,
     private val playlistItemRepository: PlaylistItemRepository,
     private val coverRepository: CoverRepository,
+    private val coverTagRepository: CoverTagRepository,
     private val musicClient: MusicClient,
 ) {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -38,6 +40,7 @@ class PlaylistService(
         }
     }
 
+    @Transactional
     fun getPlaylist(playlistId: Long, includeItems: Boolean): PlaylistDetailResponse {
         val playlist = playlistRepository.findByIdOrNull(playlistId)
             ?: throw NoSuchElementException("Playlist not found")
@@ -148,12 +151,18 @@ class PlaylistService(
             } catch (_: Exception) {}
         }
 
+        val tags = cover?.id?.let { coverId ->
+            coverTagRepository.findAllByCoverId(coverId).map { it.tag.name }
+        } ?: emptyList()
+
         return PlaylistItemResponse(
             itemId = item.id!!,
             coverId = item.coverId,
             position = item.position,
             coverTitle = cover?.coverTitle,
             coverArtist = cover?.coverArtist,
+            coverGenre = cover?.coverGenre,
+            tags = tags,
             link = cover?.link,
             originalTitle = originalTitle,
             originalArtist = originalArtist,
