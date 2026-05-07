@@ -1,5 +1,7 @@
 package com.covercloud.cover.service.dto
 
+import com.covercloud.cover.domain.CoverGenre
+
 data class PlaylistDetailResponse(
     val playlistId: Long,
     val name: String,
@@ -14,6 +16,8 @@ data class PlaylistItemResponse(
     val position: Int,
     val coverTitle: String?,
     val coverArtist: String?,
+    val coverGenre: CoverGenre?,
+    val tags: List<String>,
     val link: String?,
     val originalTitle: String?,
     val originalArtist: String?,
