@@ -163,6 +163,9 @@ class CoverService(
         coverLikeRepository.deleteAllByCoverId(coverId)
         coverTagRepository.deleteAllByCoverId(cover.id!!)
         coverRepository.delete(cover)
+
+        // DB 삭제 후 Redis 잔여 데이터 정리 (dirty set에 남으면 sync 스케줄러에서 예외 발생)
+        likeService.evictCoverLikeCache(coverId)
     }
 
     fun getCovers(
