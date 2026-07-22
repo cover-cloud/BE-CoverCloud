@@ -29,12 +29,14 @@ class PlaylistService(
         return playlistRepository.findAllByUserId(userId).map { playlist ->
             val itemCount = playlistItemRepository.countByPlaylistId(playlist.id!!)
             val firstItem = playlistItemRepository.findAllByPlaylistIdOrderByPosition(playlist.id!!).firstOrNull()
-            val thumbnailUrl = firstItem?.let { getThumbnailUrl(it.coverId) }
+            val firstCover = firstItem?.let { coverRepository.findByIdOrNull(it.coverId) }
+            val thumbnailUrl = firstCover?.let { getThumbnailUrl(it.musicId) }
             PlaylistSummaryResponse(
                 playlistId = playlist.id!!,
                 name = playlist.name,
                 itemCount = itemCount,
                 thumbnailUrl = thumbnailUrl,
+                link = firstCover?.link,
                 createdAt = playlist.createdAt.format(formatter),
             )
         }
@@ -70,6 +72,7 @@ class PlaylistService(
             name = playlist.name,
             itemCount = 0,
             thumbnailUrl = null,
+            link = null,
             createdAt = playlist.createdAt.format(formatter),
         )
     }
@@ -172,10 +175,9 @@ class PlaylistService(
         )
     }
 
-    private fun getThumbnailUrl(coverId: Long): String? {
-        val cover = coverRepository.findByIdOrNull(coverId) ?: return null
+    private fun getThumbnailUrl(musicId: Long): String? {
         return try {
-            musicClient.getMusic(cover.musicId).originalCoverImageUrl
+            musicClient.getMusic(musicId).originalCoverImageUrl
         } catch (_: Exception) {
             null
         }

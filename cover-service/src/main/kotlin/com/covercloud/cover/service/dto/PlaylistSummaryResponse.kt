@@ -5,5 +5,6 @@ data class PlaylistSummaryResponse(
     val name: String,
     val itemCount: Int,
     val thumbnailUrl: String?,
+    val link: String?,
     val createdAt: String,
 )

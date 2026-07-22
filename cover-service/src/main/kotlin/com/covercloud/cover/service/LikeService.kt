@@ -124,6 +124,36 @@ class LikeService(
         }
     }
     
+    /**
+     * Cover 삭제 시 관련 Redis 데이터를 모두 정리한다.
+     * (좋아요 Set, 좋아요 카운트, dirty set 항목, 트렌딩 랭킹 멤버)
+     * 이 정리가 없으면 삭제된 Cover가 dirty set에 남아 syncLikesToDatabase에서
+     * EntityNotFoundException을 유발한다.
+     */
+    fun evictCoverLikeCache(coverId: Long) {
+        try {
+            val coverIdStr = coverId.toString()
+            redisTemplate.delete(likeSetKey(coverId))
+            redisTemplate.delete(likeCountKey(coverId))
+            redisTemplate.opsForSet().remove(DIRTY_SET_KEY, coverIdStr)
+
+            // 트렌딩 랭킹에서도 제거 (키 스캔은 비용이 있으므로 현재 기간 키만 정리)
+            val now = LocalDateTime.now()
+            val trendingKeys = listOf(
+                "trending:daily:${now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))}",
+                "trending:weekly:${now.get(IsoFields.WEEK_BASED_YEAR)}-W${now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)}",
+                "trending:monthly:${now.format(DateTimeFormatter.ofPattern("yyyy-MM"))}"
+            )
+            trendingKeys.forEach { key ->
+                redisTemplate.opsForZSet().remove(key, coverIdStr)
+            }
+
+            logger.info("🧹 Evicted Redis like cache for cover $coverId")
+        } catch (e: Exception) {
+            logger.error("Failed to evict Redis like cache for cover $coverId", e)
+        }
+    }
+
     fun initializeLikeCount(coverId: Long): Long {
         try {
             val currentCount = redisTemplate.opsForValue().get(likeCountKey(coverId))
@@ -154,6 +184,18 @@ class LikeService(
             for (coverIdStr in dirtyCoverIds) {
                 val coverId = coverIdStr.toLongOrNull() ?: continue
 
+                // 0. Cover 존재 여부 확인
+                // DB에서 이미 삭제된 Cover가 Redis에 남아있으면 getReferenceById 프록시 flush 시
+                // EntityNotFoundException이 발생하므로, 실제 엔티티를 조회하고 없으면 Redis 잔여 데이터를 정리 후 건너뜀
+                val cover = coverRepository.findByIdOrNull(coverId)
+                if (cover == null) {
+                    logger.warn("⚠️ Cover $coverId not found in DB (likely deleted). Cleaning up Redis keys.")
+                    redisTemplate.delete(likeSetKey(coverId))
+                    redisTemplate.delete(likeCountKey(coverId))
+                    redisTemplate.opsForSet().remove(DIRTY_SET_KEY, coverIdStr)
+                    continue
+                }
+
                 // 1. Redis에서 데이터 확보
                 val redisLikedUsers = redisTemplate.opsForSet().members(likeSetKey(coverId)) ?: emptySet()
 
@@ -175,7 +217,7 @@ class LikeService(
                     val userId = userIdStr.toLongOrNull() ?: return@forEach
                     // 중복 insert 방지를 위해 한 번 더 체크 (Unique 제약조건 에러 방지)
                     if (!coverLikeRepository.existsByCoverIdAndUserId(coverId, userId)) {
-                        coverLikeRepository.save(CoverLike(cover = coverRepository.getReferenceById(coverId), userId = userId))
+                        coverLikeRepository.save(CoverLike(cover = cover, userId = userId))
                         logger.info("➕ Added: Cover $coverId, User $userId")
                     }
                 }
